@@ -20,6 +20,76 @@
 
     <h1>Account</h1>
 
+    <div>
+  <h1>Edit Profile</h1>
+  <form>
+ 
+    <!-- Profile Info -->
+    <div>
+      <div id="avatarPreview">
+        <svg viewBox="0 0 24 24" width="50" height="50"><path d="M12 12c2.7 0 4.9-2.2 4.9-4.9S14.7 2.2 12 2.2 7.1 4.4 7.1 7.1 9.3 12 12 12zm0 2.5c-3.3 0-9.8 1.6-9.8 4.9v2.4h19.6v-2.4c0-3.3-6.5-4.9-9.8-4.9z"/></svg>
+      </div>
+      <div>
+        <input type="file" id="avatarInput" accept="image/*" hidden>
+        <button type="button" onclick="document.getElementById('avatarInput').click()">Upload photo</button>
+        <button type="button" onclick="removeAvatar()">Remove</button>
+      </div>
+    </div>
+ 
+    <label>Profile Visibility</label>
+    <div>
+      <label><input type="radio" name="visibility" value="public" checked> Public</label>
+      <label><input type="radio" name="visibility" value="private"> Private</label>
+    </div>
+ 
+    <label for="username">Username</label>
+    <input type="text" id="username" name="username" placeholder="Enter username">
+ 
+    <label for="name">Full Name</label>
+    <input type="text" id="name" name="name" placeholder="Enter full name">
+ 
+    <label for="dob">Date of Birth</label>
+    <input type="date" id="dob" name="dob">
+ 
+    <label for="age">Age</label>
+    <input type="number" id="age" name="age" placeholder="Auto-calculated from DOB" readonly>
+ 
+    <label for="gender">Gender</label>
+    <select id="gender" name="gender">
+      <option value="">Select gender</option>
+      <option value="female">Female</option>
+      <option value="male">Male</option>
+      <option value="nonbinary">Non-binary</option>
+      <option value="other">Other</option>
+      <option value="prefer_not">Prefer not to say</option>
+    </select>
+ 
+    <!-- Privacy & User Settings -->
+    <h2>Privacy & User Settings</h2>
+ 
+    <div>
+      <label for="show_email">Show email on profile</label>
+      <input type="checkbox" id="show_email" name="show_email">
+    </div>
+ 
+    <div>
+      <label for="allow_messages">Allow messages from others</label>
+      <input type="checkbox" id="allow_messages" name="allow_messages" checked>
+    </div>
+ 
+    <div>
+      <label for="email_notifications">Email notifications</label>
+      <input type="checkbox" id="email_notifications" name="email_notifications" checked>
+    </div>
+ 
+    <div>
+      <label for="two_factor">Two-factor authentication</label>
+      <input type="checkbox" id="two_factor" name="two_factor">
+    </div>
+ 
+    <button type="submit">Save Changes</button>
+  </form>
+
   <script src="js/app.js"></script>  
 </body>
 </html>
