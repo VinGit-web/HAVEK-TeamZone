@@ -1,7 +1,7 @@
 /* 
 MAIN JS FILE
 */
-
+console.log("main.js loaded")
 // EVENTS JS
 
 // View event details functionality
