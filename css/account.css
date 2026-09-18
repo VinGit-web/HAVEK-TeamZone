@@ -1,6 +1,5 @@
 /* Account page */
 
-
 .account-body {
   font-family: Arial, sans-serif;
   background: #f4f4f4;
@@ -10,14 +9,11 @@
   flex-direction: column;
   align-items: center;
   padding: 40px 20px;
+  justify-content: center; 
+  
 }
  
-.account-header,
-hr,
-main {
-  width: 100%;
-  max-width: 500px;
-}
+
  
 .account-header {
   text-align: center;
