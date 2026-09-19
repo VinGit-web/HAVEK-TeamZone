@@ -141,16 +141,44 @@ form > fieldset:first-of-type select {
   margin: 0 auto 10px;
 }
  
+ 
 #avatarPreview svg {
-  vertical-align: middle;
-  fill: #999;
+  display: block;
 }
  
-#avatarPreview img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 50%;
+.account-avatar eye {
+  transform-origin: center;
+  transform-box: fill-box;
+  animation: avatar-blink 4s infinite;
+}
+ 
+@keyframes avatar-blink {
+  0%, 92%, 100% { transform: scaleY(1); }
+  96% { transform: scaleY(0.1); }
+}
+ 
+.account-accessory-options {
+  display: inline-flex;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+ 
+.account-accessory-options label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: normal;
+  font-size: 14px;
+}
+ 
+.account-avatar input[type="color"] {
+  width: 60px;
+  height: 34px;
+  padding: 2px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  cursor: pointer;
 }
  
 /* ============================= */
