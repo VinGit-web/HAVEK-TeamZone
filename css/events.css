@@ -168,3 +168,9 @@
     cursor: pointer;
     font-size: 14px;
 }
+
+/* HIDE ELEMENTS WHEN JS SETS hidden */
+
+[hidden] {
+    display: none !important;
+}
