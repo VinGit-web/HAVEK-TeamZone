@@ -202,8 +202,23 @@
                 favourite quotes and recommendations.
             </p>
 
-            <button type="button" class="book-event">
-                Book Event
+            <!-- BOOKING CONTROLS -->
+            <div class="event-actions">
+
+                <button type="button" id="bookEventButton" class="book-event">
+                    Book Event
+                </button>
+
+                <p id="attendanceStatus" class="attendance-status" hidden>
+                    ✓ You're attending this event
+                </p>
+
+                <button type="button" id="cancelEventButton" class="cancel-event" hidden>
+                    Cancel Attendance
+                </button>
+
+            </div>
+            
             </button>
 
         </section>

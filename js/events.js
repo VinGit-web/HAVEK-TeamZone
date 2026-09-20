@@ -53,3 +53,31 @@ closeEventDetails.addEventListener("click", function () {
     listView.hidden = false;
 
 });
+
+// =============================
+// BOOK EVENT
+// =============================
+
+const bookEventButton = document.getElementById("bookEventButton");
+const cancelEventButton = document.getElementById("cancelEventButton");
+const attendanceStatus = document.getElementById("attendanceStatus");
+
+
+bookEventButton.addEventListener("click", function () {
+
+    bookEventButton.hidden = true;
+
+    attendanceStatus.hidden = false;
+    cancelEventButton.hidden = false;
+
+});
+
+
+cancelEventButton.addEventListener("click", function () {
+
+    bookEventButton.hidden = false;
+
+    attendanceStatus.hidden = true;
+    cancelEventButton.hidden = true;
+
+});
