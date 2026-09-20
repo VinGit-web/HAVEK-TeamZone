@@ -2113,3 +2113,235 @@ document
 
         }
     );
+
+const searchInput = document.getElementById("search");
+const searchSuggestions = document.getElementById("searchSuggestions");
+
+const searchablePeople = [
+
+    {
+        name: "Zach T",
+        key: "zach",
+        initials: "ZT",
+        suburb: "Toowong",
+        interests: [
+            "Horse Back Riding",
+            "Reading",
+            "Football"
+        ]
+    },
+
+    {
+        name: "Mike S",
+        key: "mike",
+        initials: "MS",
+        suburb: "Toowong",
+        interests: [
+            "Boxing",
+            "Reading",
+            "Eating"
+        ]
+    },
+
+    {
+        name: "Sally S",
+        key: "sally",
+        initials: "SS",
+        suburb: "Indooroopilly",
+        interests: [
+            "Ballet",
+            "Painting",
+            "Netball"
+        ]
+    },
+
+    {
+        name: "Holly M",
+        key: "holly",
+        initials: "HM",
+        suburb: "Carindale",
+        interests: [
+            "Swimming",
+            "Museums",
+            "Gaming"
+        ]
+    },
+
+    {
+        name: "Priya K",
+        key: "priya",
+        initials: "PK",
+        suburb: "Mt Gravatt",
+        interests: [
+            "Pottery",
+            "Horse Back Riding",
+            "Fencing",
+            "Eating"
+        ]
+    }
+
+];
+
+searchInput.addEventListener("input", function () {
+
+    const searchText =
+        searchInput.value.trim().toLowerCase();
+
+    if (searchText.length < 2) {
+
+        searchSuggestions.innerHTML = "";
+        searchSuggestions.hidden = true;
+
+        return;
+    }
+
+    const matches = searchablePeople.filter(function (person) {
+
+        const nameMatch =
+            person.name
+                .toLowerCase()
+                .includes(searchText);
+
+
+        const suburbMatch =
+            person.suburb
+                .toLowerCase()
+                .includes(searchText);
+
+
+        const interestMatch =
+            person.interests.some(function (interest) {
+
+                return interest
+                    .toLowerCase()
+                    .includes(searchText);
+
+            });
+
+
+        return (
+            nameMatch ||
+            suburbMatch ||
+            interestMatch
+        );
+
+    });
+
+
+    showSearchSuggestions(matches);
+
+});
+
+function showSearchSuggestions(matches) {
+
+    searchSuggestions.innerHTML = "";
+
+    if (matches.length === 0) {
+
+        searchSuggestions.innerHTML = `
+            <div class="no-search-result">
+                No people found
+            </div>
+        `;
+
+        searchSuggestions.hidden = false;
+
+        return;
+    }
+
+    matches.slice(0, 5).forEach(function (person) {
+
+        const suggestion =
+            document.createElement("button");
+
+
+        suggestion.type = "button";
+
+        suggestion.className =
+            "search-suggestion";
+
+
+        suggestion.innerHTML = `
+
+            <div class="suggestion-avatar">
+                ${person.initials}
+            </div>
+
+            <div class="suggestion-information">
+
+                <strong>
+                    ${person.name}
+                </strong>
+
+                <span>
+                    ${person.interests.join(" • ")}
+                </span>
+
+                <small>
+                    ${person.suburb}
+                </small>
+
+            </div>
+
+        `;
+
+        suggestion.addEventListener("click", function () {
+
+            searchInput.value =
+                person.name;
+
+
+            searchSuggestions.hidden = true;
+
+            if (typeof openPersonProfile === "function") {
+
+                openPersonProfile(person.key);
+
+            }
+
+        });
+
+
+        searchSuggestions.appendChild(
+            suggestion
+        );
+
+    });
+
+
+    searchSuggestions.hidden = false;
+
+}
+
+document.addEventListener("click", function (event) {
+
+    const searchBar =
+        document.querySelector(".search-bar");
+
+
+    if (
+        searchBar &&
+        !searchBar.contains(event.target)
+    ) {
+
+        searchSuggestions.hidden = true;
+
+    }
+
+});
+
+searchInput.addEventListener("focus", function () {
+
+    const searchText =
+        searchInput.value.trim();
+
+
+    if (searchText.length >= 2) {
+
+        searchInput.dispatchEvent(
+            new Event("input")
+        );
+
+    }
+
+});
