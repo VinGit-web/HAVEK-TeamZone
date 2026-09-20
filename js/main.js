@@ -170,6 +170,57 @@ const profiles = {
     }
 };
 
+const people = [
+    {
+        id: "samuel",
+        lat: 0,
+        lon: 0,
+        size: 34,
+        color: "#a85cff",
+        main: true
+    },
+
+    {
+        id: "zach",
+        lat: 28,
+        lon: -55,
+        size: 20,
+        color: "#48e4bd"
+    },
+
+    {
+        id: "mike",
+        lat: 30,
+        lon: 55,
+        size: 20,
+        color: "#a968ff"
+    },
+
+    {
+        id: "sally",
+        lat: 0,
+        lon: 90,
+        size: 19,
+        color: "#55c9ff"
+    },
+
+    {
+        id: "holly",
+        lat: -32,
+        lon: -65,
+        size: 19,
+        color: "#55c9ff"
+    },
+
+    {
+        id: "priya",
+        lat: -40,
+        lon: 45,
+        size: 19,
+        color: "#f17bc9"
+    }
+];
+
 const lockedPeople = [
 
     {
