@@ -1,3 +1,5 @@
+alert("events.js loaded");
+
 /* EVENTS PAGE JS */
 
 const listViewButton = document.getElementById("listViewButton");
