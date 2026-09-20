@@ -3,16 +3,13 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sphere</title>
-    # main css
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">    <title>Sphere</title>
     <link rel="stylesheet" href="css/main.css">
 </head>
 
 <body>
     <div class="app">
 
-        # Left Sidebar
         <aside class="sidebar">
             <div class="brand">
                 <div class="mark">
@@ -23,8 +20,7 @@
                     <p>Real people. Real experiences.</p>
                 </div>
             </div>
-            
-            # Navigation
+        
             <!-- <nav class="navbar">
             #sphere is the home page
             <button class="nav-button active" oneclick="window.location.href='chat.html'">
@@ -54,7 +50,6 @@
                 <a href="about.html">About</a>
             </nav>
 
-            # Bottom sidebar
             <div class="sidebar-bottom">
                 <button class="bottom-button">
                     <span>⚙</span>
@@ -67,34 +62,27 @@
             </div>
         </aside>
 
-        # Main Content
         <main class="main content">
 
-            #Top Bar
             <header class="topbar">
                 <div class="search bar" <span class="search-iron">🔍</span>
                     <input id="search" type="text" placeholder="Search people, event, or interests...">
                 </div>
 
-                #chat shortcut
                 <button class="chat-shortcut" oneclick="window.location.href='chat.html'">
                     ◌ Chats
                 </button>>
 
-                #Samuel Account
                 <button class="account-shortcut" oneclick="window.location.href='account.html'">
                     <div class="small-avatar"> SS </div>
                     <span>Samuel</span>
                 </button>
             </header>
 
-            #Sphere Area
             <section id="scene">
 
-                #Background stars
                 <div class="stars"></div>
 
-                #Page Heading
                 <div class="sphere-heading">
                     <h2>My Sphere</h2>
                     <div class="heading-line"></div>
@@ -102,10 +90,8 @@
                 </div>
                 <canvas id="canvas"></canvas>
 
-                #Hower profile information
                 <div class="tooltip" id="tooltip"></div>
 
-                #Controls
                 <div class="sphere-controls">
                     Drag to rotate
                     <span>•</span>
@@ -116,11 +102,9 @@
             </section>
         </main>
 
-        #Profile Panel
         <aside class="profile-panel" id="profilePanel">
             <button class="panel-close" id="panelClose"> x </button>
 
-            #Profile heading
             <div class="profile-header">
                 <div class="profile-avatar" id="avatar">
                     ?
@@ -131,7 +115,6 @@
                 </div>
             </div>
 
-            #Profile actions
             <div class="profile-actions">
                 <button class="message-button" id="msg">
                     ◌ Message
@@ -141,25 +124,21 @@
                 </button>
             </div>
 
-            # Interests
             <section class="profile-section">
                 <h3>Interests</h3>
                 <div class="interest-list" id="chips"></div>
             </section>
 
-            #About
             <section class="profile-section">
                 <h3>About</h3>
                 <p id="about"></p>
             </section>
 
-            #Upcoming Events
             <section class="profile-section">
                 <h3>Upcoming Events</h3>
                 <div id="events"></div>
             </section>
 
-            #Connection Information
             <section class="profile-section">
                 <h3>Your Connection</h3>
                 <p id="connection"></p>
@@ -167,7 +146,6 @@
         </aside>
     </div>
 
-    #Quick Chat Popup
     <div class="chat-popup" id="chatbox">
         <div class="chat-popup-header">
             <h3>Chats</h3>
