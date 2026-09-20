@@ -1,0 +1,1095 @@
+/* =========================================================
+   SPHERE - MAIN.CSS
+   ========================================================= */
+
+/* ---------- RESET ---------- */
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: #050711;
+    color: white;
+    overflow: hidden;
+}
+
+button,
+input {
+    font: inherit;
+}
+
+button {
+    cursor: pointer;
+}
+
+
+/* =========================================================
+   MAIN LAYOUT
+   ========================================================= */
+
+.app {
+    width: 100%;
+    height: 100vh;
+
+    display: grid;
+    grid-template-columns: 240px 1fr;
+
+    background: #050711;
+}
+
+/* When profile panel opens */
+
+.app.profile-open {
+    grid-template-columns: 240px minmax(500px, 1fr) 360px;
+}
+
+
+/* =========================================================
+   SIDEBAR
+   ========================================================= */
+
+.sidebar {
+    position: relative;
+
+    height: 100vh;
+
+    padding: 22px 15px;
+
+    background: linear-gradient(
+        160deg,
+        #0d1120,
+        #070a13
+    );
+
+    border-right: 1px solid #20263a;
+
+    z-index: 20;
+}
+
+
+#BRAND ----
+
+.brand {
+    display: flex;
+    align-items: center;
+
+    gap: 13px;
+
+    padding: 0 10px 22px;
+
+    border-bottom: 1px solid #1d2233;
+}
+
+.mark {
+    width: 44px;
+    height: 44px;
+
+    flex-shrink: 0;
+
+    border-radius: 50%;
+
+    display: grid;
+    place-items: center;
+
+    color: #c695ff;
+
+    font-size: 25px;
+
+    border: 2px solid #9954ff;
+
+    background: radial-gradient(
+        circle,
+        #45217b,
+        #15172a
+    );
+
+    box-shadow: 0 0 20px rgba(153, 84, 255, 0.5);
+}
+
+.brand h1 {
+    font-size: 25px;
+    font-weight: 700;
+}
+
+.brand p {
+    margin-top: 4px;
+
+    font-size: 9px;
+
+    color: #999fb6;
+}
+
+
+
+   #NAVIGATION
+   
+.navbar {
+    display: flex;
+    flex-direction: column;
+
+    gap: 8px;
+
+    margin-top: 24px;
+}
+
+.nav-button {
+    width: 100%;
+    height: 52px;
+
+    border: 1px solid transparent;
+    border-radius: 11px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 14px;
+
+    padding: 0 17px;
+
+    background: transparent;
+
+    color: #b9bed4;
+
+    text-align: left;
+
+    transition:
+        background 0.2s ease,
+        border 0.2s ease,
+        transform 0.2s ease;
+}
+
+.nav-button:hover {
+    background: #15192a;
+
+    transform: translateX(2px);
+}
+
+.nav-button.active {
+    color: white;
+
+    border: 1px solid #8f4cff;
+
+    background: linear-gradient(
+        90deg,
+        #5420a9,
+        #1d1b48
+    );
+
+    box-shadow: inset 0 0 25px rgba(143, 76, 255, 0.12);
+}
+
+.nav-icon {
+    width: 27px;
+
+    text-align: center;
+
+    font-size: 20px;
+}
+
+
+/* =========================================================
+   SIDEBAR BOTTOM
+   ========================================================= */
+
+.sidebar-bottom {
+    position: absolute;
+
+    left: 15px;
+    right: 15px;
+    bottom: 20px;
+}
+
+.bottom-button {
+    width: 100%;
+    height: 42px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 13px;
+
+    padding: 0 16px;
+
+    border: none;
+
+    background: transparent;
+
+    color: #999fb8;
+
+    text-align: left;
+}
+
+.bottom-button:hover {
+    color: white;
+}
+
+
+/* =========================================================
+   MAIN CONTENT
+   ========================================================= */
+
+.main-content {
+    min-width: 0;
+
+    height: 100vh;
+
+    display: grid;
+
+    grid-template-rows: 72px 1fr;
+}
+
+
+/* =========================================================
+   TOP BAR
+   ========================================================= */
+
+.topbar {
+    height: 72px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 14px;
+
+    padding: 0 25px;
+
+    background: #0c1020;
+
+    border-bottom: 1px solid #20263a;
+
+    z-index: 10;
+}
+
+
+/* ---------- SEARCH ---------- */
+
+.search-bar {
+    flex: 1;
+
+    max-width: 620px;
+    height: 44px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 11px;
+
+    padding: 0 17px;
+
+    border: 1px solid #303750;
+    border-radius: 24px;
+
+    background: #111629;
+}
+
+.search-icon {
+    color: #b9bff2;
+
+    font-size: 20px;
+}
+
+.search-bar input {
+    width: 100%;
+
+    border: none;
+    outline: none;
+
+    background: transparent;
+
+    color: white;
+
+    font-size: 13px;
+}
+
+.search-bar input::placeholder {
+    color: #8d94ad;
+}
+
+
+/* ---------- CHAT SHORTCUT ---------- */
+
+.chat-shortcut {
+    margin-left: auto;
+
+    height: 41px;
+
+    padding: 0 17px;
+
+    border: 1px solid #373e59;
+    border-radius: 10px;
+
+    background: #111526;
+
+    color: white;
+}
+
+.chat-shortcut:hover {
+    border-color: #9250ed;
+
+    background: #171b30;
+}
+
+
+/* ---------- ACCOUNT ---------- */
+
+.account-shortcut {
+    height: 48px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 9px;
+
+    padding: 0 8px;
+
+    border: none;
+
+    background: transparent;
+
+    color: white;
+}
+
+.small-avatar {
+    width: 38px;
+    height: 38px;
+
+    display: grid;
+    place-items: center;
+
+    border-radius: 50%;
+
+    border: 2px solid #a15dff;
+
+    background: linear-gradient(
+        145deg,
+        #563282,
+        #25293c
+    );
+
+    font-size: 10px;
+    font-weight: bold;
+
+    box-shadow: 0 0 12px rgba(161, 93, 255, 0.4);
+}
+
+
+/* =========================================================
+   SPHERE AREA
+   ========================================================= */
+
+#scene {
+    position: relative;
+
+    width: 100%;
+    height: 100%;
+
+    overflow: hidden;
+
+    user-select: none;
+
+    cursor: grab;
+
+    background: radial-gradient(
+        circle at 50% 45%,
+        #17103d 0%,
+        #0b0c20 45%,
+        #04060e 100%
+    );
+}
+
+#scene.dragging {
+    cursor: grabbing;
+}
+
+
+/* =========================================================
+   BACKGROUND STARS
+   ========================================================= */
+
+.stars {
+    position: absolute;
+
+    inset: 0;
+
+    pointer-events: none;
+
+    opacity: 0.5;
+
+    background-image:
+
+        radial-gradient(
+            circle,
+            rgba(157, 107, 255, 0.9) 1px,
+            transparent 1px
+        ),
+
+        radial-gradient(
+            circle,
+            rgba(255, 255, 255, 0.65) 1px,
+            transparent 1px
+        ),
+
+        radial-gradient(
+            circle,
+            rgba(85, 178, 255, 0.6) 1px,
+            transparent 1px
+        );
+
+    background-size:
+        82px 82px,
+        143px 143px,
+        197px 197px;
+
+    background-position:
+        0 0,
+        40px 60px,
+        80px 20px;
+}
+
+
+/* =========================================================
+   SPHERE HEADING
+   ========================================================= */
+
+.sphere-heading {
+    position: absolute;
+
+    top: 25px;
+    left: 0;
+    right: 0;
+
+    z-index: 5;
+
+    text-align: center;
+
+    pointer-events: none;
+}
+
+.sphere-heading h2 {
+    font-size: 30px;
+    font-weight: 700;
+}
+
+.heading-line {
+    width: 110px;
+    height: 2px;
+
+    margin: 8px auto;
+
+    background: linear-gradient(
+        90deg,
+        transparent,
+        #a45cff,
+        transparent
+    );
+}
+
+.sphere-heading p {
+    color: #aaa7ca;
+
+    font-size: 11px;
+}
+
+
+/* =========================================================
+   3D SPHERE CANVAS
+   ========================================================= */
+
+#canvas {
+    position: absolute;
+
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    display: block;
+}
+
+
+/* =========================================================
+   SPHERE CONTROLS
+   ========================================================= */
+
+.sphere-controls {
+    position: absolute;
+
+    left: 50%;
+    bottom: 18px;
+
+    transform: translateX(-50%);
+
+    z-index: 10;
+
+    padding: 8px 15px;
+
+    border: 1px solid #30364c;
+    border-radius: 20px;
+
+    background: rgba(10, 13, 27, 0.82);
+
+    color: #9da3bb;
+
+    font-size: 10px;
+
+    backdrop-filter: blur(8px);
+}
+
+.sphere-controls span {
+    margin: 0 5px;
+
+    color: #9c5cff;
+}
+
+
+/* =========================================================
+   HOVER TOOLTIP
+   ========================================================= */
+
+.tooltip {
+    position: absolute;
+
+    display: none;
+
+    z-index: 30;
+
+    min-width: 155px;
+
+    padding: 10px 12px;
+
+    border: 1px solid #754bc8;
+    border-radius: 10px;
+
+    background: rgba(12, 15, 30, 0.94);
+
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
+
+    pointer-events: none;
+}
+
+.tooltip strong {
+    display: block;
+
+    font-size: 12px;
+}
+
+.tooltip small {
+    display: block;
+
+    margin-top: 4px;
+
+    color: #aeb3c9;
+
+    font-size: 10px;
+}
+
+
+/* =========================================================
+   RIGHT PROFILE PANEL
+   ========================================================= */
+
+.profile-panel {
+    position: relative;
+
+    display: none;
+
+    height: 100vh;
+
+    padding: 27px 22px;
+
+    overflow-y: auto;
+
+    border-left: 1px solid #22283c;
+
+    background: linear-gradient(
+        150deg,
+        #0f1423,
+        #090d18
+    );
+}
+
+.profile-panel.open {
+    display: block;
+}
+
+
+/* ---------- CLOSE BUTTON ---------- */
+
+.panel-close {
+    position: absolute;
+
+    top: 12px;
+    right: 15px;
+
+    border: none;
+
+    background: transparent;
+
+    color: #cdd1e3;
+
+    font-size: 25px;
+}
+
+.panel-close:hover {
+    color: white;
+}
+
+
+/* =========================================================
+   PROFILE HEADER
+   ========================================================= */
+
+.profile-header {
+    display: flex;
+    align-items: center;
+
+    gap: 16px;
+
+    padding-top: 10px;
+}
+
+.profile-avatar {
+    width: 88px;
+    height: 88px;
+
+    flex: 0 0 88px;
+
+    display: grid;
+    place-items: center;
+
+    border-radius: 50%;
+
+    border: 3px solid #a15dff;
+
+    background: linear-gradient(
+        145deg,
+        #7344b9,
+        #252a40
+    );
+
+    box-shadow: 0 0 22px rgba(143, 76, 255, 0.45);
+
+    font-size: 22px;
+    font-weight: bold;
+}
+
+.profile-name-area h2 {
+    font-size: 19px;
+}
+
+.profile-location {
+    margin-top: 7px;
+
+    color: #aab0c8;
+
+    font-size: 11px;
+}
+
+
+/* =========================================================
+   PROFILE BUTTONS
+   ========================================================= */
+
+.profile-actions {
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    gap: 9px;
+
+    margin: 21px 0;
+}
+
+.profile-actions button {
+    height: 41px;
+
+    border-radius: 8px;
+
+    border: 1px solid #914fff;
+
+    color: white;
+
+    background: transparent;
+}
+
+.profile-actions button:hover {
+    background: rgba(145, 79, 255, 0.15);
+}
+
+.profile-actions .message-button {
+    background: linear-gradient(
+        90deg,
+        #7d3be8,
+        #a15cff
+    );
+}
+
+.profile-actions .message-button:hover {
+    filter: brightness(1.1);
+}
+
+
+/* =========================================================
+   PROFILE SECTIONS
+   ========================================================= */
+
+.profile-section {
+    padding: 16px 0;
+
+    border-top: 1px solid #252b3f;
+}
+
+.profile-section h3 {
+    margin-bottom: 11px;
+
+    font-size: 13px;
+}
+
+.profile-section p {
+    color: #b9bed1;
+
+    font-size: 11px;
+
+    line-height: 1.55;
+}
+
+
+/* =========================================================
+   INTEREST CHIPS
+   ========================================================= */
+
+.interest-list {
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 7px;
+}
+
+.interest-chip {
+    padding: 7px 10px;
+
+    border: 1px solid #373e58;
+    border-radius: 16px;
+
+    background: #121729;
+
+    color: #d7daf0;
+
+    font-size: 9px;
+}
+
+
+/* =========================================================
+   EVENT CARDS
+   ========================================================= */
+
+.profile-event {
+    margin-top: 8px;
+
+    padding: 11px;
+
+    border: 1px solid #272e43;
+    border-radius: 10px;
+
+    background: #0b101e;
+
+    transition:
+        border-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.profile-event:hover {
+    border-color: #754bc8;
+
+    transform: translateY(-1px);
+}
+
+.profile-event strong {
+    display: block;
+
+    font-size: 11px;
+}
+
+.profile-event small {
+    display: block;
+
+    margin-top: 5px;
+
+    color: #9ca2bb;
+
+    font-size: 9px;
+}
+
+
+/* =========================================================
+   QUICK CHAT POPUP
+   ========================================================= */
+
+.chat-popup {
+    position: fixed;
+
+    top: 78px;
+    right: 25px;
+
+    z-index: 100;
+
+    width: 290px;
+
+    display: none;
+
+    padding: 12px;
+
+    border: 1px solid #414963;
+    border-radius: 13px;
+
+    background: #0b1020;
+
+    box-shadow: 0 20px 55px rgba(0, 0, 0, 0.7);
+}
+
+.chat-popup.open {
+    display: block;
+}
+
+
+/* ---------- CHAT HEADER ---------- */
+
+.chat-popup-header {
+    display: flex;
+
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 3px 5px 10px;
+}
+
+.chat-popup-header h3 {
+    font-size: 15px;
+}
+
+.chat-popup-header button {
+    border: none;
+
+    background: transparent;
+
+    color: white;
+
+    font-size: 20px;
+}
+
+
+/* ---------- CHAT PERSON ---------- */
+
+.chat-person {
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+
+    gap: 11px;
+
+    padding: 11px 5px;
+
+    border: none;
+    border-top: 1px solid #252b40;
+
+    background: transparent;
+
+    color: white;
+
+    text-align: left;
+}
+
+.chat-person:hover {
+    background: #13182a;
+}
+
+.chat-avatar {
+    width: 37px;
+    height: 37px;
+
+    flex-shrink: 0;
+
+    display: grid;
+    place-items: center;
+
+    border-radius: 50%;
+
+    border: 2px solid #9250ed;
+
+    background: #22263a;
+
+    font-size: 9px;
+}
+
+.chat-person strong {
+    display: block;
+
+    font-size: 11px;
+}
+
+.chat-person small {
+    display: block;
+
+    margin-top: 4px;
+
+    color: #979db5;
+
+    font-size: 9px;
+}
+
+
+/* =========================================================
+   SCROLLBAR
+   ========================================================= */
+
+.profile-panel::-webkit-scrollbar {
+    width: 6px;
+}
+
+.profile-panel::-webkit-scrollbar-track {
+    background: #090d18;
+}
+
+.profile-panel::-webkit-scrollbar-thumb {
+    background: #38304f;
+
+    border-radius: 10px;
+}
+
+.profile-panel::-webkit-scrollbar-thumb:hover {
+    background: #6945a5;
+}
+
+
+/* =========================================================
+   RESPONSIVE - MEDIUM SCREENS
+   ========================================================= */
+
+@media (max-width: 1100px) {
+
+    .app {
+        grid-template-columns: 190px 1fr;
+    }
+
+    .app.profile-open {
+        grid-template-columns:
+            190px
+            minmax(400px, 1fr)
+            310px;
+    }
+
+    .brand p {
+        display: none;
+    }
+
+    .sidebar {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+}
+
+
+/* =========================================================
+   RESPONSIVE - SMALL SCREENS
+   ========================================================= */
+
+@media (max-width: 850px) {
+
+    .app,
+    .app.profile-open {
+        grid-template-columns: 75px 1fr;
+    }
+
+    .brand-text {
+        display: none;
+    }
+
+    .nav-button span:not(.nav-icon) {
+        display: none;
+    }
+
+    .sidebar-bottom {
+        display: none;
+    }
+
+    .brand {
+        justify-content: center;
+
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    .nav-button {
+        justify-content: center;
+
+        padding: 0;
+    }
+
+    .nav-icon {
+        width: auto;
+    }
+
+    .profile-panel {
+        position: fixed;
+
+        right: 0;
+        top: 0;
+
+        z-index: 80;
+
+        width: 330px;
+    }
+
+    .topbar {
+        padding: 0 12px;
+    }
+
+    .account-shortcut span {
+        display: none;
+    }
+
+}
+
+
+/* =========================================================
+   VERY SMALL SCREENS
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+    .chat-shortcut {
+        display: none;
+    }
+
+    .sphere-heading h2 {
+        font-size: 24px;
+    }
+
+    .sphere-heading p {
+        max-width: 280px;
+
+        margin: auto;
+
+        line-height: 1.5;
+    }
+
+    .sphere-controls {
+        white-space: nowrap;
+
+        font-size: 8px;
+    }
+
+}
