@@ -1,5 +1,8 @@
 /* EVENTS PAGE JS */
 
+
+// GET PAGE ELEMENTS
+
 const listViewButton = document.getElementById("listViewButton");
 const mapViewButton = document.getElementById("mapViewButton");
 
@@ -11,22 +14,34 @@ const closeEventDetails = document.getElementById("closeEventDetails");
 
 const viewEventButtons = document.querySelectorAll(".view-event");
 
+const bookEventButton = document.getElementById("bookEventButton");
+const cancelEventButton = document.getElementById("cancelEventButton");
+const attendanceStatus = document.getElementById("attendanceStatus");
+
 
 // LIST VIEW
 
 listViewButton.addEventListener("click", function () {
+
     listView.hidden = false;
     mapView.hidden = true;
+
+    // Close event popup if open
     eventDetails.hidden = true;
+
 });
 
 
 // MAP VIEW
 
 mapViewButton.addEventListener("click", function () {
+
     listView.hidden = true;
     mapView.hidden = false;
+
+    // Close event popup if open
     eventDetails.hidden = true;
+
 });
 
 
@@ -36,8 +51,6 @@ viewEventButtons.forEach(function (button) {
 
     button.addEventListener("click", function () {
 
-        listView.hidden = true;
-        mapView.hidden = true;
         eventDetails.hidden = false;
 
     });
@@ -50,18 +63,11 @@ viewEventButtons.forEach(function (button) {
 closeEventDetails.addEventListener("click", function () {
 
     eventDetails.hidden = true;
-    listView.hidden = false;
 
 });
 
-// =============================
+
 // BOOK EVENT
-// =============================
-
-const bookEventButton = document.getElementById("bookEventButton");
-const cancelEventButton = document.getElementById("cancelEventButton");
-const attendanceStatus = document.getElementById("attendanceStatus");
-
 
 bookEventButton.addEventListener("click", function () {
 
@@ -72,6 +78,8 @@ bookEventButton.addEventListener("click", function () {
 
 });
 
+
+// CANCEL ATTENDANCE
 
 cancelEventButton.addEventListener("click", function () {
 
