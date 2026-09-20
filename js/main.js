@@ -1,2347 +1,1055 @@
 const profiles = {
-
     samuel: {
-        name: "Samuel Smith",
+        key: "samuel",
+        initials: "SS",
+        name: "Samuel",
         age: 22,
         gender: "Male",
         mbti: "INFP",
-        location: "South Bank",
-        initials: "SS",
-
-        interests: [
-            "Gaming",
-            "Pottery",
-            "Ballet",
-            "Museums",
-            "Reading"
-        ],
-
-        about:
-            "An introvert who wants to connect with people through shared interests and comfortable real-world experiences.",
-
-        events: [
-            {
-                name: "Museum Evening",
-                location: "South Bank",
-                time: "Friday • 6:00 PM"
-            },
-            {
-                name: "Pottery Workshop",
-                location: "West End",
-                time: "Sunday • 11:00 AM"
-            }
-        ]
-    },
-
-
-    zach: {
-        name: "Zach T",
-        age: 23,
-        gender: "Male",
-        mbti: "INFJ",
-        location: "Toowong",
-        initials: "ZT",
-
-        interests: [
-            "Horse Back Riding",
-            "Reading",
-            "Football"
-        ],
-
-        about:
-            "Enjoys reading, football and horse riding. Prefers quieter activities and smaller social groups.",
-
-        events: [
-            {
-                name: "Quiet Reading Club",
-                location: "Toowong",
-                time: "Saturday • 2:00 PM"
-            }
-        ]
-    },
-
-
-    mike: {
-        name: "Mike S",
-        age: 31,
-        gender: "Male",
-        mbti: "ISFP",
-        location: "Toowong",
-        initials: "MS",
-
-        interests: [
-            "Boxing",
-            "Reading",
-            "Eating"
-        ],
-
-        about:
-            "Enjoys fitness, food and relaxed activities where people can connect naturally.",
-
-        events: [
-            {
-                name: "Beginner Boxing Social",
-                location: "West End",
-                time: "Thursday • 6:30 PM"
-            }
-        ]
-    },
-
-
-    sally: {
-        name: "Sally S",
-        age: 27,
-        gender: "Non-Binary",
-        mbti: "ISFJ",
-        location: "Indooroopilly",
-        initials: "SA",
-
-        interests: [
-            "Ballet",
-            "Painting",
-            "Netball"
-        ],
-
-        about:
-            "Enjoys creative activities, ballet, painting and social sport.",
-
-        events: [
-            {
-                name: "Ballet Meetup",
-                location: "South Brisbane",
-                time: "Wednesday • 5:30 PM"
-            }
-        ]
-    },
-
-
-    holly: {
-        name: "Holly M",
-        age: 24,
-        gender: "Female",
-        mbti: "",
-        location: "Carindale",
-        initials: "HM",
-
-        interests: [
-            "Swimming",
-            "Museums",
-            "Gaming"
-        ],
-
-        about:
-            "Enjoys gaming, museums and swimming, especially low-pressure social activities.",
-
-        events: [
-            {
-                name: "Museum Meetup",
-                location: "South Brisbane",
-                time: "Saturday • 11:00 AM"
-            }
-        ]
-    },
-
-
-    priya: {
-        name: "Priya K",
-        age: 20,
-        gender: "Female",
-        mbti: "ESFP",
-        location: "Mt Gravatt",
-        initials: "PK",
-
-        interests: [
-            "Pottery",
-            "Horse Back Riding",
-            "Fencing",
-            "Eating"
-        ],
-
-        about:
-            "Enjoys trying new activities and meeting people through shared experiences.",
-
-        events: [
-            {
-                name: "Pottery Social",
-                location: "West End",
-                time: "Sunday • 11:00 AM"
-            }
-        ]
-    }
-};
-
-const people = [
-    {
-        id: "samuel",
-        lat: 0,
-        lon: 0,
-        size: 34,
-        color: "#a85cff",
+        suburb: "South Bank",
+        interests: ["Gaming", "Pottery", "Museums", "Reading"],
+        about: "Looking to connect with people who share similar interests and experiences.",
+        event: "Brisbane Social Meetup",
+        connection: "This is you.",
+        lat: -8,
+        lon: 18,
         main: true
     },
 
-    {
-        id: "zach",
-        lat: 28,
-        lon: -55,
-        size: 20,
-        color: "#48e4bd"
+    zach: {
+        key: "zach",
+        initials: "ZT",
+        name: "Zach",
+        age: 23,
+        gender: "Male",
+        mbti: "INFJ",
+        suburb: "Toowong",
+        interests: ["Horse Riding", "Reading", "Football"],
+        about: "Enjoys outdoor activities, reading and meeting people through shared interests.",
+        event: "Weekend River Walk",
+        connection: "You met Zach through a shared social activity.",
+        lat: 15,
+        lon: -50
     },
 
-    {
-        id: "mike",
-        lat: 30,
-        lon: 55,
-        size: 20,
-        color: "#a968ff"
+    mike: {
+        key: "mike",
+        initials: "MS",
+        name: "Mike",
+        age: 22,
+        gender: "Male",
+        mbti: "ISTP",
+        suburb: "Toowong",
+        interests: ["Boxing", "Reading", "Food"],
+        about: "Interested in fitness, boxing and exploring events around Brisbane.",
+        event: "Beginner Boxing Session",
+        connection: "You and Mike share interests in local activities.",
+        lat: 25,
+        lon: 50
     },
 
-    {
-        id: "sally",
-        lat: 0,
-        lon: 90,
-        size: 19,
-        color: "#55c9ff"
+    sally: {
+        key: "sally",
+        initials: "SA",
+        name: "Sally",
+        age: 21,
+        gender: "Female",
+        mbti: "ENFP",
+        suburb: "Indooroopilly",
+        interests: ["Ballet", "Painting", "Netball"],
+        about: "Enjoys creative activities, sport and meeting new people.",
+        event: "Community Art Workshop",
+        connection: "You connected through a creative community event.",
+        lat: -5,
+        lon: 65
     },
 
-    {
-        id: "holly",
-        lat: -32,
-        lon: -65,
-        size: 19,
-        color: "#55c9ff"
-    },
-
-    {
-        id: "priya",
+    holly: {
+        key: "holly",
+        initials: "HM",
+        name: "Holly",
+        age: 22,
+        gender: "Female",
+        mbti: "ISFJ",
+        suburb: "Carindale",
+        interests: ["Swimming", "Museums", "Gaming"],
+        about: "Likes relaxed activities, museums, gaming and exploring Brisbane.",
+        event: "Museum Social Afternoon",
+        connection: "You and Holly share an interest in museums.",
         lat: -40,
-        lon: 45,
-        size: 19,
-        color: "#f17bc9"
+        lon: -35
+    },
+
+    priya: {
+        key: "priya",
+        initials: "PK",
+        name: "Priya",
+        age: 21,
+        gender: "Female",
+        mbti: "INTJ",
+        suburb: "Mt Gravatt",
+        interests: ["Pottery", "Fencing", "Food", "Walking"],
+        about: "Enjoys creative workshops and smaller social activities.",
+        event: "Beginner Pottery Workshop",
+        connection: "You connected through a local creative event.",
+        lat: -45,
+        lon: 35
+    }
+};
+
+const lockedProfiles = [
+    {
+        key: "locked1",
+        initials: "🔒",
+        name: "Locked",
+        locked: true,
+        lat: 62,
+        lon: 0
+    },
+
+    {
+        key: "locked2",
+        initials: "🔒",
+        name: "Locked",
+        locked: true,
+        lat: 35,
+        lon: -82
+    },
+
+    {
+        key: "locked3",
+        initials: "🔒",
+        name: "Locked",
+        locked: true,
+        lat: 38,
+        lon: 83
     }
 ];
 
-const lockedPeople = [
-
-    {
-        lat: 58,
-        lon: -20
-    },
-
-    {
-        lat: 15,
-        lon: -120
-    },
-
-    {
-        lat: 25,
-        lon: 140
-    },
-
-    {
-        lat: -25,
-        lon: 130
-    },
-
-    {
-        lat: -58,
-        lon: -25
-    },
-
-    {
-        lat: 52,
-        lon: 115
-    }
-
+const people = [
+    profiles.samuel,
+    profiles.zach,
+    profiles.mike,
+    profiles.sally,
+    profiles.holly,
+    profiles.priya,
+    ...lockedProfiles
 ];
 
 const connections = [
-
-    ["samuel", "zach", "#a66dff"],
-
-    ["samuel", "mike", "#a66dff"],
-
-    ["samuel", "sally", "#a66dff"],
-
-    ["samuel", "holly", "#a66dff"],
-
-    ["samuel", "priya", "#a66dff"],
-
-    ["zach", "mike", "#42e0c5"],
-
-    ["priya", "mike", "#42e0c5"]
-
+    ["samuel", "zach"],
+    ["samuel", "mike"],
+    ["samuel", "sally"],
+    ["samuel", "holly"],
+    ["samuel", "priya"],
+    ["zach", "mike"],
+    ["priya", "mike"]
 ];
-const canvas =
-    document.getElementById("canvas");
 
-const ctx =
-    canvas.getContext("2d");
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+const scene = document.getElementById("scene");
+const tooltip = document.getElementById("tooltip");
 
-const scene =
-    document.getElementById("scene");
-
-const tooltip =
-    document.getElementById("tooltip");
-
-const profilePanel =
-    document.getElementById("profilePanel");
-
-const app =
-    document.querySelector(".app");
-let width;
-let height;
-
-let centreX;
-let centreY;
-
-let globeRadius;
-
-const pixelRatio =
-    Math.min(
-        window.devicePixelRatio || 1,
-        2
-    );
-let yaw = 0.15;
-
-let pitch = -0.08;
-
+let width = 0;
+let height = 0;
+let centerX = 0;
+let centerY = 0;
+let radius = 290;
 let zoom = 1;
 
+let rotationX = -0.05;
+let rotationY = 0;
+
 let dragging = false;
+let movedDuringDrag = false;
+let previousX = 0;
+let previousY = 0;
 
-let movedWhileDragging = false;
-
-let lastMouseX = 0;
-
-let lastMouseY = 0;
-
-let clickableNodes = [];
-
+let projectedPeople = [];
 
 function resizeCanvas() {
+    const rect = scene.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
 
-    width =
-        scene.clientWidth;
+    width = rect.width;
+    height = rect.height;
 
-    height =
-        scene.clientHeight;
+    canvas.width = width * dpr;
+    canvas.height = height * dpr;
 
+    canvas.style.width = width + "px";
+    canvas.style.height = height + "px";
 
-    canvas.width =
-        width * pixelRatio;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-    canvas.height =
-        height * pixelRatio;
+    centerX = width / 2;
+    centerY = Math.max(470, height * 0.64);
 
+    radius = Math.min(width * 0.25, height * 0.39, 310);
 
-    canvas.style.width =
-        width + "px";
-
-    canvas.style.height =
-        height + "px";
-
-
-    ctx.setTransform(
-        pixelRatio,
-        0,
-        0,
-        pixelRatio,
-        0,
-        0
-    );
-
-
-    centreX =
-        width / 2;
-
-
-    centreY =
-        height / 2 + 25;
-
-
-    globeRadius =
-        Math.min(
-            width,
-            height
-        ) * 0.35;
+    draw();
 }
 
-
-window.addEventListener(
-    "resize",
-    resizeCanvas
-);
-
-
-resizeCanvas();
-
-function toRadians(degrees) {
-
-    return degrees * Math.PI / 180;
-}
-
-function spherePosition(lat, lon) {
-
-    const latitude =
-        toRadians(lat);
-
-    const longitude =
-        toRadians(lon);
-
+function latLonToXYZ(lat, lon) {
+    const latitude = lat * Math.PI / 180;
+    const longitude = lon * Math.PI / 180;
 
     return {
-
-        x:
-            Math.cos(latitude)
-            *
-            Math.sin(longitude),
-
-        y:
-            -Math.sin(latitude),
-
-        z:
-            Math.cos(latitude)
-            *
-            Math.cos(longitude)
-
+        x: Math.cos(latitude) * Math.sin(longitude),
+        y: -Math.sin(latitude),
+        z: Math.cos(latitude) * Math.cos(longitude)
     };
 }
 
 function rotatePoint(point) {
+    let x = point.x;
+    let y = point.y;
+    let z = point.z;
 
-    const cosYaw =
-        Math.cos(yaw);
+    const cosY = Math.cos(rotationY);
+    const sinY = Math.sin(rotationY);
 
-    const sinYaw =
-        Math.sin(yaw);
+    const x1 = x * cosY + z * sinY;
+    const z1 = -x * sinY + z * cosY;
 
-    const cosPitch =
-        Math.cos(pitch);
+    x = x1;
+    z = z1;
 
-    const sinPitch =
-        Math.sin(pitch);
+    const cosX = Math.cos(rotationX);
+    const sinX = Math.sin(rotationX);
 
-    const x =
-        point.x * cosYaw
-        +
-        point.z * sinYaw;
-
-
-    const z =
-        -point.x * sinYaw
-        +
-        point.z * cosYaw;
-
-    const y =
-        point.y * cosPitch
-        -
-        z * sinPitch;
-
-
-    const finalZ =
-        point.y * sinPitch
-        +
-        z * cosPitch;
-
+    const y1 = y * cosX - z * sinX;
+    const z2 = y * sinX + z * cosX;
 
     return {
-
         x: x,
-
-        y: y,
-
-        z: finalZ
-
+        y: y1,
+        z: z2
     };
 }
 
-function projectPoint(point) {
-
-    const cameraDistance = 3.2;
-
-
-    const perspective =
-        cameraDistance
-        /
-        (
-            cameraDistance
-            -
-            point.z * 0.65
-        );
-
-
-    const radius =
-        globeRadius * zoom;
-
+function project(point) {
+    const rotated = rotatePoint(point);
+    const currentRadius = radius * zoom;
 
     return {
-
-        x:
-            centreX
-            +
-            point.x
-            *
-            radius
-            *
-            perspective,
-
-        y:
-            centreY
-            +
-            point.y
-            *
-            radius
-            *
-            perspective,
-
-        z:
-            point.z,
-
-        scale:
-            perspective
-
+        x: centerX + rotated.x * currentRadius,
+        y: centerY + rotated.y * currentRadius,
+        z: rotated.z
     };
 }
 
-function getScreenPosition(lat, lon) {
+function drawSphereGlow() {
+    const currentRadius = radius * zoom;
 
-    const point =
-        spherePosition(
-            lat,
-            lon
-        );
-
-
-    const rotated =
-        rotatePoint(point);
-
-
-    return projectPoint(rotated);
-}
-
-function drawGlobeBackground() {
-
-    const radius =
-        globeRadius * zoom;
-
-
-
-    ctx.save();
-
-
-    ctx.shadowColor =
-        "#7c4dff";
-
-    ctx.shadowBlur =
-        35;
-
-
-    ctx.beginPath();
-
-
-    ctx.arc(
-        centreX,
-        centreY,
-        radius,
-        0,
-        Math.PI * 2
+    const glow = ctx.createRadialGradient(
+        centerX - currentRadius * 0.25,
+        centerY - currentRadius * 0.2,
+        currentRadius * 0.05,
+        centerX,
+        centerY,
+        currentRadius
     );
 
+    glow.addColorStop(0, "rgba(96, 54, 180, 0.42)");
+    glow.addColorStop(0.55, "rgba(47, 28, 100, 0.28)");
+    glow.addColorStop(1, "rgba(20, 13, 55, 0.12)");
 
-    ctx.strokeStyle =
-        "rgba(139, 91, 255, 0.8)";
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, currentRadius, 0, Math.PI * 2);
+    ctx.fillStyle = glow;
+    ctx.fill();
 
-
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, currentRadius, 0, Math.PI * 2);
+    ctx.strokeStyle = "rgba(145, 76, 255, 0.9)";
     ctx.lineWidth = 2;
-
-
     ctx.stroke();
 
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, currentRadius + 5, 0, Math.PI * 2);
+    ctx.strokeStyle = "rgba(100, 69, 200, 0.35)";
+    ctx.lineWidth = 1;
+    ctx.stroke();
+}
 
-    ctx.restore();
+function drawLatitudeLines() {
+    const currentRadius = radius * zoom;
 
+    const latitudes = [-60, -30, 0, 30, 60];
 
+    latitudes.forEach(function (latitude) {
+        ctx.beginPath();
 
-    const gradient =
-        ctx.createRadialGradient(
+        let started = false;
 
-            centreX - radius * 0.3,
+        for (let longitude = -180; longitude <= 180; longitude += 4) {
+            const point = project(
+                latLonToXYZ(latitude, longitude)
+            );
 
-            centreY - radius * 0.3,
+            if (!started) {
+                ctx.moveTo(point.x, point.y);
+                started = true;
+            } else {
+                ctx.lineTo(point.x, point.y);
+            }
+        }
 
-            radius * 0.05,
-
-            centreX,
-
-            centreY,
-
-            radius
-
-        );
-
-
-    gradient.addColorStop(
-        0,
-        "rgba(145, 92, 255, 0.28)"
-    );
-
-
-    gradient.addColorStop(
-        0.55,
-        "rgba(90, 48, 190, 0.13)"
-    );
-
-
-    gradient.addColorStop(
-        1,
-        "rgba(25, 14, 70, 0.03)"
-    );
-
+        ctx.strokeStyle = "rgba(123, 80, 220, 0.28)";
+        ctx.lineWidth = 1;
+        ctx.stroke();
+    });
 
     ctx.beginPath();
-
-
     ctx.arc(
-        centreX,
-        centreY,
-        radius,
+        centerX,
+        centerY,
+        currentRadius,
         0,
         Math.PI * 2
     );
 
-
-    ctx.fillStyle =
-        gradient;
-
-
-    ctx.fill();
+    ctx.strokeStyle = "rgba(145, 76, 255, 0.55)";
+    ctx.stroke();
 }
 
-function drawGridLine(points) {
+function drawLongitudeLines() {
+    const longitudes = [
+        -150,
+        -120,
+        -90,
+        -60,
+        -30,
+        0,
+        30,
+        60,
+        90,
+        120,
+        150
+    ];
 
-    let previous = null;
+    longitudes.forEach(function (longitude) {
+        ctx.beginPath();
 
+        let started = false;
 
-    points.forEach(point => {
-
-        const screen =
-            getScreenPosition(
-                point.lat,
-                point.lon
+        for (let latitude = -90; latitude <= 90; latitude += 3) {
+            const point = project(
+                latLonToXYZ(latitude, longitude)
             );
 
-
-        if (previous) {
-
-            ctx.beginPath();
-
-
-            ctx.moveTo(
-                previous.x,
-                previous.y
-            );
-
-
-            ctx.lineTo(
-                screen.x,
-                screen.y
-            );
-
-
-            if (
-                screen.z < -0.1
-            ) {
-
-                ctx.strokeStyle =
-                    "rgba(120, 80, 210, 0.06)";
+            if (!started) {
+                ctx.moveTo(point.x, point.y);
+                started = true;
+            } else {
+                ctx.lineTo(point.x, point.y);
             }
-
-            else {
-
-                ctx.strokeStyle =
-                    "rgba(155, 105, 255, 0.28)";
-            }
-
-
-            ctx.lineWidth =
-                0.7;
-
-
-            ctx.stroke();
         }
 
-
-        previous =
-            screen;
+        ctx.strokeStyle = "rgba(123, 80, 220, 0.28)";
+        ctx.lineWidth = 1;
+        ctx.stroke();
     });
 }
- 
-function drawGrid() {
 
-    for (
-        let lat = -60;
-        lat <= 60;
-        lat += 20
-    ) {
-
-        const points = [];
-
-
-        for (
-            let lon = -180;
-            lon <= 180;
-            lon += 4
-        ) {
-
-            points.push({
-
-                lat: lat,
-
-                lon: lon
-
-            });
-        }
-
-
-        drawGridLine(points);
-    }
-
-    for (
-        let lon = -160;
-        lon < 180;
-        lon += 20
-    ) {
-
-        const points = [];
-
-
-        for (
-            let lat = -89;
-            lat <= 89;
-            lat += 3
-        ) {
-
-            points.push({
-
-                lat: lat,
-
-                lon: lon
-
-            });
-        }
-
-
-        drawGridLine(points);
-    }
+function getPerson(key) {
+    return people.find(function (person) {
+        return person.key === key;
+    });
 }
 
-function drawConnection(
-    personA,
-    personB,
-    color
-) {
+function drawConnections() {
+    connections.forEach(function (connection) {
+        const personA = getPerson(connection[0]);
+        const personB = getPerson(connection[1]);
 
-    const pointA =
-        spherePosition(
-            personA.lat,
-            personA.lon
-        );
-
-
-    const pointB =
-        spherePosition(
-            personB.lat,
-            personB.lon
-        );
-
-
-    const dot =
-        Math.max(
-            -1,
-
-            Math.min(
-
-                1,
-
-                pointA.x * pointB.x
-                +
-                pointA.y * pointB.y
-                +
-                pointA.z * pointB.z
-
-            )
-        );
-
-
-    const angle =
-        Math.acos(dot);
-
-
-    const sinAngle =
-        Math.sin(angle);
-
-
-    let previous = null;
-
-
-    for (
-        let step = 0;
-        step <= 35;
-        step++
-    ) {
-
-        const amount =
-            step / 35;
-
-
-        let weightA;
-
-        let weightB;
-
-
-        if (
-            Math.abs(sinAngle) > 0.0001
-        ) {
-
-            weightA =
-                Math.sin(
-                    (1 - amount)
-                    *
-                    angle
-                )
-                /
-                sinAngle;
-
-
-            weightB =
-                Math.sin(
-                    amount
-                    *
-                    angle
-                )
-                /
-                sinAngle;
+        if (!personA || !personB) {
+            return;
         }
 
-        else {
-
-            weightA =
-                1 - amount;
-
-            weightB =
-                amount;
-        }
-
-
-        const point = {
-
-            x:
-                pointA.x * weightA
-                +
-                pointB.x * weightB,
-
-            y:
-                pointA.y * weightA
-                +
-                pointB.y * weightB,
-
-            z:
-                pointA.z * weightA
-                +
-                pointB.z * weightB
-
-        };
-
-
-        const rotated =
-            rotatePoint(point);
-
-
-        const screen =
-            projectPoint(rotated);
-
-
-        if (previous) {
-
-            ctx.beginPath();
-
-
-            ctx.moveTo(
-                previous.x,
-                previous.y
-            );
-
-
-            ctx.lineTo(
-                screen.x,
-                screen.y
-            );
-
-
-            const depth =
-                (
-                    previous.z
-                    +
-                    screen.z
-                )
-                /
-                2;
-
-
-            ctx.globalAlpha =
-                depth < -0.15
-                ?
-                0.1
-                :
-                0.75;
-
-
-            ctx.strokeStyle =
-                color;
-
-
-            ctx.lineWidth =
-                1.4;
-
-
-            ctx.stroke();
-        }
-
-
-        previous =
-            screen;
-    }
-
-
-    ctx.globalAlpha =
-        1;
-}
-
-function drawProfileNode(person) {
-
-    const position =
-        getScreenPosition(
-            person.lat,
-            person.lon
+        const pointA = project(
+            latLonToXYZ(personA.lat, personA.lon)
         );
 
+        const pointB = project(
+            latLonToXYZ(personB.lat, personB.lon)
+        );
 
-    const profile =
-        profiles[person.id];
+        const visibility = Math.min(pointA.z, pointB.z);
 
+        if (visibility < -0.35) {
+            return;
+        }
 
-    const radius =
-        person.size
-        *
-        (
-            0.65
-            +
-            position.scale * 0.42
-        )
-        *
-        zoom;
+        const alpha = Math.max(
+            0.15,
+            Math.min(0.85, (visibility + 1) / 2)
+        );
 
+        const gradient = ctx.createLinearGradient(
+            pointA.x,
+            pointA.y,
+            pointB.x,
+            pointB.y
+        );
 
-    const alpha =
-        position.z < -0.2
-        ?
-        0.22
-        :
-        Math.min(
+        gradient.addColorStop(
+            0,
+            "rgba(74, 230, 207," + alpha + ")"
+        );
+
+        gradient.addColorStop(
             1,
-            0.72 + position.z * 0.25
+            "rgba(165, 76, 255," + alpha + ")"
         );
 
+        ctx.beginPath();
+        ctx.moveTo(pointA.x, pointA.y);
+
+        const middleX =
+            (pointA.x + pointB.x) / 2;
+
+        const middleY =
+            (pointA.y + pointB.y) / 2 -
+            25 * zoom;
+
+        ctx.quadraticCurveTo(
+            middleX,
+            middleY,
+            pointB.x,
+            pointB.y
+        );
+
+        ctx.strokeStyle = gradient;
+        ctx.lineWidth = 1.7;
+        ctx.stroke();
+    });
+}
+
+function drawPerson(person) {
+    const point = project(
+        latLonToXYZ(person.lat, person.lon)
+    );
+
+    const depth =
+        Math.max(0.45, Math.min(1.2, 0.8 + point.z * 0.25));
+
+    let nodeRadius = person.main ? 47 : 27;
+
+    if (person.locked) {
+        nodeRadius = 19;
+    }
+
+    nodeRadius *= zoom * depth;
+
+    const opacity =
+        Math.max(0.28, Math.min(1, 0.65 + point.z * 0.35));
+
+    projectedPeople.push({
+        person: person,
+        x: point.x,
+        y: point.y,
+        z: point.z,
+        radius: nodeRadius
+    });
 
     ctx.save();
 
+    ctx.globalAlpha = opacity;
 
-    ctx.globalAlpha =
-        alpha;
+    if (person.locked) {
+        ctx.shadowColor = "rgba(255,255,255,0.45)";
+        ctx.shadowBlur = 14;
 
-    ctx.shadowColor =
-        person.color;
+        ctx.beginPath();
+        ctx.arc(
+            point.x,
+            point.y,
+            nodeRadius,
+            0,
+            Math.PI * 2
+        );
 
+        ctx.fillStyle = "rgba(55, 57, 72, 0.9)";
+        ctx.fill();
 
-    ctx.shadowBlur =
-        position.z > 0
-        ?
-        radius
-        :
-        3;
+        ctx.strokeStyle = "rgba(150, 150, 165, 0.7)";
+        ctx.lineWidth = 2;
+        ctx.stroke();
 
+        ctx.shadowBlur = 0;
 
-    /* Circle */
-
-    ctx.beginPath();
-
-
-    ctx.arc(
-        position.x,
-        position.y,
-        radius,
-        0,
-        Math.PI * 2
-    );
-
-
-    ctx.fillStyle =
-        person.main
-        ?
-        "#2c2145"
-        :
-        "#20243a";
-
-
-    ctx.fill();
-
-
-    ctx.lineWidth =
-        person.main
-        ?
-        3
-        :
-        2.4;
-
-
-    ctx.strokeStyle =
-        person.color;
-
-
-    ctx.stroke();
-
-
-    ctx.shadowBlur = 0;
-
-
-    ctx.fillStyle =
-        "#ffffff";
-
-
-    ctx.font =
-        `bold ${
-            Math.max(
-                9,
-                radius * 0.45
-            )
-        }px Arial`;
-
-
-    ctx.textAlign =
-        "center";
-
-
-    ctx.textBaseline =
-        "middle";
-
-
-    ctx.fillText(
-        profile.initials,
-        position.x,
-        position.y
-    );
-
-
-    if (
-        position.z > -0.1
-    ) {
-
+        ctx.fillStyle = "#c7c7cf";
         ctx.font =
-            person.main
-            ?
-            "bold 14px Arial"
-            :
-            "11px Arial";
+            Math.max(12, 14 * zoom) +
+            "px Arial";
 
-
-        ctx.textBaseline =
-            "top";
-
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
 
         ctx.fillText(
-
-            person.main
-            ?
-            "You"
-            :
-            profile.name.split(" ")[0],
-
-            position.x,
-
-            position.y
-            +
-            radius
-            +
-            6
-
+            "🔒",
+            point.x,
+            point.y + 1
         );
+
+        ctx.restore();
+        return;
     }
 
+    if (person.key === "zach") {
+        ctx.shadowColor = "#4ce4c6";
+    } else {
+        ctx.shadowColor = "#9b50f2";
+    }
 
-    ctx.restore();
-
-
-    return {
-
-        x: position.x,
-
-        y: position.y,
-
-        z: position.z,
-
-        radius: radius,
-
-        id: person.id,
-
-        locked: false
-
-    };
-}
-
-function drawLockedNode(person) {
-
-    const position =
-        getScreenPosition(
-            person.lat,
-            person.lon
-        );
-
-
-    const radius =
-        14
-        *
-        (
-            0.65
-            +
-            position.scale * 0.42
-        )
-        *
-        zoom;
-
-
-    ctx.save();
-
-
-    ctx.globalAlpha =
-        position.z < -0.2
-        ?
-        0.16
-        :
-        0.8;
-
-
-    ctx.shadowColor =
-        "#88839c";
-
-
-    ctx.shadowBlur =
-        position.z > 0
-        ?
-        15
-        :
-        2;
-
+    ctx.shadowBlur = person.main ? 20 : 14;
 
     ctx.beginPath();
-
-
     ctx.arc(
-        position.x,
-        position.y,
-        radius,
+        point.x,
+        point.y,
+        nodeRadius,
         0,
         Math.PI * 2
     );
 
+    if (person.main) {
+        ctx.fillStyle = "#4b2d68";
+        ctx.strokeStyle = "#a44eff";
+    } else if (person.key === "zach") {
+        ctx.fillStyle = "#234b55";
+        ctx.strokeStyle = "#4ce4c6";
+    } else {
+        ctx.fillStyle = "#423066";
+        ctx.strokeStyle = "#9751e9";
+    }
 
-    ctx.fillStyle =
-        "#151827";
-
+    ctx.lineWidth = person.main ? 4 : 3;
 
     ctx.fill();
-
-
-    ctx.lineWidth = 2;
-
-
-    ctx.strokeStyle =
-        "#62667e";
-
-
     ctx.stroke();
-
 
     ctx.shadowBlur = 0;
 
-
-    ctx.fillStyle =
-        "#b3b5c4";
-
+    ctx.fillStyle = "#ffffff";
 
     ctx.font =
-        `${Math.max(
-            9,
-            radius * 0.7
-        )}px Arial`;
+        "bold " +
+        Math.max(
+            11,
+            (person.main ? 19 : 12) * zoom
+        ) +
+        "px Arial";
 
-
-    ctx.textAlign =
-        "center";
-
-
-    ctx.textBaseline =
-        "middle";
-
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
 
     ctx.fillText(
-        "🔒",
-        position.x,
-        position.y
+        person.initials,
+        point.x,
+        point.y
     );
 
+    ctx.fillStyle = "#ffffff";
+
+    ctx.font =
+        (person.main ? "bold " : "") +
+        Math.max(
+            10,
+            (person.main ? 15 : 11) * zoom
+        ) +
+        "px Arial";
+
+    ctx.textBaseline = "top";
+
+    ctx.fillText(
+        person.main ? "You" : person.name,
+        point.x,
+        point.y + nodeRadius + 7
+    );
 
     ctx.restore();
-
-
-    return {
-
-        x: position.x,
-
-        y: position.y,
-
-        z: position.z,
-
-        radius: radius,
-
-        locked: true
-
-    };
 }
 
 function draw() {
+    ctx.clearRect(0, 0, width, height);
 
-    ctx.clearRect(
-        0,
-        0,
-        width,
-        height
-    );
+    projectedPeople = [];
 
+    drawSphereGlow();
+    drawLatitudeLines();
+    drawLongitudeLines();
+    drawConnections();
 
-    drawGlobeBackground();
-
-    drawGrid();
-
-
-    const peopleById = {};
-
-
-    people.forEach(person => {
-
-        peopleById[person.id] =
-            person;
-
-    });
-
-
-    connections.forEach(connection => {
-
-        drawConnection(
-
-            peopleById[connection[0]],
-
-            peopleById[connection[1]],
-
-            connection[2]
-
+    const sortedPeople = [...people].sort(function (a, b) {
+        const aPoint = rotatePoint(
+            latLonToXYZ(a.lat, a.lon)
         );
 
+        const bPoint = rotatePoint(
+            latLonToXYZ(b.lat, b.lon)
+        );
+
+        return aPoint.z - bPoint.z;
     });
 
+    sortedPeople.forEach(function (person) {
+        drawPerson(person);
+    });
+}
 
-    const nodes = [];
-
-
-    lockedPeople.forEach(person => {
-
-        nodes.push({
-
-            type: "locked",
-
-            data: person,
-
-            depth:
-                getScreenPosition(
-                    person.lat,
-                    person.lon
-                ).z
-
-        });
-
+function findPersonAt(x, y) {
+    const sorted = [...projectedPeople].sort(function (a, b) {
+        return b.z - a.z;
     });
 
+    return sorted.find(function (item) {
+        const dx = x - item.x;
+        const dy = y - item.y;
 
-    people.forEach(person => {
-
-        nodes.push({
-
-            type: "profile",
-
-            data: person,
-
-            depth:
-                getScreenPosition(
-                    person.lat,
-                    person.lon
-                ).z
-
-        });
-
+        return Math.sqrt(
+            dx * dx + dy * dy
+        ) <= item.radius + 8;
     });
+}
 
+canvas.addEventListener("mousedown", function (event) {
+    dragging = true;
+    movedDuringDrag = false;
 
-    nodes.sort(
-        (a, b) =>
-            a.depth - b.depth
-    );
+    previousX = event.clientX;
+    previousY = event.clientY;
+});
 
-
-    clickableNodes = [];
-
-
-    nodes.forEach(node => {
-
-        if (
-            node.type === "locked"
-        ) {
-
-            clickableNodes.push(
-
-                drawLockedNode(
-                    node.data
-                )
-
-            );
-
-        }
-
-        else {
-
-            clickableNodes.push(
-
-                drawProfileNode(
-                    node.data
-                )
-
-            );
-
-        }
-
-    });
-
-
+window.addEventListener("mousemove", function (event) {
     if (!dragging) {
-
-        yaw += 0.001;
-
+        return;
     }
 
+    const dx = event.clientX - previousX;
+    const dy = event.clientY - previousY;
 
-    requestAnimationFrame(draw);
-}
-
-
-draw();
-
-function findNodeAtMouse(
-    mouseX,
-    mouseY
-) {
-
-    return [...clickableNodes]
-        .reverse()
-        .find(node => {
-
-            const distance =
-                Math.hypot(
-
-                    mouseX - node.x,
-
-                    mouseY - node.y
-
-                );
-
-
-            return (
-
-                distance
-                <
-                node.radius + 8
-
-                &&
-
-                node.z > -0.35
-
-            );
-
-        });
-}
-
-scene.addEventListener(
-    "pointerdown",
-
-    event => {
-
-        dragging = true;
-
-        movedWhileDragging = false;
-
-
-        lastMouseX =
-            event.clientX;
-
-
-        lastMouseY =
-            event.clientY;
-
-
-        scene.classList.add(
-            "dragging"
-        );
-
-
-        scene.setPointerCapture(
-            event.pointerId
-        );
-
+    if (
+        Math.abs(dx) > 1 ||
+        Math.abs(dy) > 1
+    ) {
+        movedDuringDrag = true;
     }
-);
 
-scene.addEventListener(
-    "pointermove",
+    rotationY += dx * 0.006;
+    rotationX += dy * 0.006;
 
-    event => {
+    rotationX = Math.max(
+        -1.2,
+        Math.min(1.2, rotationX)
+    );
 
-        const rect =
-            canvas.getBoundingClientRect();
+    previousX = event.clientX;
+    previousY = event.clientY;
 
+    draw();
+});
 
-        const mouseX =
-            event.clientX
-            -
-            rect.left;
+window.addEventListener("mouseup", function () {
+    dragging = false;
+});
 
-
-        const mouseY =
-            event.clientY
-            -
-            rect.top;
-
-        if (dragging) {
-
-            const changeX =
-                event.clientX
-                -
-                lastMouseX;
-
-
-            const changeY =
-                event.clientY
-                -
-                lastMouseY;
-
-
-            if (
-                Math.abs(changeX) > 1
-                ||
-                Math.abs(changeY) > 1
-            ) {
-
-                movedWhileDragging = true;
-
-            }
-
-
-            yaw +=
-                changeX * 0.006;
-
-
-            pitch +=
-                changeY * 0.006;
-
-
-            pitch =
-                Math.max(
-                    -1.25,
-
-                    Math.min(
-                        1.25,
-                        pitch
-                    )
-                );
-
-
-            lastMouseX =
-                event.clientX;
-
-
-            lastMouseY =
-                event.clientY;
-
-
-            tooltip.style.display =
-                "none";
-
-
-            return;
-
-        }
-
-
-        /* Hover */
-
-        const node =
-            findNodeAtMouse(
-                mouseX,
-                mouseY
-            );
-
-
-        if (
-            node
-            &&
-            !node.locked
-        ) {
-
-            const profile =
-                profiles[node.id];
-
-
-            tooltip.style.display =
-                "block";
-
-
-            tooltip.style.left =
-                mouseX + 15 + "px";
-
-
-            tooltip.style.top =
-                mouseY + 15 + "px";
-
-
-            tooltip.innerHTML = `
-
-                <strong>
-                    ${profile.name}
-                </strong>
-
-                <small>
-                    ${profile.age}
-                    •
-                    ${profile.location}
-
-                    ${
-                        profile.mbti
-                        ?
-                        " • " + profile.mbti
-                        :
-                        ""
-                    }
-                </small>
-
-            `;
-
-        }
-
-        else if (
-            node
-            &&
-            node.locked
-        ) {
-
-            tooltip.style.display =
-                "block";
-
-
-            tooltip.style.left =
-                mouseX + 15 + "px";
-
-
-            tooltip.style.top =
-                mouseY + 15 + "px";
-
-
-            tooltip.innerHTML = `
-
-                <strong>
-                    Unknown User
-                </strong>
-
-                <small>
-                    Meet this connection at an event
-                    to unlock their profile.
-                </small>
-
-            `;
-
-        }
-
-        else {
-
-            tooltip.style.display =
-                "none";
-
-        }
-
-    }
-);
-
-scene.addEventListener(
-    "pointerup",
-
-    event => {
-
-        const rect =
-            canvas.getBoundingClientRect();
-
-
-        const mouseX =
-            event.clientX
-            -
-            rect.left;
-
-
-        const mouseY =
-            event.clientY
-            -
-            rect.top;
-
-
-        if (!movedWhileDragging) {
-
-            const node =
-                findNodeAtMouse(
-                    mouseX,
-                    mouseY
-                );
-
-
-            if (
-                node
-                &&
-                !node.locked
-            ) {
-
-
-                if (
-                    node.id === "samuel"
-                ) {
-
-                    window.location.href =
-                        "account.html";
-
-                }
-
-                else {
-
-                    openProfile(
-                        node.id
-                    );
-
-                }
-
-            }
-
-        }
-
-
-        dragging = false;
-
-
-        scene.classList.remove(
-            "dragging"
-        );
-
-    }
-);
-
-scene.addEventListener(
-    "pointerleave",
-
-    () => {
-
-        dragging = false;
-
-
-        scene.classList.remove(
-            "dragging"
-        );
-
-
-        tooltip.style.display =
-            "none";
-
-    }
-);
-
-scene.addEventListener(
+canvas.addEventListener(
     "wheel",
-
-    event => {
-
+    function (event) {
         event.preventDefault();
 
+        if (event.deltaY < 0) {
+            zoom += 0.08;
+        } else {
+            zoom -= 0.08;
+        }
 
-        zoom -=
-            event.deltaY
-            *
-            0.0007;
+        zoom = Math.max(
+            0.7,
+            Math.min(1.4, zoom)
+        );
 
-
-        zoom =
-            Math.max(
-
-                0.65,
-
-                Math.min(
-                    1.4,
-                    zoom
-                )
-
-            );
-
+        draw();
     },
-
     {
         passive: false
     }
 );
 
-function openProfile(id) {
-
-    const profile =
-        profiles[id];
-
-    document.getElementById(
-        "avatar"
-    ).textContent =
-        profile.initials;
-
-    document.getElementById(
-        "pname"
-    ).textContent =
-        `${profile.name}, ${profile.age}`;
-
-    let locationText =
-        "⌖ "
-        +
-        profile.location;
-
-
-    if (profile.mbti) {
-
-        locationText +=
-            " • "
-            +
-            profile.mbti;
-
-    }
-
-
-    document.getElementById(
-        "ploc"
-    ).textContent =
-        locationText;
-
-    document.getElementById(
-        "about"
-    ).textContent =
-        profile.about;
-
-    const interestContainer =
-        document.getElementById(
-            "chips"
-        );
-
-
-    interestContainer.innerHTML =
-        "";
-
-
-    profile.interests.forEach(
-        interest => {
-
-            const chip =
-                document.createElement(
-                    "span"
-                );
-
-
-            chip.className =
-                "interest-chip";
-
-
-            chip.textContent =
-                interest;
-
-
-            interestContainer.appendChild(
-                chip
-            );
-
-        }
-    );
-
-
-    const eventContainer =
-        document.getElementById(
-            "events"
-        );
-
-
-    eventContainer.innerHTML =
-        "";
-
-
-    profile.events.forEach(
-        event => {
-
-            const card =
-                document.createElement(
-                    "div"
-                );
-
-
-            card.className =
-                "profile-event";
-
-
-            card.innerHTML = `
-
-                <strong>
-                    ${event.name}
-                </strong>
-
-                <small>
-                    ⌖ ${event.location}
-                </small>
-
-                <small>
-                    ${event.time}
-                </small>
-
-            `;
-
-
-            eventContainer.appendChild(
-                card
-            );
-
-        }
-    );
-
-
-    const samuel =
-        profiles.samuel;
-
-
-    const sharedInterests =
-        profile.interests.filter(
-            interest =>
-                samuel.interests.includes(
-                    interest
-                )
-        );
-
-
-    const connection =
-        document.getElementById(
-            "connection"
-        );
-
-
-    if (
-        sharedInterests.length > 0
-    ) {
-
-        connection.textContent =
-
-            `${sharedInterests.length} shared interest${
-                sharedInterests.length === 1
-                ?
-                ""
-                :
-                "s"
-            } with Samuel: ${
-                sharedInterests.join(", ")
-            }.`;
-
-    }
-
-    else {
-
-        connection.textContent =
-            "This person is part of your unlocked Sphere network.";
-
-    }
-
-    profilePanel.classList.add(
-        "open"
-    );
-
-
-    app.classList.add(
-        "profile-open"
-    );
-
-
-    setTimeout(
-        resizeCanvas,
-        10
-    );
-
-}
-
-function closeProfile() {
-
-    profilePanel.classList.remove(
-        "open"
-    );
-
-
-    app.classList.remove(
-        "profile-open"
-    );
-
-
-    setTimeout(
-        resizeCanvas,
-        10
-    );
-
-}
-
-
-document
-    .getElementById("panelClose")
-    .addEventListener(
-        "click",
-        closeProfile
-    );
-
-const chatPopup =
-    document.getElementById(
-        "chatbox"
-    );
-
-
-document
-    .getElementById("msg")
-    .addEventListener(
-        "click",
-
-        () => {
-
-            chatPopup.classList.add(
-                "open"
-            );
-
-        }
-    );
-
-
-/* Close chat */
-
-document
-    .getElementById("closeChat")
-    .addEventListener(
-        "click",
-
-        () => {
-
-            chatPopup.classList.remove(
-                "open"
-            );
-
-        }
-    );
-
-document
-    .querySelectorAll(".chat-person")
-    .forEach(
-
-        button => {
-
-            button.addEventListener(
-                "click",
-
-                () => {
-
-                    const person =
-                        button.dataset.key;
-
-
-                    openProfile(
-                        person
-                    );
-
-
-                    chatPopup.classList.remove(
-                        "open"
-                    );
-
-                }
-            );
-
-        }
-
-    );
-
-const searchInput =
-    document.getElementById(
-        "search"
-    );
-
-
-searchInput.addEventListener(
-    "keydown",
-
-    event => {
-
-        if (
-            event.key !== "Enter"
-        ) {
-
-            return;
-
-        }
-
-
-        const search =
-            searchInput.value
-                .trim()
-                .toLowerCase();
-
-
-        if (!search) {
-
-            return;
-
-        }
-
-
-        const result =
-            Object.keys(
-                profiles
-            ).find(
-
-                id => {
-
-                    const profile =
-                        profiles[id];
-
-
-                    const searchable =
-                        [
-
-                            profile.name,
-
-                            profile.location,
-
-                            profile.mbti,
-
-                            profile.gender,
-
-                            ...profile.interests
-
-                        ]
-
-                        .join(" ")
-
-                        .toLowerCase();
-
-
-                    return searchable.includes(
-                        search
-                    );
-
-                }
-
-            );
-
-
-        if (!result) {
-
-            alert(
-                "No matching person found."
-            );
-
-
-            return;
-
-        }
-
-
-        if (
-            result === "samuel"
-        ) {
-
-            window.location.href =
-                "account.html";
-
-
-            return;
-
-        }
-
-
-        openProfile(
-            result
-        );
-
-    }
-);
-document
-    .getElementById("viewSphere")
-    .addEventListener(
-        "click",
-
-        () => {
-
-            closeProfile();
-
-        }
-    );
-
-const searchInput = document.getElementById("search");
-const searchSuggestions = document.getElementById("searchSuggestions");
-
-const searchablePeople = [
-
-    {
-        name: "Zach T",
-        key: "zach",
-        initials: "ZT",
-        suburb: "Toowong",
-        interests: [
-            "Horse Back Riding",
-            "Reading",
-            "Football"
-        ]
-    },
-
-    {
-        name: "Mike S",
-        key: "mike",
-        initials: "MS",
-        suburb: "Toowong",
-        interests: [
-            "Boxing",
-            "Reading",
-            "Eating"
-        ]
-    },
-
-    {
-        name: "Sally S",
-        key: "sally",
-        initials: "SS",
-        suburb: "Indooroopilly",
-        interests: [
-            "Ballet",
-            "Painting",
-            "Netball"
-        ]
-    },
-
-    {
-        name: "Holly M",
-        key: "holly",
-        initials: "HM",
-        suburb: "Carindale",
-        interests: [
-            "Swimming",
-            "Museums",
-            "Gaming"
-        ]
-    },
-
-    {
-        name: "Priya K",
-        key: "priya",
-        initials: "PK",
-        suburb: "Mt Gravatt",
-        interests: [
-            "Pottery",
-            "Horse Back Riding",
-            "Fencing",
-            "Eating"
-        ]
-    }
-
-];
-
-searchInput.addEventListener("input", function () {
-
-    const searchText =
-        searchInput.value.trim().toLowerCase();
-
-    if (searchText.length < 2) {
-
-        searchSuggestions.innerHTML = "";
-        searchSuggestions.hidden = true;
-
+canvas.addEventListener("mousemove", function (event) {
+    if (dragging) {
+        tooltip.style.display = "none";
         return;
     }
 
-    const matches = searchablePeople.filter(function (person) {
+    const rect = canvas.getBoundingClientRect();
 
-        const nameMatch =
-            person.name
-                .toLowerCase()
-                .includes(searchText);
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
 
+    const found = findPersonAt(x, y);
 
-        const suburbMatch =
-            person.suburb
-                .toLowerCase()
-                .includes(searchText);
+    if (!found) {
+        tooltip.style.display = "none";
+        canvas.style.cursor = "grab";
+        return;
+    }
 
+    canvas.style.cursor = "pointer";
 
-        const interestMatch =
-            person.interests.some(function (interest) {
+    if (found.person.locked) {
+        tooltip.textContent =
+            "Keep exploring to unlock this connection";
+    } else if (found.person.main) {
+        tooltip.textContent = "You";
+    } else {
+        tooltip.textContent =
+            found.person.name +
+            " • " +
+            found.person.suburb;
+    }
 
-                return interest
+    tooltip.style.display = "block";
+
+    tooltip.style.left =
+        event.clientX -
+        rect.left +
+        15 +
+        "px";
+
+    tooltip.style.top =
+        event.clientY -
+        rect.top +
+        15 +
+        "px";
+});
+
+canvas.addEventListener("mouseleave", function () {
+    tooltip.style.display = "none";
+});
+
+canvas.addEventListener("click", function (event) {
+    if (movedDuringDrag) {
+        return;
+    }
+
+    const rect = canvas.getBoundingClientRect();
+
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
+
+    const found = findPersonAt(x, y);
+
+    if (!found) {
+        return;
+    }
+
+    if (found.person.locked) {
+        return;
+    }
+
+    if (found.person.main) {
+        return;
+    }
+
+    openPersonProfile(found.person.key);
+});
+
+const profilePanel =
+    document.getElementById("profilePanel");
+
+const panelClose =
+    document.getElementById("panelClose");
+
+const avatar =
+    document.getElementById("avatar");
+
+const profileName =
+    document.getElementById("pname");
+
+const profileLocation =
+    document.getElementById("ploc");
+
+const profileAge =
+    document.getElementById("pAge");
+
+const profileGender =
+    document.getElementById("pGender");
+
+const profileMbti =
+    document.getElementById("pMbti");
+
+const profileChips =
+    document.getElementById("chips");
+
+const profileAbout =
+    document.getElementById("about");
+
+const profileEvents =
+    document.getElementById("events");
+
+const profileConnection =
+    document.getElementById("connection");
+
+const messageButton =
+    document.getElementById("msg");
+
+let currentProfile = null;
+
+function openPersonProfile(key) {
+    const person = profiles[key];
+
+    if (!person || person.main) {
+        return;
+    }
+
+    currentProfile = person;
+
+    avatar.textContent =
+        person.initials;
+
+    profileName.textContent =
+        person.name;
+
+    profileLocation.textContent =
+        person.suburb;
+
+    profileAge.textContent =
+        person.age + " years old";
+
+    profileGender.textContent =
+        person.gender;
+
+    profileMbti.textContent =
+        person.mbti;
+
+    profileAbout.textContent =
+        person.about;
+
+    profileEvents.textContent =
+        person.event;
+
+    profileConnection.textContent =
+        person.connection;
+
+    profileChips.innerHTML = "";
+
+    person.interests.forEach(function (interest) {
+        const chip =
+            document.createElement("span");
+
+        chip.className =
+            "interest-chip";
+
+        chip.textContent =
+            interest;
+
+        profileChips.appendChild(chip);
+    });
+
+    profilePanel.classList.add("open");
+}
+
+panelClose.addEventListener("click", function () {
+    profilePanel.classList.remove("open");
+});
+
+messageButton.addEventListener("click", function () {
+    if (!currentProfile) {
+        return;
+    }
+
+    window.location.href =
+        "chat.html?person=" +
+        encodeURIComponent(
+            currentProfile.key
+        );
+});
+
+const searchInput =
+    document.getElementById("search");
+
+const searchSuggestions =
+    document.getElementById("searchSuggestions");
+
+const searchablePeople =
+    Object.values(profiles).filter(function (person) {
+        return !person.main;
+    });
+
+searchInput.addEventListener("input", function () {
+    const searchText =
+        searchInput.value
+            .trim()
+            .toLowerCase();
+
+    if (searchText.length < 2) {
+        searchSuggestions.innerHTML = "";
+        searchSuggestions.hidden = true;
+        return;
+    }
+
+    const matches =
+        searchablePeople.filter(function (person) {
+            const nameMatch =
+                person.name
                     .toLowerCase()
                     .includes(searchText);
 
-            });
+            const suburbMatch =
+                person.suburb
+                    .toLowerCase()
+                    .includes(searchText);
 
+            const interestMatch =
+                person.interests.some(function (interest) {
+                    return interest
+                        .toLowerCase()
+                        .includes(searchText);
+                });
 
-        return (
-            nameMatch ||
-            suburbMatch ||
-            interestMatch
-        );
-
-    });
-
+            return (
+                nameMatch ||
+                suburbMatch ||
+                interestMatch
+            );
+        });
 
     showSearchSuggestions(matches);
-
 });
 
 function showSearchSuggestions(matches) {
-
     searchSuggestions.innerHTML = "";
 
     if (matches.length === 0) {
+        const noResult =
+            document.createElement("div");
 
-        searchSuggestions.innerHTML = `
-            <div class="no-search-result">
-                No people found
-            </div>
-        `;
+        noResult.className =
+            "no-search-result";
+
+        noResult.textContent =
+            "No people found";
+
+        searchSuggestions.appendChild(
+            noResult
+        );
 
         searchSuggestions.hidden = false;
 
         return;
     }
 
-    matches.slice(0, 5).forEach(function (person) {
+    matches
+        .slice(0, 5)
+        .forEach(function (person) {
+            const suggestion =
+                document.createElement("button");
 
-        const suggestion =
-            document.createElement("button");
+            suggestion.type = "button";
 
+            suggestion.className =
+                "search-suggestion";
 
-        suggestion.type = "button";
+            const suggestionAvatar =
+                document.createElement("div");
 
-        suggestion.className =
-            "search-suggestion";
+            suggestionAvatar.className =
+                "suggestion-avatar";
 
+            suggestionAvatar.textContent =
+                person.initials;
 
-        suggestion.innerHTML = `
+            const suggestionInfo =
+                document.createElement("div");
 
-            <div class="suggestion-avatar">
-                ${person.initials}
-            </div>
+            suggestionInfo.className =
+                "suggestion-info";
 
-            <div class="suggestion-information">
+            const name =
+                document.createElement("strong");
 
-                <strong>
-                    ${person.name}
-                </strong>
-
-                <span>
-                    ${person.interests.join(" • ")}
-                </span>
-
-                <small>
-                    ${person.suburb}
-                </small>
-
-            </div>
-
-        `;
-
-        suggestion.addEventListener("click", function () {
-
-            searchInput.value =
+            name.textContent =
                 person.name;
 
+            const interests =
+                document.createElement("span");
 
-            searchSuggestions.hidden = true;
+            interests.textContent =
+                person.interests.join(" • ");
 
-            if (typeof openPersonProfile === "function") {
+            const suburb =
+                document.createElement("small");
 
-                openPersonProfile(person.key);
+            suburb.textContent =
+                person.suburb;
 
-            }
+            suggestionInfo.appendChild(name);
+            suggestionInfo.appendChild(interests);
+            suggestionInfo.appendChild(suburb);
 
+            suggestion.appendChild(
+                suggestionAvatar
+            );
+
+            suggestion.appendChild(
+                suggestionInfo
+            );
+
+            suggestion.addEventListener(
+                "click",
+                function () {
+                    searchInput.value =
+                        person.name;
+
+                    searchSuggestions.hidden =
+                        true;
+
+                    openPersonProfile(
+                        person.key
+                    );
+                }
+            );
+
+            searchSuggestions.appendChild(
+                suggestion
+            );
         });
 
-
-        searchSuggestions.appendChild(
-            suggestion
-        );
-
-    });
-
-
     searchSuggestions.hidden = false;
-
 }
 
-document.addEventListener("click", function (event) {
+searchInput.addEventListener("focus", function () {
+    if (
+        searchInput.value
+            .trim()
+            .length >= 2
+    ) {
+        searchInput.dispatchEvent(
+            new Event("input")
+        );
+    }
+});
 
+document.addEventListener("click", function (event) {
     const searchBar =
         document.querySelector(".search-bar");
-
 
     if (
         searchBar &&
         !searchBar.contains(event.target)
     ) {
-
         searchSuggestions.hidden = true;
-
     }
-
 });
 
-searchInput.addEventListener("focus", function () {
+window.addEventListener(
+    "resize",
+    resizeCanvas
+);
 
-    const searchText =
-        searchInput.value.trim();
-
-
-    if (searchText.length >= 2) {
-
-        searchInput.dispatchEvent(
-            new Event("input")
-        );
-
-    }
-
-});
+resizeCanvas();
