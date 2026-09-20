@@ -25,7 +25,7 @@ const eventMap = L.map("eventMap").setView([-27.4698, 153.0251], 13);
 // MAPBOX TILES
 
 L.tileLayer(
-    "https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=YOUR_MAPBOX_TOKEN",
+    "https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=" + MAPBOX_TOKEN,
     {
         attribution: "Map data © OpenStreetMap contributors, Imagery © Mapbox",
         maxZoom: 18,
