@@ -1,22 +1,21 @@
-/* =========================================
-   SHARED TOP NAVBAR
-   Matches the Events page
-   ========================================= */
-
 * {
     box-sizing: border-box;
 }
 
+html,
 body {
     margin: 0;
+    padding: 0;
+    width: 100%;
 }
 
-
-/* MAIN NAVBAR */
+body {
+    background: #ffffff;
+}
 
 nav {
     width: 100%;
-    height: 115px;
+    min-height: 115px;
 
     display: flex;
     align-items: center;
@@ -25,14 +24,12 @@ nav {
     padding: 0 70px;
 
     background: #ffffff;
+
     border-bottom: 1px solid #e5e5e5;
 
     position: relative;
     z-index: 100;
 }
-
-
-/* LOGO */
 
 .nav-logo {
     color: #c4d8ea;
@@ -42,11 +39,9 @@ nav {
     font-weight: bold;
 
     text-decoration: none;
+
     letter-spacing: 0.5px;
 }
-
-
-/* NAVIGATION LINKS */
 
 .nav-links {
     display: flex;
@@ -74,9 +69,6 @@ nav {
     color: #718ca8;
 }
 
-
-/* ACTIVE PAGE */
-
 .nav-links a.active {
     font-weight: bold;
 }
@@ -96,11 +88,6 @@ nav {
     background: #b8cee1;
 }
 
-
-/* =========================================
-   HOME SEARCH BAR AREA
-   ========================================= */
-
 .topbar {
     width: 100%;
     min-height: 105px;
@@ -113,65 +100,178 @@ nav {
     padding: 20px 85px;
 
     background: #ffffff;
+
     border-bottom: 1px solid #e5e5e5;
 
     position: relative;
     z-index: 90;
 }
 
-
-/* SEARCH */
-
 .search-bar {
     flex: 1;
-    max-width: 1000px;
 
     display: flex;
     align-items: center;
 
+    max-width: 1000px;
+
     height: 62px;
 
-    padding: 0 22px;
+    padding: 0 20px;
+
+    background: #ffffff;
 
     border: 1px solid #d2d2d2;
     border-radius: 10px;
-
-    background: white;
 }
 
 
 .search-icon {
-    margin-right: 14px;
+    flex-shrink: 0;
 
-    font-size: 18px;
+    margin-right: 12px;
 
     color: #555;
+
+    font-size: 21px;
 }
 
 
-.search-bar input {
+.search-wrapper {
+    position: relative;
+
     width: 100%;
+}
+
+
+.search-wrapper input {
+    width: 100%;
+
+    padding: 0;
 
     border: none;
     outline: none;
 
     background: transparent;
 
+    color: #333333;
+
     font-family: Arial, sans-serif;
     font-size: 17px;
-
-    color: #333;
 }
 
 
-.search-bar input::placeholder {
-    color: #777;
+.search-wrapper input::placeholder {
+    color: #777777;
+}
+
+.search-suggestions {
+    position: absolute;
+
+    top: 42px;
+    left: -48px;
+
+    width: calc(100% + 48px);
+
+    background: #ffffff;
+
+    border: 1px solid #dddddd;
+    border-radius: 10px;
+
+    box-shadow:
+        0 10px 30px rgba(0, 0, 0, 0.13);
+
+    overflow: hidden;
+
+    z-index: 2000;
 }
 
 
-/* =========================================
-   CHAT BUTTON
-   ========================================= */
+.search-suggestion {
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+
+    gap: 13px;
+
+    padding: 13px 16px;
+
+    border: none;
+    border-bottom: 1px solid #eeeeee;
+
+    background: #ffffff;
+
+    text-align: left;
+
+    cursor: pointer;
+}
+
+
+.search-suggestion:last-child {
+    border-bottom: none;
+}
+
+
+.search-suggestion:hover {
+    background: #f5f7fa;
+}
+
+
+.suggestion-avatar {
+    width: 40px;
+    height: 40px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #33245a;
+
+    color: #ffffff;
+
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+
+.suggestion-information {
+    display: flex;
+    flex-direction: column;
+
+    gap: 3px;
+}
+
+
+.suggestion-information strong {
+    color: #222222;
+
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+}
+
+
+.suggestion-information span {
+    color: #777777;
+
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+}
+
+
+.no-search-result {
+    padding: 16px;
+
+    color: #777777;
+
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+}
 
 .chat-shortcut {
     min-width: 120px;
@@ -179,10 +279,12 @@ nav {
 
     padding: 0 25px;
 
-    background: white;
+    background: #ffffff;
 
-    border: 1px solid #555;
+    border: 1px solid #555555;
     border-radius: 10px;
+
+    color: #222222;
 
     font-family: Georgia, "Times New Roman", serif;
     font-size: 20px;
@@ -195,21 +297,19 @@ nav {
     background: #f5f5f5;
 }
 
-
-/* =========================================
-   ACCOUNT BUTTON
-   ========================================= */
-
 .account-shortcut {
     display: flex;
     align-items: center;
 
     gap: 14px;
 
+    padding: 0;
+
     border: none;
+
     background: transparent;
 
-    padding: 0;
+    color: #222222;
 
     font-family: Georgia, "Times New Roman", serif;
     font-size: 20px;
@@ -217,8 +317,6 @@ nav {
     cursor: pointer;
 }
 
-
-/* SAMUEL CIRCLE */
 
 .small-avatar {
     width: 55px;
@@ -234,37 +332,50 @@ nav {
 
     border: 3px solid #9148e8;
 
-    color: white;
+    color: #ffffff;
 
     font-family: Arial, sans-serif;
     font-size: 14px;
     font-weight: bold;
 }
 
-
-/* =========================================
-   SPHERE SECTION
-   ========================================= */
-
 #scene {
     position: relative;
 
     width: 100%;
+
     min-height: calc(100vh - 220px);
 
     overflow: hidden;
 
     background:
         radial-gradient(
-            circle at 50% 40%,
-            #18143c 0%,
-            #080a20 48%,
-            #040611 100%
+            circle at 50% 42%,
+            #19143c 0%,
+            #0a0b23 45%,
+            #050714 75%,
+            #03040c 100%
         );
 }
 
+.stars {
+    position: absolute;
 
-/* SPHERE TITLE */
+    inset: 0;
+
+    pointer-events: none;
+
+    opacity: 0.7;
+
+    background-image:
+        radial-gradient(
+            circle,
+            rgba(153, 103, 255, 0.9) 1px,
+            transparent 1.5px
+        );
+
+    background-size: 115px 115px;
+}
 
 .sphere-heading {
     position: absolute;
@@ -278,16 +389,19 @@ nav {
 
     text-align: center;
 
+    color: #ffffff;
+
     z-index: 5;
 
-    color: white;
+    pointer-events: none;
 }
 
 
-.sphere-heading h2 {
+.sphere-heading h1 {
     margin: 0;
 
     font-family: Arial, sans-serif;
+
     font-size: 44px;
     font-weight: 700;
 }
@@ -299,47 +413,237 @@ nav {
 
     margin: 15px auto;
 
-    border-radius: 10px;
+    border-radius: 20px;
 
-    background: linear-gradient(
-        90deg,
-        transparent,
-        #8b45e8,
-        transparent
-    );
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            #8b45e8,
+            transparent
+        );
 }
 
 
 .sphere-heading p {
     margin: 0;
 
+    color: #c4c0db;
+
     font-family: Arial, sans-serif;
     font-size: 16px;
-
-    color: #c4c0db;
 }
 
-
-/* =========================================
-   CANVAS
-   ========================================= */
-
 #canvas {
+    position: absolute;
+
+    inset: 0;
+
     display: block;
 
     width: 100%;
     height: 100%;
+}
 
+.sphere-controls {
     position: absolute;
 
+    left: 50%;
+    bottom: 20px;
+
+    transform: translateX(-50%);
+
+    display: flex;
+
+    gap: 10px;
+
+    padding: 9px 15px;
+
+    border-radius: 20px;
+
+    background: rgba(12, 12, 35, 0.72);
+
+    color: #bdb9d0;
+
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+
+    z-index: 10;
+}
+
+.tooltip {
+    position: absolute;
+
+    display: none;
+
+    padding: 8px 12px;
+
+    border: 1px solid rgba(147, 80, 255, 0.5);
+    border-radius: 7px;
+
+    background: rgba(10, 10, 30, 0.95);
+
+    color: white;
+
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+
+    pointer-events: none;
+
+    z-index: 50;
+}
+
+.profile-panel {
+    position: fixed;
+
     top: 0;
-    left: 0;
+    right: -420px;
+
+    width: 400px;
+    height: 100vh;
+
+    padding: 30px;
+
+    overflow-y: auto;
+
+    background: #101323;
+
+    border-left: 1px solid #292e45;
+
+    color: white;
+
+    transition: right 0.3s ease;
+
+    z-index: 3000;
 }
 
 
-/* =========================================
-   RESPONSIVE
-   ========================================= */
+.profile-panel.open {
+    right: 0;
+}
+
+
+.panel-close {
+    position: absolute;
+
+    top: 15px;
+    right: 18px;
+
+    border: none;
+
+    background: transparent;
+
+    color: white;
+
+    font-size: 28px;
+
+    cursor: pointer;
+}
+
+
+.profile-header {
+    display: flex;
+    align-items: center;
+
+    gap: 18px;
+
+    margin-top: 30px;
+}
+
+
+.profile-avatar {
+    width: 75px;
+    height: 75px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    border-radius: 50%;
+
+    background: #33245a;
+
+    border: 3px solid #9148e8;
+
+    font-family: Arial, sans-serif;
+    font-weight: bold;
+    font-size: 20px;
+}
+
+
+.profile-name-area h2 {
+    margin: 0 0 5px;
+
+    font-family: Arial, sans-serif;
+}
+
+
+.profile-location {
+    margin: 0;
+
+    color: #aaa7c2;
+
+    font-family: Arial, sans-serif;
+}
+
+
+.profile-actions {
+    margin: 25px 0;
+}
+
+
+.message-button {
+    width: 100%;
+
+    padding: 12px;
+
+    border: none;
+    border-radius: 8px;
+
+    background: #8d45ed;
+
+    color: white;
+
+    font-size: 15px;
+
+    cursor: pointer;
+}
+
+
+.profile-section {
+    padding: 20px 0;
+
+    border-top: 1px solid #292e45;
+
+    font-family: Arial, sans-serif;
+}
+
+
+.profile-section h3 {
+    margin-top: 0;
+}
+
+
+.interest-list {
+    display: flex;
+    flex-wrap: wrap;
+
+    gap: 8px;
+}
+
+
+.interest-chip {
+    padding: 7px 11px;
+
+    border: 1px solid #464b68;
+    border-radius: 20px;
+
+    color: #d7d4e5;
+
+    font-size: 12px;
+}
 
 @media (max-width: 1000px) {
 
@@ -348,10 +652,50 @@ nav {
     }
 
     .nav-links {
-        gap: 30px;
+        gap: 28px;
+    }
+
+    .nav-links a {
+        font-size: 17px;
     }
 
     .topbar {
         padding: 20px 30px;
     }
+
+}
+
+
+@media (max-width: 750px) {
+
+    nav {
+        flex-direction: column;
+
+        padding: 20px;
+    }
+
+    .nav-links {
+        flex-wrap: wrap;
+        justify-content: center;
+
+        gap: 20px;
+    }
+
+    .nav-links a {
+        padding: 10px 0;
+    }
+
+    .topbar {
+        flex-wrap: wrap;
+    }
+
+    .search-bar {
+        width: 100%;
+        max-width: none;
+    }
+
+    .sphere-heading h1 {
+        font-size: 34px;
+    }
+
 }
