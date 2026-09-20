@@ -2,6 +2,44 @@
 /* EVENTS PAGE */
 /* ============================= */
 
+/* LOADING OVERLAY */
+
+#loading {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+
+    background: rgba(255, 255, 255, 0.8)
+                url("../images/sphere_spinner.gif")
+                center center
+                no-repeat;
+
+    z-index: 2000;
+
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.5s ease, visibility 0.5s ease;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#loading p {
+    margin-top: 150px;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+/* HIDE LOADING OVERLAY ONCE EVENTS HAVE LOADED */
+
+body.loaded #loading {
+    opacity: 0;
+    visibility: hidden;
+}
+
 .events-container {
     max-width: 1000px;
     margin: 0 auto;

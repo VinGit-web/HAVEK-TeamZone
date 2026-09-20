@@ -71,11 +71,11 @@ fetch(LOCATIONS_API)
                     [location.latitude, location.longitude],
                     { icon: sphereMarker }
                 )
-                .addTo(eventMap)
-                .bindPopup(
-                    "<strong>" + location.venue_name + "</strong><br>" +
-                    location.venue_address
-                );
+                    .addTo(eventMap)
+                    .bindPopup(
+                        "<strong>" + location.venue_name + "</strong><br>" +
+                        location.venue_address
+                    );
 
             }
 
@@ -120,10 +120,16 @@ async function loadEventsFromAPI() {
 
         displayAPIEvents(loadedEvents);
 
-    } catch (error) {
+        // HIDE LOADING OVERLAY AFTER EVENTS LOAD
+        setTimeout(function () {
+            document.body.classList.add("loaded");
+        }, 500);
 
+    } catch (error) {
         console.error("Error loading events:", error);
 
+        // HIDE LOADING OVERLAY IF API FAILS
+        document.body.classList.add("loaded");
     }
 }
 function displayAPIEvents(events) {
