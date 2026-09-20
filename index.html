@@ -3,178 +3,297 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">    <title>Sphere</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Sphere</title>
+
     <link rel="stylesheet" href="css/main.css">
 </head>
 
 <body>
-    <div class="app">
 
-        <aside class="sidebar">
-            <div class="brand">
-                <div class="mark">
-                    ✦
-                </div>
-                <div class="brand-text">
-                    <h1>Sphere</h1>
-                    <p>Real people. Real experiences.</p>
-                </div>
-            </div>
-        
-            <!-- <nav class="navbar">
-            #sphere is the home page
-            <button class="nav-button active" oneclick="window.location.href='chat.html'">
-                <span class="nav-icon">◌</span>
-                <span>Chats</span>
-            </button>
-            <button class="nav-button" oneclick="window.location.href='strings.html'">
-                <span class="nav-icon">⌁</span>
-                <span>Strings</span>
-            </button>
-            <button class="nav-button" oneclick="window.location.href='account.html'">
-                <span class="nav-icon">⚙</span>
-                <span>Account</span>
-            </button>
-            <button class="nav-button" oneclick="window.location.href='About.html'">
-                <span class="nav-icon">ⓘ</span>
-                <span>About Us</span>
-            </button>
-        </nav> -->
+    <header class="site-header">
 
-            <nav class="navbar">
-                <a href="index.html">Home</a>
-                <a href="events.html">Events</a>
-                <a href="strings.html">Strings</a>
-                <a href="chat.html">Chat</a>
-                <a href="account.html">Account</a>
-                <a href="about.html">About</a>
-            </nav>
+        <a href="index.html" class="site-logo">
+            INTROSPHEER
+        </a>
 
-            <div class="sidebar-bottom">
-                <button class="bottom-button">
-                    <span>⚙</span>
-                    Settings
-                </button>
-                <button class="bottom-button">
-                    <span>?</span>
-                    Help & Support
-                </button>
-            </div>
-        </aside>
+        <nav class="site-nav">
+            <a href="index.html" class="active">Home</a>
+            <a href="events.html">Events</a>
+            <a href="strings.html">Strings</a>
+            <a href="chat.html">Chat</a>
+            <a href="account.html">Account</a>
+            <a href="about.html">About</a>
+        </nav>
 
-        <main class="main content">
+    </header>
 
-            <header class="topbar">
-                <div class="search bar" <span class="search-iron">🔍</span>
-                    <input id="search" type="text" placeholder="Search people, event, or interests...">
-                </div>
 
-                <button class="chat-shortcut" oneclick="window.location.href='chat.html'">
-                    ◌ Chats
-                </button>>
+    <div class="sphere-toolbar">
 
-                <button class="account-shortcut" oneclick="window.location.href='account.html'">
-                    <div class="small-avatar"> SS </div>
-                    <span>Samuel</span>
-                </button>
-            </header>
+        <div class="search-bar">
 
-            <section id="scene">
+            <span class="search-icon">⌕</span>
 
-                <div class="stars"></div>
+            <input
+                id="search"
+                type="text"
+                placeholder="Search people, events, or interests..."
+            >
 
-                <div class="sphere-heading">
-                    <h2>My Sphere</h2>
-                    <div class="heading-line"></div>
-                    <p>People you've met, people you'll meet, and the experiences in between.</p>
-                </div>
-                <canvas id="canvas"></canvas>
+        </div>
 
-                <div class="tooltip" id="tooltip"></div>
 
-                <div class="sphere-controls">
-                    Drag to rotate
-                    <span>•</span>
-                    Scroll to zoom
-                    <span>•</span>
-                    Click a profile
-                </div>
-            </section>
-        </main>
+        <button
+            class="chat-shortcut"
+            onclick="window.location.href='chat.html'"
+        >
+            Chats
+        </button>
 
-        <aside class="profile-panel" id="profilePanel">
-            <button class="panel-close" id="panelClose"> x </button>
 
-            <div class="profile-header">
-                <div class="profile-avatar" id="avatar">
-                    ?
-                </div>
-                <div class="profile-name-area">
-                    <h2 id="pname">Profile</h2>
-                    <p class="profile-location" id="ploc"></p>
-                </div>
+        <button
+            class="account-shortcut"
+            onclick="window.location.href='account.html'"
+        >
+
+            <div class="small-avatar">
+                SS
             </div>
 
-            <div class="profile-actions">
-                <button class="message-button" id="msg">
-                    ◌ Message
-                </button>
-                <button class="sphere-button" id="viewSphere">
-                    ◉ View in Sphere
-                </button>
-            </div>
+            <span>Samuel</span>
 
-            <section class="profile-section">
-                <h3>Interests</h3>
-                <div class="interest-list" id="chips"></div>
-            </section>
+        </button>
 
-            <section class="profile-section">
-                <h3>About</h3>
-                <p id="about"></p>
-            </section>
-
-            <section class="profile-section">
-                <h3>Upcoming Events</h3>
-                <div id="events"></div>
-            </section>
-
-            <section class="profile-section">
-                <h3>Your Connection</h3>
-                <p id="connection"></p>
-            </section>
-        </aside>
     </div>
 
-    <div class="chat-popup" id="chatbox">
-        <div class="chat-popup-header">
-            <h3>Chats</h3>
-            <button id="closeChat">×</button>
+    <main class="sphere-page">
+
+        <section id="scene">
+
+            <div class="stars"></div>
+
+
+            <div class="sphere-heading">
+
+                <h1>My Sphere</h1>
+
+                <div class="heading-line"></div>
+
+                <p>
+                    People you've met, people you'll meet,
+                    and the experiences in between.
+                </p>
+
+            </div>
+
+
+            <canvas id="canvas"></canvas>
+
+
+            <div
+                class="tooltip"
+                id="tooltip"
+            ></div>
+
+
+            <div class="sphere-controls">
+
+                Drag to rotate
+
+                <span>•</span>
+
+                Scroll to zoom
+
+                <span>•</span>
+
+                Click a profile
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <aside
+        class="profile-panel"
+        id="profilePanel"
+    >
+
+        <button
+            class="panel-close"
+            id="panelClose"
+        >
+            ×
+        </button>
+
+
+        <div class="profile-header">
+
+            <div
+                class="profile-avatar"
+                id="avatar"
+            >
+                ?
+            </div>
+
+
+            <div class="profile-name-area">
+
+                <h2 id="pname">
+                    Profile
+                </h2>
+
+                <p
+                    class="profile-location"
+                    id="ploc"
+                ></p>
+
+            </div>
+
         </div>
-        <button class="chat-person" data-key="zach">
-            <div class="chat-avatar">ZT</div>
+
+
+        <div class="profile-actions">
+
+            <button
+                class="message-button"
+                id="msg"
+            >
+                Message
+            </button>
+
+
+            <button
+                class="sphere-button"
+                id="viewSphere"
+            >
+                View in Sphere
+            </button>
+
+        </div>
+
+
+        <section class="profile-section">
+
+            <h3>Interests</h3>
+
+            <div
+                class="interest-list"
+                id="chips"
+            ></div>
+
+        </section>
+
+
+        <section class="profile-section">
+
+            <h3>About</h3>
+
+            <p id="about"></p>
+
+        </section>
+
+
+        <section class="profile-section">
+
+            <h3>Upcoming Events</h3>
+
+            <div id="events"></div>
+
+        </section>
+
+
+        <section class="profile-section">
+
+            <h3>Your Connection</h3>
+
+            <p id="connection"></p>
+
+        </section>
+
+    </aside>
+
+    <div
+        class="chat-popup"
+        id="chatbox"
+    >
+
+        <div class="chat-popup-header">
+
+            <h3>Chats</h3>
+
+            <button id="closeChat">
+                ×
+            </button>
+
+        </div>
+
+
+        <button
+            class="chat-person"
+            data-key="zach"
+        >
+
+            <div class="chat-avatar">
+                ZT
+            </div>
+
             <div>
                 <strong>Zach</strong>
-                <small>Are you going to the event?</small>
+
+                <small>
+                    Are you going to the event?
+                </small>
             </div>
+
         </button>
-        <button class="chat-person" data-key="mike">
-            <div class="chat-avatar">MS</div>
+
+
+        <button
+            class="chat-person"
+            data-key="mike"
+        >
+
+            <div class="chat-avatar">
+                MS
+            </div>
+
             <div>
                 <strong>Mike</strong>
-                <small>Boxing event looks good.</small>
+
+                <small>
+                    Boxing event looks good.
+                </small>
             </div>
+
         </button>
-        <button class="chat-person" data-key="holly">
-            <div class="chat-avatar">HM</div>
+
+
+        <button
+            class="chat-person"
+            data-key="holly"
+        >
+
+            <div class="chat-avatar">
+                HM
+            </div>
+
             <div>
                 <strong>Holly</strong>
-                <small>Museum this weekend?.</small>
+
+                <small>
+                    Museum this weekend?
+                </small>
             </div>
+
         </button>
+
     </div>
 
-    <script src="js/main.js"></script>
-</body>
 
+    <script src="js/main.js"></script>
+
+</body>
 </html>
