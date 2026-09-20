@@ -485,6 +485,26 @@ nav {
     text-decoration: underline;
 }
 
+/* UNSEND BUTTON */
+
+.unsend-btn {
+    display: none;
+    background: none;
+    border: none;
+    color: #777;
+    font-size: 12px;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+.sent-message:hover .unsend-btn {
+    display: inline;
+}
+
+.unsend-btn:hover {
+    color: #d9534f;
+    text-decoration: underline;
+}
 
 /* MOBILE */
 
