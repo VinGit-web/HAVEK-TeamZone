@@ -120,12 +120,14 @@ mapViewButton.addEventListener("click", function () {
 
     listView.hidden = true;
     mapView.hidden = false;
-
-    // Close event popup if open
     eventDetails.hidden = true;
 
-});
+    // Resize Leaflet after the map becomes visible
+    setTimeout(function () {
+        eventMap.invalidateSize(true);
+    }, 300);
 
+});
 
 // OPEN EVENT DETAILS
 
