@@ -453,8 +453,25 @@ nav .nav-links a.active::after {
 }
 
 main {
-    background: #03040d;
+    background: #ffffff;
     padding-bottom: 180px;
+}
+
+#scene {
+    position: relative;
+    width: 100%;
+    height: calc(100vh - 205px);
+    min-height: 650px;
+    overflow: hidden;
+
+    background:
+        radial-gradient(
+            circle at 50% 55%,
+            #17123a 0%,
+            #0a0b22 46%,
+            #050716 75%,
+            #03040d 100%
+        );
 }
 
 @media (max-width: 900px) {
