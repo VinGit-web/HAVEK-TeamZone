@@ -40,7 +40,7 @@ async function loadEventsFromAPI() {
 
         console.log("Events:", loadedEvents);
 
-        // IMPORTANT FOR LOCATIONS API
+        // IMPORTANT FOR LOCATIONS API //
         console.log(
             "Venues:",
             loadedEvents.map(event => event.venue)
@@ -65,7 +65,7 @@ function displayAPIEvents(events) {
             event.title ||
             "Brisbane Event";
 
-        // KEEP THIS AS event.venue
+        // KEEP THIS AS event.venue //
         const venue =
             event.venue ||
             "Venue unavailable";
@@ -140,7 +140,7 @@ function displayAPIEvents(events) {
         listView.appendChild(card);
     });
 
-    // Add click events AFTER API cards exist
+    // Add click events AFTER API cards exist //
 
     document
         .querySelectorAll(".view-event")
@@ -182,7 +182,7 @@ function displayAPIEvents(events) {
         });
 }
 
-// LIST VIEW
+// LIST VIEW //
 
 listViewButton.addEventListener("click", function () {
 
@@ -195,7 +195,7 @@ listViewButton.addEventListener("click", function () {
 });
 
 
-// MAP VIEW
+// MAP VIEW //
 
 mapViewButton.addEventListener("click", function () {
 
@@ -210,7 +210,7 @@ mapViewButton.addEventListener("click", function () {
 
 });
 
-// CLOSE EVENT DETAILS
+// CLOSE EVENT DETAILS //
 
 closeEventDetails.addEventListener("click", function () {
 
@@ -219,7 +219,7 @@ closeEventDetails.addEventListener("click", function () {
 });
 
 
-// BOOK EVENT
+// BOOK EVENT //
 
 bookEventButton.addEventListener("click", function () {
 
@@ -231,7 +231,7 @@ bookEventButton.addEventListener("click", function () {
 });
 
 
-// CANCEL ATTENDANCE
+// CANCEL ATTENDANCE //
 
 cancelEventButton.addEventListener("click", function () {
 
@@ -242,5 +242,5 @@ cancelEventButton.addEventListener("click", function () {
 
 });
 
-// LOAD EVENTS FROM API
+// LOAD EVENTS FROM API //
 loadEventsFromAPI();
