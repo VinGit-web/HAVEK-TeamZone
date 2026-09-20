@@ -44,62 +44,36 @@ const sphereMarker = L.icon({
     popupAnchor: [0, -45]
 });
 
+// BCC EVENT LOCATIONS API
 
-// PROTOTYPE EVENT MARKERS
+const locationsURL =
+    "https://data.brisbane.qld.gov.au/api/explore/v2.1/catalog/datasets/brisbane-city-council-events-locations/records?limit=100";
 
-const events = [
-    {
-        title: "Book Club",
-        location: "Brisbane Square Library",
-        date: "19 September 2026 · 2:00pm–5:00pm",
-        lat: -27.4726,
-        lng: 153.0227
-    },
+fetch(locationsURL)
+    .then(function (response) {
 
-    {
-        title: "Brisbane City Markets",
-        location: "Queen Street Mall",
-        date: "23 September 2026 · 8:00am–2:00pm",
-        lat: -27.4690,
-        lng: 153.0255
-    },
+        if (!response.ok) {
+            throw new Error("BCC locations API request failed");
+        }
 
-    {
-        title: "Social River Walk",
-        location: "South Bank Parklands",
-        date: "26 September 2026 · 9:00am–11:00am",
-        lat: -27.4775,
-        lng: 153.0220
-    },
+        return response.json();
 
-    {
-        title: "Beginner Pottery Workshop",
-        location: "West End Community Centre",
-        date: "3 October 2026 · 1:00pm–3:00pm",
-        lat: -27.4805,
-        lng: 153.0120
-    }
-];
+    })
+    .then(function (data) {
 
+        console.log("BCC EVENT LOCATIONS:");
+        console.log(data);
 
-// ADD EVENTS TO MAP
+        data.results.forEach(function (location) {
+            console.log(location);
+        });
 
-events.forEach(function (event) {
+    })
+    .catch(function (error) {
 
-    const marker = L.marker(
-        [event.lat, event.lng],
-        { icon: sphereMarker }
-    ).addTo(eventMap);
+        console.error("Error loading BCC event locations:", error);
 
-    marker.bindPopup(
-        "<strong>" + event.title + "</strong>" +
-        "<br>" +
-        event.date +
-        "<br>" +
-        event.location
-    );
-
-});
+    });
 
 // LIST VIEW
 
