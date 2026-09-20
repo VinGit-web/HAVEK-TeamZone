@@ -660,13 +660,16 @@ window.addEventListener("mouseup", function () {
 canvas.addEventListener(
     "wheel",
     function (event) {
+
+        if (!event.ctrlKey) {
+            return;
+        }
+
         event.preventDefault();
 
-        if (event.deltaY < 0) {
-            zoom += 0.08;
-        } else {
-            zoom -= 0.08;
-        }
+        const zoomAmount = -event.deltaY * 0.01;
+
+        zoom += zoomAmount;
 
         zoom = Math.max(
             0.7,
@@ -674,6 +677,7 @@ canvas.addEventListener(
         );
 
         draw();
+
     },
     {
         passive: false
