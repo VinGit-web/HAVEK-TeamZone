@@ -62,113 +62,17 @@
         </section>
 
 
-        <!-- LIST VIEW -->
-        <section id="listView" class="event-list">
+<!-- LIST VIEW -->
+<section id="listView" class="event-list">
 
-            <article class="event-card">
-                <div class="event-card-content">
-                    <span class="event-category">Social</span>
+    <!-- Events will be automatically loaded from the
+         Brisbane City Council Events API -->
 
-                    <h2>Book Club</h2>
+    <p id="eventLoading">
+        Loading Brisbane events...
+    </p>
 
-                    <p class="event-date">19 September 2026 · 2:00pm–5:00pm</p>
-
-                    <p>Brisbane Square Library</p>
-
-                    <p class="event-description">
-                        Join others to discuss weekly book readings,
-                        favourite quotes and recommendations.
-                    </p>
-
-                    <div class="event-card-footer">
-                        <span>Free</span>
-
-                        <button type="button" class="view-event">
-                            View Event
-                        </button>
-                    </div>
-                </div>
-            </article>
-
-
-            <article class="event-card">
-                <div class="event-card-content">
-                    <span class="event-category">Community</span>
-
-                    <h2>Brisbane City Markets</h2>
-
-                    <p class="event-date">23 September 2026 · 8:00am–2:00pm</p>
-
-                    <p>Queen Street Mall</p>
-
-                    <p class="event-description">
-                        Explore local food stalls, markets and the city
-                        with other people from the community.
-                    </p>
-
-                    <div class="event-card-footer">
-                        <span>Free</span>
-
-                        <button type="button" class="view-event">
-                            View Event
-                        </button>
-                    </div>
-                </div>
-            </article>
-
-
-            <article class="event-card">
-                <div class="event-card-content">
-                    <span class="event-category">Fitness</span>
-
-                    <h2>Social River Walk</h2>
-
-                    <p class="event-date">26 September 2026 · 9:00am–11:00am</p>
-
-                    <p>South Bank Parklands</p>
-
-                    <p class="event-description">
-                        A relaxed walk along the Brisbane River for people
-                        looking to get outside and meet others.
-                    </p>
-
-                    <div class="event-card-footer">
-                        <span>Free</span>
-
-                        <button type="button" class="view-event">
-                            View Event
-                        </button>
-                    </div>
-                </div>
-            </article>
-
-
-            <article class="event-card">
-                <div class="event-card-content">
-                    <span class="event-category">Creative</span>
-
-                    <h2>Beginner Pottery Workshop</h2>
-
-                    <p class="event-date">3 October 2026 · 1:00pm–3:00pm</p>
-
-                    <p>West End Community Centre</p>
-
-                    <p class="event-description">
-                        Learn the basics of pottery in a small group
-                        workshop designed for beginners.
-                    </p>
-
-                    <div class="event-card-footer">
-                        <span>$15</span>
-
-                        <button type="button" class="view-event">
-                            View Event
-                        </button>
-                    </div>
-                </div>
-            </article>
-
-        </section>
+</section>
 
 
         <!-- MAP VIEW -->
@@ -179,8 +83,73 @@
         </section>
 
 
-        <!-- EVENT DETAILS MODAL -->
-        <section id="eventDetails" class="event-full-details" hidden>
+      <!-- EVENT DETAILS MODAL -->
+<section id="eventDetails" class="event-full-details" hidden>
+
+    <!-- CLOSE BUTTON -->
+    <button type="button" id="closeEventDetails">
+        ×
+    </button>
+
+    <!-- EVENT CATEGORY -->
+    <span class="event-category" id="detailCategory">
+        Event
+    </span>
+
+    <!-- EVENT NAME -->
+    <h2 id="detailName">
+        Event Name
+    </h2>
+
+    <!-- EVENT DATE / TIME -->
+    <p class="event-date" id="detailDate"></p>
+
+    <!-- VENUE -->
+    <!-- The JS puts event.venue into this element -->
+    <p id="detailLocation"></p>
+
+    <!-- EVENT COST -->
+    <p id="detailCost"></p>
+
+    <!-- EVENT DESCRIPTION -->
+    <h3>
+        About this event
+    </h3>
+
+    <p id="detailDescription"></p>
+
+
+    <!-- BOOKING CONTROLS -->
+    <div class="event-actions">
+
+        <button
+            type="button"
+            id="bookEventButton"
+            class="book-event"
+        >
+            Book Event
+        </button>
+
+        <p
+            id="attendanceStatus"
+            class="attendance-status"
+            hidden
+        >
+            ✓ You're attending this event
+        </p>
+
+        <button
+            type="button"
+            id="cancelEventButton"
+            class="cancel-event"
+            hidden
+        >
+            Cancel Attendance
+        </button>
+
+    </div>
+
+</section>
 
             <!-- CLOSE BUTTON -->
             <button type="button" id="closeEventDetails">
@@ -195,7 +164,7 @@
                 19 September 2026 · 2:00pm–5:00pm
             </p>
 
-            <p>Brisbane Square Library</p>
+            <p id="detailLocation"></p>
 
             <p>Free · Bookings required</p>
 
