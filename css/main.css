@@ -452,6 +452,11 @@ nav .nav-links a.active::after {
     line-height: 1.5;
 }
 
+main {
+    background: #03040d;
+    padding-bottom: 180px;
+}
+
 @media (max-width: 900px) {
     .home-toolbar {
         padding: 20px 30px;
