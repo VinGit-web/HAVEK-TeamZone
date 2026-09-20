@@ -47,6 +47,20 @@
     background: #f0f0f0;
 }
 
+/* PAST EVENTS BUTTON */
+.past-events-button {
+    padding: 9px 16px;
+    border: 1px solid #444;
+    border-radius: 7px;
+    background: white;
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.past-events-button:hover {
+    background: #f0f0f0;
+}
 
 /* SEARCH + FILTERS */
 
