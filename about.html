@@ -3,24 +3,210 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>About</title>
+    <title>About | INTROSPHEER</title>
     <link rel="stylesheet" href="css/app.css">
 </head>
 <body>
     
     <!-- SIMPLE NAVBAR CODE -->
     <nav>
+
+        <a href="index.html" class="nav-logo">INTROSPHEER</a>
+    <div class="nav-links">
         <a href="index.html">Home</a>
         <a href="events.html">Events</a>
         <a href="strings.html">Strings</a>
         <a href="chat.html">Chat</a>
         <a href="account.html">Account</a>
         <a href="about.html">About</a>
+    </div>
     </nav>
 
-    <h1>About</h1>
+    <!-- ABOUT PAGE -->
+    <main class="about-page">
 
-<script src="js/main.js"></script>
+        <section class="about-intro">
+            <p class="about-label">ABOUT US</p>
+
+            <h1>Meet the team behind INTROSPHEER</h1>
+
+            <p class="about-description">
+                INTROSPHEER is designed to help people build meaningful
+                social connections through shared interests, events and
+                conversations. Our goal is to create a welcoming space where
+                users can discover activities, connect with others and feel
+                more comfortable getting involved.
+            </p>
+        </section>
+
+
+        <!-- TEAM PHOTO -->
+        <section class="team-section">
+
+            <div class="team-photo-container">
+                <img
+                    src="images/team-photo.jpeg"
+                    alt="The INTROSPHEER project team working together"
+                    class="team-photo"
+                >
+            </div>
+
+            <div class="team-content">
+                <p class="about-label">OUR TEAM</p>
+
+                <h2>Built together.</h2>
+
+                <p>
+                    INTROSPHEER was created collaboratively by our team as part
+                    of our university project. Through research, design,
+                    prototyping, testing and development, we worked together
+                    to create an experience focused on making social
+                    interaction easier and more approachable.
+                </p>
+
+                <p>
+                    Each member of the team contributed different ideas,
+                    perspectives and skills throughout the design and
+                    development process.
+                </p>
+            </div>
+
+        </section>
+
+
+        <!-- REFERENCES -->
+        <section class="references-section">
+
+            <h2>References</h2>
+
+            <p>
+                View the sources and resources used throughout the development
+                of INTROSPHEER.
+            </p>
+
+            <button id="open-references" class="reference-button">
+                View APA 7 Reference List
+            </button>
+
+        </section>
+
+    </main>
+
+
+    <!-- REFERENCES POPUP -->
+    <div id="reference-modal" class="reference-modal">
+
+        <div class="reference-modal-content">
+
+            <button
+                id="close-references"
+                class="close-reference"
+                aria-label="Close references"
+            >
+                &times;
+            </button>
+
+            <p class="about-label">SOURCES</p>
+
+            <h2>Reference List</h2>
+
+            <p class="apa-note">
+                References formatted according to APA 7th edition.
+            </p>
+
+            <div class="reference-list">
+
+                <div class="reference-list">
+
+    <p>
+        Brisbane City Council. (n.d.). <i>Creative events</i>.
+        Brisbane City Council Open Data.
+        <a href="https://data.brisbane.qld.gov.au/explore/dataset/creative-events/table/"
+           target="_blank">
+            View source
+        </a>
+    </p>
+
+    <p>
+        Brisbane City Council. (n.d.). <i>Classes and workshops events</i>.
+        Brisbane City Council Open Data.
+        <a href="https://data.brisbane.qld.gov.au/explore/dataset/classes-and-workshops-events/table/"
+           target="_blank">
+            View source
+        </a>
+    </p>
+
+    <p>
+        Brisbane City Council. (n.d.). <i>Library events</i>.
+        Brisbane City Council Open Data.
+        <a href="https://data.brisbane.qld.gov.au/explore/dataset/library-events/table/"
+           target="_blank">
+            View source
+        </a>
+    </p>
+
+    <p>
+        Brisbane City Council. (n.d.). <i>Museum of Brisbane events</i>.
+        Brisbane City Council Open Data.
+        <a href="https://data.brisbane.qld.gov.au/explore/dataset/mob-events/table/"
+           target="_blank">
+            View source
+        </a>
+    </p>
+
+    <p>
+        Brisbane City Council. (n.d.). <i>Brisbane Botanic Gardens events</i>.
+        Brisbane City Council Open Data.
+        <a href="https://data.brisbane.qld.gov.au/explore/dataset/brisbane-botanic-gardens-events/table/"
+           target="_blank">
+            View source
+        </a>
+    </p>
+
+    <p>
+        Dembling, S. (2015, February 15).
+        <i>Why even introverts need community</i>.
+        Psychology Today.
+        <a href="https://www.psychologytoday.com/au/blog/the-introverts-corner/201502/why-even-introverts-need-community"
+           target="_blank">
+            View source
+        </a>
+    </p>
+
+    <p>
+        Odintsova, K. (2026, August 14).
+        <i>Colours that represent introversion, calm and reflection</i>.
+        KSENIA ODINTSOVA.
+        <a href="https://kseniaodintsova.com/blogs/tales/colours-that-represent-introversion-calm-and-reflection"
+           target="_blank">
+            View source
+        </a>
+    </p>
+
+    <p>
+        Reddit. (2026). <i>Reddit search</i>.
+        <a href="https://www.reddit.com/search/"
+           target="_blank">
+            View source
+        </a>
+    </p>
+
+    <p>
+        PeoplePsych. (n.d.).
+        <i>Building meaningful relationships as an introvert</i>.
+        <a href="https://peoplepsych.com/building-meaningful-relationships-as-an-introvert/"
+           target="_blank">
+            View source
+        </a>
+    </p>
+
+    </div>
+
+        </div>
+
+    </div>
+
+<script src="js/about.js"></script>
 </body>
 
 </html>
