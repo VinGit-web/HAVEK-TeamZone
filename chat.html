@@ -19,8 +19,77 @@
     </div>
     </nav>
 
-    <h1>Chat</h1>
+    <!-- CHAT LIST -->
+    <main id="chat-list-page" class="chat-page">
 
-<script src="js/app.js"></script>
+        <h1>Chats</h1>
+
+        <div class="chat-list">
+
+            <div class="chat-card" data-name="Zach T">
+                <div class="profile-image">ZT</div>
+                <p>Zach T</p>
+            </div>
+
+            <div class="chat-card" data-name="Mike S">
+                <div class="profile-image">MS</div>
+                <p>Mike S</p>
+            </div>
+
+            <div class="chat-card" data-name="Sally S">
+                <div class="profile-image">SS</div>
+                <p>Sally S</p>
+            </div>
+
+            <div class="chat-card" data-name="Holly M">
+                <div class="profile-image">HM</div>
+                <p>Holly M</p>
+            </div>
+
+        </div>
+
+    </main>
+
+
+    <!-- INDIVIDUAL CHAT -->
+    <main id="conversation-page" class="conversation-page">
+
+        <div class="conversation-header">
+
+            <button id="back-button">←</button>
+
+            <div class="conversation-profile">
+                <div id="conversation-avatar" class="profile-image"></div>
+
+                <div>
+                    <h2 id="conversation-name"></h2>
+                    <p class="online-status">Online</p>
+                </div>
+            </div>
+
+        </div>
+
+
+        <div id="messages" class="conversation-messages">
+
+        </div>
+
+
+        <div class="chat-input-area">
+
+            <input
+                type="text"
+                id="message-box"
+                placeholder="Type a message..."
+            >
+
+            <button id="send-button">➤</button>
+
+        </div>
+
+    </main>
+
+    <script src="js/chat.js"></script>
+
 </body>
 </html>

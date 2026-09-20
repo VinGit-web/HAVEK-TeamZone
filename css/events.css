@@ -157,8 +157,22 @@
     margin: 0 auto;
 }
 
-.event-full-details h2 {
-    margin-top: 12px;
+.event-full-details {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    width: 90%;
+    max-width: 550px;
+
+    background: white;
+    padding: 30px;
+    border-radius: 16px;
+
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+
+    z-index: 1000;
 }
 
 #closeEventDetails {
@@ -167,4 +181,10 @@
     background: none;
     cursor: pointer;
     font-size: 14px;
+}
+
+/* HIDE ELEMENTS WHEN JS SETS hidden */
+
+[hidden] {
+    display: none !important;
 }

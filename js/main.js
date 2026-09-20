@@ -1,4 +1,3 @@
-#User Data
 const profiles = {
 
     samuel: {
@@ -170,7 +169,7 @@ const profiles = {
         ]
     }
 };
-#Locked / unknown connections 
+
 const lockedPeople = [
 
     {
@@ -204,7 +203,7 @@ const lockedPeople = [
     }
 
 ];
-#Connection networks
+
 const connections = [
 
     ["samuel", "zach", "#a66dff"],
@@ -268,7 +267,7 @@ let lastMouseY = 0;
 
 let clickableNodes = [];
 
-#Resize canvas 
+
 function resizeCanvas() {
 
     width =
@@ -469,7 +468,7 @@ function getScreenPosition(lat, lon) {
 
     return projectPoint(rotated);
 }
-#Draw Globe Background
+
 function drawGlobeBackground() {
 
     const radius =
@@ -567,7 +566,7 @@ function drawGlobeBackground() {
 
     ctx.fill();
 }
-#Draw Grid Line
+
 function drawGridLine(points) {
 
     let previous = null;
@@ -626,7 +625,7 @@ function drawGridLine(points) {
             screen;
     });
 }
-#Draw Globe Grid 
+ 
 function drawGrid() {
 
     for (
@@ -685,7 +684,7 @@ function drawGrid() {
         drawGridLine(points);
     }
 }
-#Draw Connection
+
 function drawConnection(
     personA,
     personB,
@@ -867,7 +866,7 @@ function drawConnection(
     ctx.globalAlpha =
         1;
 }
-#DRAW USER PROFILE NODE
+
 function drawProfileNode(person) {
 
     const position =
@@ -1048,7 +1047,7 @@ function drawProfileNode(person) {
 
     };
 }
-#DRAW LOCKED NODE
+
 function drawLockedNode(person) {
 
     const position =
@@ -1168,7 +1167,7 @@ function drawLockedNode(person) {
 
     };
 }
-#MAIN DRAW LOOP
+
 function draw() {
 
     ctx.clearRect(
@@ -1303,7 +1302,7 @@ function draw() {
 
 
 draw();
-#DETECT NODE UNDER MOUSE
+
 function findNodeAtMouse(
     mouseX,
     mouseY
@@ -1337,7 +1336,7 @@ function findNodeAtMouse(
 
         });
 }
-#DRAG START
+
 scene.addEventListener(
     "pointerdown",
 
@@ -1367,7 +1366,7 @@ scene.addEventListener(
 
     }
 );
-# DRAG / HOVER
+
 scene.addEventListener(
     "pointermove",
 
@@ -1546,7 +1545,7 @@ scene.addEventListener(
 
     }
 );
-#CLICK USER
+
 scene.addEventListener(
     "pointerup",
 
@@ -1615,7 +1614,7 @@ scene.addEventListener(
 
     }
 );
-#POINTER LEAVE
+
 scene.addEventListener(
     "pointerleave",
 
@@ -1634,7 +1633,7 @@ scene.addEventListener(
 
     }
 );
-#ZOOM
+
 scene.addEventListener(
     "wheel",
 
@@ -1667,7 +1666,7 @@ scene.addEventListener(
         passive: false
     }
 );
-#OPEN PROFILE PANEL
+
 function openProfile(id) {
 
     const profile =
@@ -1852,7 +1851,7 @@ function openProfile(id) {
     );
 
 }
-#CLOSE PROFILE
+
 function closeProfile() {
 
     profilePanel.classList.remove(
@@ -1879,7 +1878,7 @@ document
         "click",
         closeProfile
     );
-#CHAT POPUP
+
 const chatPopup =
     document.getElementById(
         "chatbox"
@@ -1916,7 +1915,7 @@ document
 
         }
     );
-#CHAT USERS
+
 document
     .querySelectorAll(".chat-person")
     .forEach(
@@ -1947,7 +1946,7 @@ document
         }
 
     );
-#SEARCH
+
 const searchInput =
     document.getElementById(
         "search"
@@ -2052,7 +2051,6 @@ searchInput.addEventListener(
 
     }
 );
-#VIEW IN SPHERE BUTTON
 document
     .getElementById("viewSphere")
     .addEventListener(
