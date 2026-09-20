@@ -12,12 +12,175 @@ const mapView = document.getElementById("mapView");
 const eventDetails = document.getElementById("eventDetails");
 const closeEventDetails = document.getElementById("closeEventDetails");
 
-const viewEventButtons = document.querySelectorAll(".view-event");
-
 const bookEventButton = document.getElementById("bookEventButton");
 const cancelEventButton = document.getElementById("cancelEventButton");
 const attendanceStatus = document.getElementById("attendanceStatus");
 
+// BRISBANE CITY COUNCIL EVENTS API//
+
+const EVENTS_API =
+    "https://data.brisbane.qld.gov.au/api/explore/v2.1/catalog/datasets/brisbane-city-council-events/records?limit=4";
+
+let loadedEvents = [];
+
+
+async function loadEventsFromAPI() {
+
+    try {
+
+        const response = await fetch(EVENTS_API);
+
+        if (!response.ok) {
+            throw new Error("API request failed: " + response.status);
+        }
+
+        const data = await response.json();
+
+        loadedEvents = data.results || [];
+
+        console.log("Events:", loadedEvents);
+
+        // IMPORTANT FOR LOCATIONS API
+        console.log(
+            "Venues:",
+            loadedEvents.map(event => event.venue)
+        );
+
+        displayAPIEvents(loadedEvents);
+
+    } catch (error) {
+
+        console.error("Error loading events:", error);
+
+    }
+}
+function displayAPIEvents(events) {
+
+    listView.innerHTML = "";
+
+    events.forEach(function (event, index) {
+
+        const name =
+            event.subject ||
+            event.title ||
+            "Brisbane Event";
+
+        // KEEP THIS AS event.venue
+        const venue =
+            event.venue ||
+            "Venue unavailable";
+
+        const startDate =
+            event.start_date ||
+            event.start ||
+            "";
+
+        const endDate =
+            event.end_date ||
+            event.end ||
+            "";
+
+        const cost =
+            event.cost ||
+            "See details";
+
+        const category =
+            event.category ||
+            "Event";
+
+        const description =
+            event.description ||
+            "More information available from Brisbane City Council.";
+
+
+        const card =
+            document.createElement("article");
+
+        card.className = "event-card";
+
+        card.innerHTML = `
+            <div class="event-card-content">
+
+                <span class="event-category">
+                    ${category}
+                </span>
+
+                <h2>${name}</h2>
+
+                <p class="event-date">
+                    ${startDate}
+                    ${endDate ? " – " + endDate : ""}
+                </p>
+
+                <p class="event-venue">
+                    ${venue}
+                </p>
+
+                <p class="event-description">
+                    ${description}
+                </p>
+
+                <div class="event-card-footer">
+
+                    <span>${cost}</span>
+
+                    <button
+                        type="button"
+                        class="view-event"
+                        data-event-index="${index}"
+                    >
+                        View Event
+                    </button>
+
+                </div>
+
+            </div>
+        `;
+
+        listView.appendChild(card);
+    });
+
+    // Add click events AFTER API cards exist
+
+    document
+        .querySelectorAll(".view-event")
+        .forEach(function (button) {
+
+            button.addEventListener("click", function () {
+
+                const index =
+                    Number(button.dataset.eventIndex);
+
+                const event =
+                    loadedEvents[index];
+
+
+                document.getElementById("detailCategory").textContent =
+                    event.category || "Event";
+
+                document.getElementById("detailName").textContent =
+                    event.subject || event.title || "Brisbane Event";
+
+                document.getElementById("detailDate").textContent =
+                    event.start_date || event.start || "Date unavailable";
+
+                // IMPORTANT: venue from Events API
+                document.getElementById("detailLocation").textContent =
+                    event.venue || "Venue unavailable";
+
+                document.getElementById("detailCost").textContent =
+                    event.cost || "See details";
+
+                document.getElementById("detailDescription").textContent =
+                    event.description || "No description available";
+
+
+                eventDetails.hidden = false;
+
+            });
+
+        });
+}
 
 // LIST VIEW
 
@@ -46,19 +209,6 @@ mapViewButton.addEventListener("click", function () {
     }, 300);
 
 });
-
-// OPEN EVENT DETAILS
-
-viewEventButtons.forEach(function (button) {
-
-    button.addEventListener("click", function () {
-
-        eventDetails.hidden = false;
-
-    });
-
-});
-
 
 // CLOSE EVENT DETAILS
 
@@ -91,3 +241,6 @@ cancelEventButton.addEventListener("click", function () {
     cancelEventButton.hidden = true;
 
 });
+
+// LOAD EVENTS FROM API
+loadEventsFromAPI();
