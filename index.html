@@ -2,58 +2,105 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Sphere</title>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>INTROSPHEER | My Sphere</title>
+
+    <link rel="stylesheet" href="css/app.css">
 
     <link rel="stylesheet" href="css/main.css">
+
 </head>
 
+
 <body>
+    <nav>
 
-    <header class="site-header">
-
-        <a href="index.html" class="site-logo">
+        <a
+            href="index.html"
+            class="nav-logo"
+        >
             INTROSPHEER
         </a>
 
-        <nav class="site-nav">
-            <a href="index.html" class="active">Home</a>
-            <a href="events.html">Events</a>
-            <a href="strings.html">Strings</a>
-            <a href="chat.html">Chat</a>
-            <a href="account.html">Account</a>
-            <a href="about.html">About</a>
-        </nav>
 
-    </header>
+        <div class="nav-links">
 
-
-    <div class="sphere-toolbar">
-
-        <div class="search-bar">
-
-            <span class="search-icon">⌕</span>
-
-            <input
-                id="search"
-                type="text"
-                placeholder="Search people, events, or interests..."
+            <a
+                href="index.html"
+                class="active"
             >
+                Home
+            </a>
+
+            <a href="events.html">
+                Events
+            </a>
+
+            <a href="strings.html">
+                Strings
+            </a>
+
+            <a href="chat.html">
+                Chat
+            </a>
+
+            <a href="account.html">
+                Account
+            </a>
+
+            <a href="about.html">
+                About
+            </a>
 
         </div>
 
+    </nav>
+
+    <header class="topbar">
+
+        <div class="search-bar">
+
+            <span class="search-icon">
+                ⌕
+            </span>
+
+
+            <div class="search-wrapper">
+
+                <input
+                    id="search"
+                    type="text"
+                    placeholder="Search people, events, or interests..."
+                    autocomplete="off"
+                >
+                <div
+                    id="searchSuggestions"
+                    class="search-suggestions"
+                    hidden
+                >
+                </div>
+
+            </div>
+
+        </div>
 
         <button
+            type="button"
             class="chat-shortcut"
             onclick="window.location.href='chat.html'"
         >
             Chats
         </button>
 
-
         <button
+            type="button"
             class="account-shortcut"
             onclick="window.location.href='account.html'"
         >
@@ -62,22 +109,27 @@
                 SS
             </div>
 
-            <span>Samuel</span>
+            <span>
+                Samuel
+            </span>
 
         </button>
 
-    </div>
+    </header>
 
-    <main class="sphere-page">
+    <main>
 
         <section id="scene">
+
 
             <div class="stars"></div>
 
 
             <div class="sphere-heading">
 
-                <h1>My Sphere</h1>
+                <h1>
+                    My Sphere
+                </h1>
 
                 <div class="heading-line"></div>
 
@@ -95,8 +147,8 @@
             <div
                 class="tooltip"
                 id="tooltip"
-            ></div>
-
+            >
+            </div>
 
             <div class="sphere-controls">
 
@@ -122,6 +174,7 @@
     >
 
         <button
+            type="button"
             class="panel-close"
             id="panelClose"
         >
@@ -148,152 +201,72 @@
                 <p
                     class="profile-location"
                     id="ploc"
-                ></p>
+                >
+                </p>
 
             </div>
 
         </div>
 
 
+
         <div class="profile-actions">
 
             <button
+                type="button"
                 class="message-button"
                 id="msg"
             >
                 Message
             </button>
 
-
-            <button
-                class="sphere-button"
-                id="viewSphere"
-            >
-                View in Sphere
-            </button>
-
         </div>
+
 
 
         <section class="profile-section">
 
-            <h3>Interests</h3>
+            <h3>
+                Interests
+            </h3>
 
             <div
                 class="interest-list"
                 id="chips"
-            ></div>
+            >
+            </div>
 
         </section>
 
 
+
         <section class="profile-section">
 
-            <h3>About</h3>
+            <h3>
+                About
+            </h3>
 
             <p id="about"></p>
 
         </section>
 
 
+
         <section class="profile-section">
 
-            <h3>Upcoming Events</h3>
+            <h3>
+                Upcoming Events
+            </h3>
 
             <div id="events"></div>
 
         </section>
 
-
-        <section class="profile-section">
-
-            <h3>Your Connection</h3>
-
-            <p id="connection"></p>
-
-        </section>
-
     </aside>
-
-    <div
-        class="chat-popup"
-        id="chatbox"
-    >
-
-        <div class="chat-popup-header">
-
-            <h3>Chats</h3>
-
-            <button id="closeChat">
-                ×
-            </button>
-
-        </div>
-
-
-        <button
-            class="chat-person"
-            data-key="zach"
-        >
-
-            <div class="chat-avatar">
-                ZT
-            </div>
-
-            <div>
-                <strong>Zach</strong>
-
-                <small>
-                    Are you going to the event?
-                </small>
-            </div>
-
-        </button>
-
-
-        <button
-            class="chat-person"
-            data-key="mike"
-        >
-
-            <div class="chat-avatar">
-                MS
-            </div>
-
-            <div>
-                <strong>Mike</strong>
-
-                <small>
-                    Boxing event looks good.
-                </small>
-            </div>
-
-        </button>
-
-
-        <button
-            class="chat-person"
-            data-key="holly"
-        >
-
-            <div class="chat-avatar">
-                HM
-            </div>
-
-            <div>
-                <strong>Holly</strong>
-
-                <small>
-                    Museum this weekend?
-                </small>
-            </div>
-
-        </button>
-
-    </div>
-
 
     <script src="js/main.js"></script>
 
+
 </body>
+
 </html>
