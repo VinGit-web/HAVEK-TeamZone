@@ -1,26 +1,327 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Strings</title>
+
+    <!-- Your main website styling -->
     <link rel="stylesheet" href="css/app.css">
+
+    <!-- Styling just for Strings -->
+    <link rel="stylesheet" href="css/strings.css">
 </head>
+
 <body>
-    
-    <!-- SIMPLE NAVBAR CODE -->
+
+    <!-- NAVBAR -->
     <nav>
-        <a href="index.html">Home</a>
-        <a href="events.html">Events</a>
-        <a href="strings.html">Strings</a>
-        <a href="chat.html">Chat</a>
-        <a href="account.html">Account</a>
-        <a href="about.html">About</a>
+        <a href="index.html" class="nav-logo">INTROSPHEER</a>
+
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="events.html">Events</a>
+            <a href="strings.html">Strings</a>
+            <a href="chat.html">Chat</a>
+            <a href="account.html">Account</a>
+            <a href="about.html">About</a>
+        </div>
     </nav>
 
-    <h1>Strings</h1>
 
-<script src="js/app.js"></script>
+    <!-- STRINGS PAGE -->
+    <main class="strings-page">
+
+        <!-- TITLE + ADD BUTTON -->
+        <div class="strings-heading">
+
+            <h1>Strings</h1>
+
+            <button
+                id="openPostForm"
+                class="add-post-button"
+                type="button"
+            >
+                +
+            </button>
+
+        </div>
+
+
+        <!-- CREATE POST FORM -->
+        <section
+            id="postFormContainer"
+            class="post-form-container hidden"
+        >
+
+            <form id="postForm">
+
+                <input
+                    type="text"
+                    id="postName"
+                    placeholder="Your name"
+                    required
+                >
+
+                <textarea
+                    id="postText"
+                    placeholder="What event are you thinking about?"
+                    required
+                ></textarea>
+
+                <input
+                    type="text"
+                    id="postEvent"
+                    placeholder="Event name"
+                    required
+                >
+
+                <input
+                    type="text"
+                    id="postLocation"
+                    placeholder="Location"
+                    required
+                >
+
+                <div class="form-buttons">
+
+                    <button
+                        type="button"
+                        id="cancelPost"
+                    >
+                        Cancel
+                    </button>
+
+                    <button type="submit">
+                        Post
+                    </button>
+
+                </div>
+
+            </form>
+
+        </section>
+
+
+        <!-- POST FEED -->
+        <section
+            id="stringsFeed"
+            class="strings-feed"
+        >
+
+
+            <!-- MIKE POST -->
+
+            <article class="string-card">
+
+                <div class="post-user">
+
+                    <div class="profile-circle">
+                        M
+                    </div>
+
+                    <h3>Mike S</h3>
+
+                </div>
+
+
+                <p class="post-message">
+                    Brisbane City Markets looks pretty good this week.
+                    Mainly going for the food honestly 😅 Anyone else keen to come along?
+                </p>
+
+
+                <div class="event-details">
+
+                    <p>
+                        <strong>Brisbane City Markets</strong>
+                    </p>
+
+                    <p>
+                        Queen Street Mall
+                    </p>
+
+                </div>
+
+
+                <div class="post-actions">
+
+                    <button class="comment-button">
+                        Comment
+                    </button>
+
+                    <button class="join-button">
+                        Join
+                    </button>
+
+                </div>
+
+            </article>
+
+
+
+            <!-- SALLY POST -->
+
+            <article class="string-card">
+
+                <div class="post-user">
+
+                    <div class="profile-circle">
+                        S
+                    </div>
+
+                    <h3>Sally S</h3>
+
+                </div>
+
+
+                <p class="post-message">
+                    I’m interested in heading to Matsuri Brisbane.
+                    The performances and cultural activities look really fun
+                    and I’d love some company!
+                </p>
+
+
+                <div class="event-details">
+
+                    <p>
+                        <strong>Matsuri Brisbane</strong>
+                    </p>
+
+                    <p>
+                        Brisbane
+                    </p>
+
+                </div>
+
+
+                <div class="post-actions">
+
+                    <button class="comment-button">
+                        Comment
+                    </button>
+
+                    <button class="join-button">
+                        Join
+                    </button>
+
+                </div>
+
+            </article>
+
+
+
+            <!-- HOLLY POST -->
+
+            <article class="string-card">
+
+                <div class="post-user">
+
+                    <div class="profile-circle">
+                        H
+                    </div>
+
+                    <h3>Holly M</h3>
+
+                </div>
+
+
+                <p class="post-message">
+                    Thinking about going to the Ferny Grove Festival.
+                    Looks like there’ll be food, live entertainment and heaps happening.
+                    Happy to meet a few people there rather than going solo :)
+                </p>
+
+
+                <div class="event-details">
+
+                    <p>
+                        <strong>Ferny Grove Festival</strong>
+                    </p>
+
+                    <p>
+                        Ferny Grove
+                    </p>
+
+                </div>
+
+
+                <div class="post-actions">
+
+                    <button class="comment-button">
+                        Comment
+                    </button>
+
+                    <button class="join-button">
+                        Join
+                    </button>
+
+                </div>
+
+            </article>
+
+
+
+            <!-- PRIYA POST -->
+
+            <article class="string-card">
+
+                <div class="post-user">
+
+                    <div class="profile-circle">
+                        P
+                    </div>
+
+                    <h3>Priya K</h3>
+
+                </div>
+
+
+                <p class="post-message">
+                    I really want to explore the Brisbane City Markets.
+                    Food stalls + walking around the city sounds like an ideal afternoon.
+                    Anyone want to join?
+                </p>
+
+
+                <div class="event-details">
+
+                    <p>
+                        <strong>Brisbane City Markets</strong>
+                    </p>
+
+                    <p>
+                        Queen Street Mall
+                    </p>
+
+                </div>
+
+
+                <div class="post-actions">
+
+                    <button class="comment-button">
+                        Comment
+                    </button>
+
+                    <button class="join-button">
+                        Join
+                    </button>
+
+                </div>
+
+            </article>
+
+
+        </section>
+
+    </main>
+
+
+    <script src="js/app.js"></script>
+    <script src="js/strings.js"></script>
+
 </body>
 
 </html>

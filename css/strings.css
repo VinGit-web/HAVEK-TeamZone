@@ -1,0 +1,251 @@
+/* ============================= */
+/* STRINGS PAGE */
+/* ============================= */
+
+.strings-page {
+    max-width: 650px;
+    margin: 0 auto;
+    padding: 30px 20px 60px;
+}
+
+
+/* ============================= */
+/* PAGE HEADING */
+/* ============================= */
+
+.strings-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    margin-bottom: 25px;
+}
+
+.strings-heading h1 {
+    margin: 0;
+}
+
+
+/* + BUTTON */
+
+.add-post-button {
+    width: 46px;
+    height: 38px;
+
+    border: 1px solid #333;
+    border-radius: 8px;
+
+    background: white;
+
+    font-size: 26px;
+
+    cursor: pointer;
+}
+
+.add-post-button:hover {
+    background: #f2f2f2;
+}
+
+
+/* ============================= */
+/* FEED */
+/* ============================= */
+
+.strings-feed {
+    display: flex;
+    flex-direction: column;
+
+    gap: 18px;
+}
+
+
+/* ============================= */
+/* POST CARD */
+/* ============================= */
+
+.string-card {
+    background: white;
+
+    border: 1px solid #d8d8d8;
+    border-radius: 12px;
+
+    padding: 18px;
+
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+
+/* ============================= */
+/* USER */
+/* ============================= */
+
+.post-user {
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+
+    margin-bottom: 14px;
+}
+
+.post-user h3 {
+    margin: 0;
+
+    font-size: 16px;
+}
+
+
+/* PROFILE CIRCLE */
+
+.profile-circle {
+    width: 42px;
+    height: 42px;
+
+    border-radius: 50%;
+
+    background: #eeeeee;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-weight: bold;
+}
+
+
+/* ============================= */
+/* POST TEXT */
+/* ============================= */
+
+.post-message {
+    margin: 10px 0 18px;
+
+    line-height: 1.5;
+
+    font-size: 15px;
+}
+
+
+/* ============================= */
+/* EVENT INFO */
+/* ============================= */
+
+.event-details {
+    font-size: 14px;
+
+    margin-bottom: 14px;
+}
+
+.event-details p {
+    margin: 4px 0;
+}
+
+
+/* ============================= */
+/* ACTION BUTTONS */
+/* ============================= */
+
+.post-actions {
+    display: flex;
+
+    justify-content: flex-end;
+    align-items: center;
+
+    gap: 10px;
+}
+
+
+.join-button,
+.comment-button {
+    padding: 8px 16px;
+
+    border-radius: 7px;
+
+    border: 1px solid #444;
+
+    background: white;
+
+    cursor: pointer;
+}
+
+
+.join-button:hover,
+.comment-button:hover {
+    background: #f0f0f0;
+}
+
+
+/* ============================= */
+/* CREATE POST FORM */
+/* ============================= */
+
+.post-form-container {
+    background: white;
+
+    border: 1px solid #ddd;
+    border-radius: 12px;
+
+    padding: 20px;
+
+    margin-bottom: 20px;
+}
+
+
+.post-form-container form {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 12px;
+}
+
+
+.post-form-container input,
+.post-form-container textarea {
+    width: 100%;
+
+    box-sizing: border-box;
+
+    padding: 11px;
+
+    border: 1px solid #ccc;
+    border-radius: 7px;
+
+    font-family: inherit;
+}
+
+
+.post-form-container textarea {
+    min-height: 100px;
+
+    resize: vertical;
+}
+
+
+.form-buttons {
+    display: flex;
+
+    justify-content: flex-end;
+
+    gap: 10px;
+}
+
+
+.form-buttons button {
+    padding: 9px 18px;
+
+    border-radius: 7px;
+
+    border: 1px solid #444;
+
+    background: white;
+
+    cursor: pointer;
+}
+
+
+/* hide create form */
+
+.hidden {
+    display: none;
+}

@@ -6,27 +6,211 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Events</title>
     <link rel="stylesheet" href="css/app.css">
+    <link rel="stylesheet" href="css/events.css">
 </head>
 
 <body>
-    <!-- SIMPLE NAVBAR CODE -->
+    <!-- NAVBAR -->
     <nav>
-        <a href="index.html">Home</a>
-        <a href="events.html">Events</a>
-        <a href="strings.html">Strings</a>
-        <a href="chat.html">Chat</a>
-        <a href="account.html">Account</a>
-        <a href="about.html">About</a>
+        <a href="index.html" class="nav-logo">INTROSPHEER</a>
+
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="events.html">Events</a>
+            <a href="strings.html">Strings</a>
+            <a href="chat.html">Chat</a>
+            <a href="account.html">Account</a>
+            <a href="about.html">About</a>
+        </div>
     </nav>
 
-    <h1>Events</h1>
+    <main class="events-container">
 
-    <div class="view-toggle">
-        <button type="button">List View</button>
-        <button type="button">Map View</button>
-    </div>
+        <div class="events-heading">
+            <div>
+                <h1>Discover Events</h1>
+                <p>Find local events and meet people with similar interests.</p>
+            </div>
 
-    <script src="js/app.js"></script>
+            <div class="view-toggle">
+                <button type="button" id="listViewButton">List View</button>
+                <button type="button" id="mapViewButton">Map View</button>
+            </div>
+        </div>
+
+
+        <!-- SEARCH AND FILTERS -->
+        <section class="event-filters">
+
+            <input type="search" id="eventSearch" placeholder="Search events...">
+
+            <select id="eventCategory">
+                <option value="all">All categories</option>
+                <option value="social">Social</option>
+                <option value="fitness">Fitness</option>
+                <option value="creative">Creative</option>
+                <option value="community">Community</option>
+            </select>
+
+            <select id="eventCost">
+                <option value="all">Any cost</option>
+                <option value="free">Free</option>
+                <option value="paid">Paid</option>
+            </select>
+
+        </section>
+
+
+        <!-- LIST VIEW -->
+        <section id="listView" class="event-list">
+
+            <article class="event-card">
+                <div class="event-card-content">
+                    <span class="event-category">Social</span>
+
+                    <h2>Book Club</h2>
+
+                    <p class="event-date">19 September 2026 · 2:00pm–5:00pm</p>
+
+                    <p>Brisbane Square Library</p>
+
+                    <p class="event-description">
+                        Join others to discuss weekly book readings,
+                        favourite quotes and recommendations.
+                    </p>
+
+                    <div class="event-card-footer">
+                        <span>Free</span>
+
+                        <button type="button" class="view-event">
+                            View Event
+                        </button>
+                    </div>
+                </div>
+            </article>
+
+
+            <article class="event-card">
+                <div class="event-card-content">
+                    <span class="event-category">Community</span>
+
+                    <h2>Brisbane City Markets</h2>
+
+                    <p class="event-date">23 September 2026 · 8:00am–2:00pm</p>
+
+                    <p>Queen Street Mall</p>
+
+                    <p class="event-description">
+                        Explore local food stalls, markets and the city
+                        with other people from the community.
+                    </p>
+
+                    <div class="event-card-footer">
+                        <span>Free</span>
+
+                        <button type="button" class="view-event">
+                            View Event
+                        </button>
+                    </div>
+                </div>
+            </article>
+
+
+            <article class="event-card">
+                <div class="event-card-content">
+                    <span class="event-category">Fitness</span>
+
+                    <h2>Social River Walk</h2>
+
+                    <p class="event-date">26 September 2026 · 9:00am–11:00am</p>
+
+                    <p>South Bank Parklands</p>
+
+                    <p class="event-description">
+                        A relaxed walk along the Brisbane River for people
+                        looking to get outside and meet others.
+                    </p>
+
+                    <div class="event-card-footer">
+                        <span>Free</span>
+
+                        <button type="button" class="view-event">
+                            View Event
+                        </button>
+                    </div>
+                </div>
+            </article>
+
+
+            <article class="event-card">
+                <div class="event-card-content">
+                    <span class="event-category">Creative</span>
+
+                    <h2>Beginner Pottery Workshop</h2>
+
+                    <p class="event-date">3 October 2026 · 1:00pm–3:00pm</p>
+
+                    <p>West End Community Centre</p>
+
+                    <p class="event-description">
+                        Learn the basics of pottery in a small group
+                        workshop designed for beginners.
+                    </p>
+
+                    <div class="event-card-footer">
+                        <span>$15</span>
+
+                        <button type="button" class="view-event">
+                            View Event
+                        </button>
+                    </div>
+                </div>
+            </article>
+
+        </section>
+
+
+        <!-- MAP VIEW -->
+        <section id="mapView" class="map-view" hidden>
+
+            <div id="eventMap">
+                <p>Map loading area</p>
+            </div>
+
+        </section>
+
+
+        <!-- EVENT DETAILS -->
+        <section id="eventDetails" class="event-full-details" hidden>
+
+            <button type="button" id="closeEventDetails">
+                ← Back to events
+            </button>
+
+            <span class="event-category">Social</span>
+
+            <h2>Book Club</h2>
+
+            <p>19 September 2026 · 2:00pm–5:00pm</p>
+            <p>Brisbane Square Library</p>
+            <p>Free · Bookings required</p>
+
+            <h3>About this event</h3>
+
+            <p>
+                Join others to discuss weekly book readings,
+                favourite quotes and recommendations.
+            </p>
+
+            <button type="button" class="book-event">
+                Book Event
+            </button>
+
+        </section>
+
+    </main>
+
+    <script src="js/events.js"></script>
 </body>
 
 
