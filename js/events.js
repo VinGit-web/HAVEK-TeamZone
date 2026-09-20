@@ -64,8 +64,23 @@ fetch(locationsURL)
         console.log("BCC EVENT LOCATIONS:");
         console.log(data);
 
+        // ADD BCC LOCATIONS TO MAP
         data.results.forEach(function (location) {
-            console.log(location);
+
+            if (location.latitude && location.longitude) {
+
+                L.marker(
+                    [location.latitude, location.longitude],
+                    { icon: sphereMarker }
+                )
+                    .addTo(eventMap)
+                    .bindPopup(
+                        "<strong>" + location.venue_name + "</strong><br>" +
+                        location.venue_address
+                    );
+
+            }
+
         });
 
     })
