@@ -112,3 +112,419 @@ nav {
     font-size: 20px;
     margin: 0;
 }
+
+/* CHAT LIST */
+
+.chat-page {
+    max-width: 500px;
+    margin: 40px auto;
+    padding: 20px;
+}
+
+.chat-page h1 {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.chat-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.chat-card {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+
+    padding: 18px 20px;
+
+    background-color: white;
+
+    border: 1px solid #ddd;
+    border-radius: 15px;
+
+    cursor: pointer;
+}
+
+.chat-card:hover {
+    background-color: #f5f5f5;
+}
+
+.profile-image {
+    width: 55px;
+    height: 55px;
+
+    border-radius: 50%;
+
+    background-color: #c4d9ec;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    font-weight: bold;
+    color: #59636f;
+}
+
+
+/* CONVERSATION PAGE */
+
+.conversation-page {
+    display: none;
+
+    max-width: 600px;
+    height: 75vh;
+
+    margin: 30px auto;
+
+    background-color: white;
+
+    border-radius: 18px;
+
+    overflow: hidden;
+
+    border: 1px solid #ddd;
+
+    flex-direction: column;
+}
+
+
+/* CHAT HEADER */
+
+.conversation-header {
+    display: flex;
+    align-items: center;
+
+    padding: 15px 20px;
+
+    background-color: #fff7ea;
+
+    border-bottom: 1px solid #ddd;
+}
+
+#back-button {
+    border: none;
+    background: none;
+
+    font-size: 26px;
+
+    cursor: pointer;
+
+    margin-right: 15px;
+}
+
+.conversation-profile {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.conversation-profile h2 {
+    margin: 0;
+    font-size: 20px;
+}
+
+.online-status {
+    margin: 3px 0 0;
+    font-size: 13px;
+    color: #777;
+}
+
+
+/* MESSAGE AREA */
+
+.conversation-messages {
+    flex: 1;
+
+    padding: 20px;
+
+    overflow-y: auto;
+
+    background-color: #fafafa;
+
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+
+/* RECEIVED MESSAGE */
+
+.received-message {
+    align-self: flex-start;
+
+    background-color: #d4dcc8;
+
+    padding: 10px 15px;
+
+    border-radius: 18px 18px 18px 4px;
+
+    max-width: 70%;
+}
+
+
+/* SENT MESSAGE */
+
+.sent-message {
+    align-self: flex-end;
+
+    background-color: #c4d9ec;
+
+    padding: 10px 15px;
+
+    border-radius: 18px 18px 4px 18px;
+
+    max-width: 70%;
+}
+
+
+/* MESSAGE INPUT */
+
+.chat-input-area {
+    display: flex;
+    gap: 10px;
+
+    padding: 15px;
+
+    border-top: 1px solid #ddd;
+
+    background-color: white;
+}
+
+.chat-input-area input {
+    flex: 1;
+
+    padding: 12px;
+
+    border: 1px solid #ccc;
+    border-radius: 20px;
+
+    outline: none;
+}
+
+.chat-input-area button {
+    width: 45px;
+    height: 45px;
+
+    border: none;
+    border-radius: 50%;
+
+    background-color: #59636f;
+    color: white;
+
+    cursor: pointer;
+
+    font-size: 18px;
+}
+
+/* ABOUT PAGE */
+
+.about-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 80px 60px;
+}
+
+.about-intro {
+    max-width: 800px;
+    margin-bottom: 70px;
+}
+
+.about-label {
+    color: #9fc9e8;
+    font-weight: bold;
+    letter-spacing: 2px;
+    font-size: 14px;
+    margin-bottom: 12px;
+}
+
+.about-intro h1 {
+    font-size: 48px;
+    margin: 0 0 20px;
+}
+
+.about-description {
+    font-size: 18px;
+    line-height: 1.7;
+    color: #5f6873;
+}
+
+
+/* TEAM SECTION */
+
+.team-section {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 60px;
+    align-items: center;
+    margin-bottom: 100px;
+}
+
+.team-photo-container {
+    width: 100%;
+}
+
+.team-photo {
+    width: 100%;
+    display: block;
+    border-radius: 20px;
+}
+
+.team-content h2 {
+    font-size: 36px;
+    margin: 0 0 20px;
+}
+
+.team-content p {
+    color: #5f6873;
+    line-height: 1.7;
+    font-size: 17px;
+}
+
+
+/* REFERENCES */
+
+.references-section {
+    text-align: center;
+    background: #f5f9fc;
+    border-radius: 20px;
+    padding: 60px 30px;
+}
+
+.references-section h2 {
+    font-size: 32px;
+    margin-bottom: 10px;
+}
+
+.references-section p {
+    color: #69737e;
+}
+
+.reference-button {
+    margin-top: 20px;
+    padding: 14px 24px;
+    border: none;
+    border-radius: 10px;
+    background: #b9d8ef;
+    color: #34495e;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.reference-button:hover {
+    opacity: 0.8;
+}
+
+/* REFERENCE POPUP */
+
+.reference-modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.45);
+    align-items: center;
+    justify-content: center;
+}
+
+.reference-modal.show {
+    display: flex;
+}
+
+.reference-modal-content {
+    background: white;
+    width: 80%;
+    max-width: 750px;
+    max-height: 75vh;
+    overflow-y: auto;
+    padding: 45px;
+    border-radius: 20px;
+    position: relative;
+}
+
+.reference-modal-content h2 {
+    font-size: 32px;
+    margin-top: 0;
+}
+
+.close-reference {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    background: none;
+    border: none;
+    font-size: 32px;
+    cursor: pointer;
+    color: #555;
+}
+
+.apa-note {
+    color: #777;
+    margin-bottom: 30px;
+}
+
+.reference-list p {
+    line-height: 1.6;
+    margin-bottom: 20px;
+    padding-left: 35px;
+    text-indent: -35px;
+}
+
+.reference-list a {
+    color: #7faed0;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.reference-list a:hover {
+    text-decoration: underline;
+}
+
+/* UNSEND BUTTON */
+
+.unsend-btn {
+    display: none;
+    background: none;
+    border: none;
+    color: #777;
+    font-size: 12px;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+.sent-message:hover .unsend-btn {
+    display: inline;
+}
+
+.unsend-btn:hover {
+    color: #d9534f;
+    text-decoration: underline;
+}
+
+/* MOBILE */
+
+@media (max-width: 800px) {
+
+    .about-page {
+        padding: 50px 25px;
+    }
+
+    .about-intro h1 {
+        font-size: 36px;
+    }
+
+    .team-section {
+        grid-template-columns: 1fr;
+        gap: 30px;
+    }
+
+    .reference-modal-content {
+        width: 85%;
+        padding: 30px;
+    }
+}

@@ -113,7 +113,7 @@ function loadMessages() {
 
     messages.innerHTML = "";
 
-    conversations[currentChat].forEach(function(message) {
+    conversations[currentChat].forEach(function(message, index) {
 
         const messageElement = document.createElement("div");
 
@@ -125,7 +125,22 @@ function loadMessages() {
 
         messageElement.textContent = message.text;
 
-        messages.appendChild(messageElement);
+        if (message.type === "sent") {
+    const unsendButton = document.createElement("button");
+
+    unsendButton.textContent = "Unsend";
+    unsendButton.classList.add("unsend-btn");
+
+    unsendButton.addEventListener("click", function () {
+        conversations[currentChat].splice(index, 1);
+        loadMessages();
+    });
+
+    messageElement.appendChild(unsendButton);
+}
+
+messages.appendChild(messageElement);
+
     });
 
     messages.scrollTop = messages.scrollHeight;
