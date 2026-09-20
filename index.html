@@ -2,93 +2,48 @@
 <html lang="en">
 
 <head>
-
     <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
-
-    <title>INTROSPHEER | My Sphere</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>INTROSPHEER</title>
 
     <link rel="stylesheet" href="css/app.css">
-
     <link rel="stylesheet" href="css/main.css">
-
 </head>
 
-
 <body>
+
     <nav>
-
-        <a
-            href="index.html"
-            class="nav-logo"
-        >
-            INTROSPHEER
-        </a>
-
+        <a href="index.html" class="nav-logo">INTROSPHEER</a>
 
         <div class="nav-links">
-
-            <a
-                href="index.html"
-                class="active"
-            >
-                Home
-            </a>
-
-            <a href="events.html">
-                Events
-            </a>
-
-            <a href="strings.html">
-                Strings
-            </a>
-
-            <a href="chat.html">
-                Chat
-            </a>
-
-            <a href="account.html">
-                Account
-            </a>
-
-            <a href="about.html">
-                About
-            </a>
-
+            <a href="index.html" class="active">Home</a>
+            <a href="events.html">Events</a>
+            <a href="strings.html">Strings</a>
+            <a href="chat.html">Chat</a>
+            <a href="account.html">Account</a>
+            <a href="about.html">About</a>
         </div>
-
     </nav>
 
-    <header class="topbar">
+    <header class="home-toolbar">
 
         <div class="search-bar">
-
-            <span class="search-icon">
-                ⌕
-            </span>
-
+            <span class="search-icon">⌕</span>
 
             <div class="search-wrapper">
-
                 <input
                     id="search"
                     type="text"
                     placeholder="Search people, events, or interests..."
                     autocomplete="off"
                 >
+
                 <div
                     id="searchSuggestions"
                     class="search-suggestions"
                     hidden
-                >
-                </div>
-
+                ></div>
             </div>
-
         </div>
 
         <button
@@ -104,15 +59,8 @@
             class="account-shortcut"
             onclick="window.location.href='account.html'"
         >
-
-            <div class="small-avatar">
-                SS
-            </div>
-
-            <span>
-                Samuel
-            </span>
-
+            <div class="small-avatar">SS</div>
+            <span>Samuel</span>
         </button>
 
     </header>
@@ -121,47 +69,31 @@
 
         <section id="scene">
 
-
             <div class="stars"></div>
 
-
             <div class="sphere-heading">
-
-                <h1>
-                    My Sphere
-                </h1>
+                <h1>My Sphere</h1>
 
                 <div class="heading-line"></div>
 
                 <p>
-                    People you've met, people you'll meet,
-                    and the experiences in between.
+                    People you've met, people you'll meet, and the experiences in between.
                 </p>
-
             </div>
 
-
             <canvas id="canvas"></canvas>
-
 
             <div
                 class="tooltip"
                 id="tooltip"
-            >
-            </div>
+            ></div>
 
             <div class="sphere-controls">
-
                 Drag to rotate
-
                 <span>•</span>
-
                 Scroll to zoom
-
                 <span>•</span>
-
                 Click a profile
-
             </div>
 
         </section>
@@ -181,7 +113,6 @@
             ×
         </button>
 
-
         <div class="profile-header">
 
             <div
@@ -191,27 +122,23 @@
                 ?
             </div>
 
-
             <div class="profile-name-area">
-
-                <h2 id="pname">
-                    Profile
-                </h2>
-
+                <h2 id="pname">Profile</h2>
                 <p
                     class="profile-location"
                     id="ploc"
-                >
-                </p>
-
+                ></p>
             </div>
 
         </div>
 
-
+        <div class="profile-meta">
+            <span id="pAge"></span>
+            <span id="pGender"></span>
+            <span id="pMbti"></span>
+        </div>
 
         <div class="profile-actions">
-
             <button
                 type="button"
                 class="message-button"
@@ -219,53 +146,37 @@
             >
                 Message
             </button>
-
         </div>
 
-
-
         <section class="profile-section">
-
-            <h3>
-                Interests
-            </h3>
-
+            <h3>Interests</h3>
             <div
                 class="interest-list"
                 id="chips"
-            >
-            </div>
-
+            ></div>
         </section>
 
-
-
         <section class="profile-section">
-
-            <h3>
-                About
-            </h3>
-
+            <h3>About</h3>
             <p id="about"></p>
-
         </section>
 
-
+        <section class="profile-section">
+            <h3>Upcoming Event</h3>
+            <div
+                class="profile-event"
+                id="events"
+            ></div>
+        </section>
 
         <section class="profile-section">
-
-            <h3>
-                Upcoming Events
-            </h3>
-
-            <div id="events"></div>
-
+            <h3>Your Connection</h3>
+            <p id="connection"></p>
         </section>
 
     </aside>
 
     <script src="js/main.js"></script>
-
 
 </body>
 
