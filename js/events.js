@@ -37,7 +37,7 @@ L.tileLayer(
 // CUSTOM EVENT MARKER
 
 const sphereMarker = L.icon({
-    iconUrl: "images/sphere_marker.jpg",
+    iconUrl: "images/sphere_marker.png",
     iconSize: [45, 45],
     iconAnchor: [22, 45],
     popupAnchor: [0, -45]
