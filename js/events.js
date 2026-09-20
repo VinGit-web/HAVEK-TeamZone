@@ -16,6 +16,78 @@ const bookEventButton = document.getElementById("bookEventButton");
 const cancelEventButton = document.getElementById("cancelEventButton");
 const attendanceStatus = document.getElementById("attendanceStatus");
 
+// MAP SETUP
+
+const eventMap = L.map("eventMap").setView([-27.4698, 153.0251], 13);
+
+
+// MAPBOX TILES
+
+L.tileLayer(
+    "https://api.mapbox.com/styles/v1/mapbox/streets-v12/tiles/512/{z}/{x}/{y}?access_token=" + MAPBOX_TOKEN,
+    {
+        attribution: "Map data © OpenStreetMap contributors, Imagery © Mapbox",
+        maxZoom: 18,
+        tileSize: 512,
+        zoomOffset: -1
+    }
+).addTo(eventMap);
+
+
+// CUSTOM EVENT MARKER
+
+const sphereMarker = L.icon({
+    iconUrl: "images/sphere_marker.jpg",
+    iconSize: [45, 45],
+    iconAnchor: [22, 45],
+    popupAnchor: [0, -45]
+});
+
+
+// BCC EVENT LOCATIONS API
+
+const LOCATIONS_API =
+    "https://data.brisbane.qld.gov.au/api/explore/v2.1/catalog/datasets/brisbane-city-council-events-locations/records?limit=100";
+
+fetch(LOCATIONS_API)
+    .then(function (response) {
+
+        if (!response.ok) {
+            throw new Error("BCC locations API request failed");
+        }
+
+        return response.json();
+
+    })
+    .then(function (data) {
+
+        console.log("BCC EVENT LOCATIONS:", data);
+
+        data.results.forEach(function (location) {
+
+            if (location.latitude && location.longitude) {
+
+                L.marker(
+                    [location.latitude, location.longitude],
+                    { icon: sphereMarker }
+                )
+                .addTo(eventMap)
+                .bindPopup(
+                    "<strong>" + location.venue_name + "</strong><br>" +
+                    location.venue_address
+                );
+
+            }
+
+        });
+
+    })
+    .catch(function (error) {
+
+        console.error("Error loading BCC event locations:", error);
+
+    });
+
 // BRISBANE CITY COUNCIL EVENTS API//
 
 const EVENTS_API =
