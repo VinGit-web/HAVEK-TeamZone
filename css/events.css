@@ -20,7 +20,10 @@
 
     opacity: 1;
     visibility: visible;
-    transition: opacity 0.5s ease, visibility 0.5s ease;
+
+    transition:
+        opacity 0.5s ease,
+        visibility 0.5s ease;
 
     display: flex;
     justify-content: center;
@@ -33,11 +36,10 @@
     font-weight: 500;
 }
 
-/* HIDE LOADING OVERLAY ONCE EVENTS HAVE LOADED */
-
 body.loaded #loading {
     opacity: 0;
     visibility: hidden;
+    pointer-events: none;
 }
 
 .events-container {
