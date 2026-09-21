@@ -2,7 +2,11 @@
 
 
 // GET PAGE ELEMENTS
-
+window.addEventListener("load", function () {
+    setTimeout(function () {
+        document.body.classList.add("loaded");
+    }, 1200);
+});
 const listViewButton = document.getElementById("listViewButton");
 const mapViewButton = document.getElementById("mapViewButton");
 
@@ -95,7 +99,6 @@ const EVENTS_API =
 
 let loadedEvents = [];
 
-
 async function loadEventsFromAPI() {
 
     try {
@@ -112,26 +115,35 @@ async function loadEventsFromAPI() {
 
         console.log("Events:", loadedEvents);
 
-        // IMPORTANT FOR LOCATIONS API //
         console.log(
             "Venues:",
-            loadedEvents.map(event => event.venue)
+            loadedEvents.map(function (event) {
+                return event.venue;
+            })
         );
 
         displayAPIEvents(loadedEvents);
 
-        // HIDE LOADING OVERLAY AFTER EVENTS LOAD
+    } catch (error) {
+
+        console.error("Error loading events:", error);
+
+        listView.innerHTML = `
+            <p class="event-load-error">
+                Events could not be loaded. Please try again.
+            </p>
+        `;
+
+    } finally {
+
         setTimeout(function () {
             document.body.classList.add("loaded");
         }, 500);
 
-    } catch (error) {
-        console.error("Error loading events:", error);
-
-        // HIDE LOADING OVERLAY IF API FAILS
-        document.body.classList.add("loaded");
     }
+
 }
+
 function displayAPIEvents(events) {
 
     listView.innerHTML = "";
