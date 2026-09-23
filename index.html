@@ -4,177 +4,264 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>INTROSPHEER</title>
-
-    <link rel="stylesheet" href="css/app.css">
+    <title>INTROSPHEER | Home</title>
     <link rel="stylesheet" href="css/main.css">
 </head>
 
 <body>
 
-    <nav>
-        <a href="index.html" class="nav-logo">INTROSPHEER</a>
+    <main class="home-page">
 
-        <div class="nav-links">
-            <a href="index.html" class="active">Home</a>
-            <a href="events.html">Events</a>
-            <a href="strings.html">Strings</a>
-            <a href="chat.html">Chat</a>
-            <a href="account.html">Account</a>
-            <a href="about.html">About</a>
-        </div>
-    </nav>
+        <header class="home-header">
 
-    <header class="home-toolbar">
+            <a href="index.html" class="logo">
+                <div class="logo-circle">
+                    <span>✦</span>
+                </div>
+                <span class="logo-text">INTROSPHEER</span>
+            </a>
 
-        <div class="search-bar">
-            <span class="search-icon">⌕</span>
+            <nav class="navbar">
+                <a href="index.html" class="active">Home</a>
+                <a href="events.html">Events</a>
+                <a href="strings.html">Strings</a>
+                <a href="chat.html">Chat</a>
+                <a href="account.html">Accounts</a>
+            </nav>
 
-            <div class="search-wrapper">
+        </header>
+
+
+        <aside class="left-controls">
+
+            <button
+                class="account-button"
+                type="button"
+                onclick="window.location.href='account.html'"
+            >
+                <span class="account-avatar">SS</span>
+                <span>Samuel</span>
+            </button>
+
+
+            <div class="search-container">
+
                 <input
-                    id="search"
-                    type="text"
-                    placeholder="Search people, events, or interests..."
+                    type="search"
+                    id="homeSearch"
+                    placeholder="Search People, Events or interests..."
                     autocomplete="off"
                 >
 
                 <div
                     id="searchSuggestions"
                     class="search-suggestions"
-                    hidden
                 ></div>
+
             </div>
-        </div>
 
-        <button
-            type="button"
-            class="chat-shortcut"
-            onclick="window.location.href='chat.html'"
-        >
-            Chats
-        </button>
+        </aside>
 
-        <button
-            type="button"
-            class="account-shortcut"
-            onclick="window.location.href='account.html'"
-        >
-            <div class="small-avatar">SS</div>
-            <span>Samuel</span>
-        </button>
 
-    </header>
-
-    <main>
-
-        <section id="scene">
-
-            <div class="stars"></div>
+        <section class="sphere-content">
 
             <div class="sphere-heading">
+
                 <h1>My Sphere</h1>
 
                 <div class="heading-line"></div>
 
                 <p>
-                    People you've met, people you'll meet, and the experiences in between.
+                    People you've met, people you'll meet,
+                    and the experiences in between
                 </p>
+
             </div>
 
-            <canvas id="canvas"></canvas>
 
-            <div
-                class="tooltip"
-                id="tooltip"
-            ></div>
+            <div class="sphere-wrapper">
+
+                <canvas id="canvas"></canvas>
+
+                <div
+                    class="tooltip"
+                    id="tooltip"
+                ></div>
+
+            </div>
+
 
             <div class="sphere-controls">
-                    Drag to rotate
-                    <span>•</span>
-                    Pinch to zoom
-                    <span>•</span>
-                    Click a profile
+
+                <span>Drag to rotate</span>
+
+                <span class="control-dot">•</span>
+
+                <span>Pinch to zoom</span>
+
+                <span class="control-dot">•</span>
+
+                <span>Click a profile</span>
+
             </div>
 
         </section>
+
+
+        <button
+            class="info-button"
+            id="infoButton"
+            type="button"
+        >
+            i
+        </button>
+
+
+        <div
+            class="info-popup"
+            id="infoPopup"
+        >
+
+            <button
+                id="closeInfo"
+                class="info-close"
+                type="button"
+            >
+                ×
+            </button>
+
+            <h3>My Sphere</h3>
+
+            <p>
+                Your Sphere visualises people you have connected with
+                and potential connections.
+            </p>
+
+            <p>
+                Drag the Sphere to rotate it and select a profile
+                to learn more about that person.
+            </p>
+
+            <p>
+                Locked profiles represent people you have not connected
+                with yet.
+            </p>
+
+        </div>
+
+
+        <aside
+            class="profile-panel"
+            id="profilePanel"
+        >
+
+            <button
+                class="panel-close"
+                id="panelClose"
+                type="button"
+            >
+                ×
+            </button>
+
+
+            <div class="profile-header">
+
+                <div
+                    class="profile-avatar"
+                    id="profileAvatar"
+                >
+                    ?
+                </div>
+
+                <div class="profile-title">
+
+                    <h2 id="profileName">
+                        Profile
+                    </h2>
+
+                    <p id="profileLocation"></p>
+
+                </div>
+
+            </div>
+
+
+            <div class="profile-details">
+
+                <div class="profile-detail">
+                    <span>Age</span>
+                    <strong id="profileAge">-</strong>
+                </div>
+
+                <div class="profile-detail">
+                    <span>MBTI</span>
+                    <strong id="profileMBTI">-</strong>
+                </div>
+
+            </div>
+
+
+            <div class="profile-actions">
+
+                <button
+                    id="messageButton"
+                    type="button"
+                >
+                    Message
+                </button>
+
+                <button
+                    id="viewSphereButton"
+                    type="button"
+                >
+                    View in Sphere
+                </button>
+
+            </div>
+
+
+            <section class="profile-section">
+
+                <h3>Interests</h3>
+
+                <div
+                    id="profileInterests"
+                    class="interest-list"
+                ></div>
+
+            </section>
+
+
+            <section class="profile-section">
+
+                <h3>About</h3>
+
+                <p id="profileAbout"></p>
+
+            </section>
+
+
+            <section class="profile-section">
+
+                <h3>Upcoming Events</h3>
+
+                <div id="profileEvents"></div>
+
+            </section>
+
+
+            <section class="profile-section">
+
+                <h3>Your Connection</h3>
+
+                <p id="profileConnection"></p>
+
+            </section>
+
+        </aside>
 
     </main>
 
-    <aside
-        class="profile-panel"
-        id="profilePanel"
-    >
-
-        <button
-            type="button"
-            class="panel-close"
-            id="panelClose"
-        >
-            ×
-        </button>
-
-        <div class="profile-header">
-
-            <div
-                class="profile-avatar"
-                id="avatar"
-            >
-                ?
-            </div>
-
-            <div class="profile-name-area">
-                <h2 id="pname">Profile</h2>
-                <p
-                    class="profile-location"
-                    id="ploc"
-                ></p>
-            </div>
-
-        </div>
-
-        <div class="profile-meta">
-            <span id="pAge"></span>
-            <span id="pGender"></span>
-            <span id="pMbti"></span>
-        </div>
-
-        <div class="profile-actions">
-            <button
-                type="button"
-                class="message-button"
-                id="msg"
-            >
-                Message
-            </button>
-        </div>
-
-        <section class="profile-section">
-            <h3>Interests</h3>
-            <div
-                class="interest-list"
-                id="chips"
-            ></div>
-        </section>
-
-        <section class="profile-section">
-            <h3>About</h3>
-            <p id="about"></p>
-        </section>
-
-        <section class="profile-section">
-            <h3>Upcoming Event</h3>
-            <div
-                class="profile-event"
-                id="events"
-            ></div>
-        </section>
-
-        <section class="profile-section">
-            <h3>Your Connection</h3>
-            <p id="connection"></p>
-        </section>
-
-    </aside>
 
     <script src="js/main.js"></script>
 
