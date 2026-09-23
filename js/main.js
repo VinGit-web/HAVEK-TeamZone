@@ -1727,3 +1727,43 @@ async function initialiseHomePage() {
 
 
 initialiseHomePage();
+
+const openAbout = document.getElementById("openAbout");
+const aboutOverlay = document.getElementById("aboutOverlay");
+const closeAbout = document.getElementById("closeAbout");
+const openReferences = document.getElementById("openReferences");
+const referenceList = document.getElementById("referenceList");
+
+openAbout.addEventListener("click", function () {
+    aboutOverlay.classList.add("show");
+    document.body.style.overflow = "hidden";
+});
+
+closeAbout.addEventListener("click", function () {
+    aboutOverlay.classList.remove("show");
+    document.body.style.overflow = "";
+});
+
+aboutOverlay.addEventListener("click", function (event) {
+    if (event.target === aboutOverlay) {
+        aboutOverlay.classList.remove("show");
+        document.body.style.overflow = "";
+    }
+});
+
+openReferences.addEventListener("click", function () {
+    const isHidden = referenceList.hidden;
+
+    referenceList.hidden = !isHidden;
+
+    openReferences.textContent = isHidden
+        ? "Hide APA 7 Reference List"
+        : "View APA 7 Reference List";
+});
+
+document.addEventListener("keydown", function (event) {
+    if (event.key === "Escape") {
+        aboutOverlay.classList.remove("show");
+        document.body.style.overflow = "";
+    }
+});
