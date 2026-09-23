@@ -15,9 +15,7 @@
         <header class="home-header">
 
             <a href="index.html" class="logo">
-                <div class="logo-circle">
-                    <span>✦</span>
-                </div>
+                <div class="logo-circle">✦</div>
                 <span class="logo-text">INTROSPHEER</span>
             </a>
 
@@ -31,18 +29,12 @@
 
         </header>
 
-
         <aside class="left-controls">
 
-            <button
-                class="account-button"
-                type="button"
-                onclick="window.location.href='account.html'"
-            >
+            <button class="account-button" type="button">
                 <span class="account-avatar">SS</span>
                 <span>Samuel</span>
             </button>
-
 
             <div class="search-container">
 
@@ -62,7 +54,6 @@
 
         </aside>
 
-
         <section class="sphere-content">
 
             <div class="sphere-heading">
@@ -72,12 +63,10 @@
                 <div class="heading-line"></div>
 
                 <p>
-                    People you've met, people you'll meet,
-                    and the experiences in between
+                    People you've met, people you'll meet, and the experiences in between
                 </p>
 
             </div>
-
 
             <div class="sphere-wrapper">
 
@@ -90,178 +79,249 @@
 
             </div>
 
-
             <div class="sphere-controls">
 
                 <span>Drag to rotate</span>
-
                 <span class="control-dot">•</span>
-
                 <span>Pinch to zoom</span>
-
                 <span class="control-dot">•</span>
-
                 <span>Click a profile</span>
 
             </div>
 
         </section>
 
-
         <button
             class="info-button"
-            id="infoButton"
+            id="openAbout"
             type="button"
+            aria-label="About INTROSPHEER"
         >
             i
         </button>
 
+    </main>
 
-        <div
-            class="info-popup"
-            id="infoPopup"
-        >
+    <div class="about-overlay" id="aboutOverlay">
+
+        <div class="about-modal">
 
             <button
-                id="closeInfo"
-                class="info-close"
+                class="about-close"
+                id="closeAbout"
                 type="button"
+                aria-label="Close About"
             >
                 ×
             </button>
 
-            <h3>My Sphere</h3>
+            <div class="about-scroll">
 
-            <p>
-                Your Sphere visualises people you have connected with
-                and potential connections.
-            </p>
+                <section class="about-intro">
 
-            <p>
-                Drag the Sphere to rotate it and select a profile
-                to learn more about that person.
-            </p>
+                    <p class="about-label">ABOUT US</p>
 
-            <p>
-                Locked profiles represent people you have not connected
-                with yet.
-            </p>
+                    <h1>Meet the team behind INTROSPHEER</h1>
+
+                    <p class="about-description">
+                        INTROSPHEER is made to help people create meaningful
+                        social bonds through shared interests, events and
+                        conversation. We aim to build a welcoming environment
+                        where users can find things to do, meet others and feel
+                        more willing to get involved.
+                    </p>
+
+                </section>
+
+                <section class="team-section">
+
+                    <div class="team-photo-container">
+
+                        <img
+                            src="images/team-photo.jpeg"
+                            alt="The INTROSPHEER project team working together"
+                            class="team-photo"
+                        >
+
+                    </div>
+
+                    <div class="team-content">
+
+                        <p class="about-label">OUR TEAM</p>
+
+                        <h2>Built together.</h2>
+
+                        <p>
+                            INTROSPHEER was developed as a collaborative effort
+                            of our team for our university project. We worked
+                            together to create an experience that makes social
+                            interaction easier and more approachable through
+                            research, design, prototyping, testing and
+                            development.
+                        </p>
+
+                        <p>
+                            Every team member brought different ideas,
+                            perspectives and skills to the design and
+                            development process.
+                        </p>
+
+                    </div>
+
+                </section>
+
+                <section class="references-section">
+
+                    <p class="about-label">SOURCES</p>
+
+                    <h2>References</h2>
+
+                    <p>
+                        View the sources and resources used throughout the
+                        development of INTROSPHEER.
+                    </p>
+
+                    <button
+                        id="openReferences"
+                        class="reference-button"
+                        type="button"
+                    >
+                        View APA 7 Reference List
+                    </button>
+
+                    <div
+                        id="referenceList"
+                        class="reference-list"
+                        hidden
+                    >
+
+                        <p>
+                            Brisbane City Council. (n.d.).
+                            <i>Creative events</i>.
+                            Brisbane City Council Open Data.
+                        </p>
+
+                        <p>
+                            Brisbane City Council. (n.d.).
+                            <i>Classes and workshops events</i>.
+                            Brisbane City Council Open Data.
+                        </p>
+
+                        <p>
+                            Brisbane City Council. (n.d.).
+                            <i>Library events</i>.
+                            Brisbane City Council Open Data.
+                        </p>
+
+                        <p>
+                            Brisbane City Council. (n.d.).
+                            <i>Museum of Brisbane events</i>.
+                            Brisbane City Council Open Data.
+                        </p>
+
+                        <p>
+                            Brisbane City Council. (n.d.).
+                            <i>Brisbane Botanic Gardens events</i>.
+                            Brisbane City Council Open Data.
+                        </p>
+
+                        <p>
+                            Dembling, S. (2015, February 15).
+                            <i>Why even introverts need community</i>.
+                            Psychology Today.
+                        </p>
+
+                        <p>
+                            PeoplePsych. (n.d.).
+                            <i>Building meaningful relationships as an introvert</i>.
+                        </p>
+
+                    </div>
+
+                </section>
+
+            </div>
 
         </div>
 
+    </div>
 
-        <aside
-            class="profile-panel"
-            id="profilePanel"
+    <aside
+        class="profile-panel"
+        id="profilePanel"
+    >
+
+        <button
+            class="panel-close"
+            id="panelClose"
+            type="button"
         >
+            ×
+        </button>
 
-            <button
-                class="panel-close"
-                id="panelClose"
-                type="button"
+        <div class="profile-header">
+
+            <div
+                class="profile-avatar"
+                id="profileAvatar"
             >
-                ×
+                ?
+            </div>
+
+            <div class="profile-title">
+                <h2 id="profileName">Profile</h2>
+                <p id="profileLocation"></p>
+            </div>
+
+        </div>
+
+        <div class="profile-details">
+
+            <div class="profile-detail">
+                <span>Age</span>
+                <strong id="profileAge">-</strong>
+            </div>
+
+            <div class="profile-detail">
+                <span>MBTI</span>
+                <strong id="profileMBTI">-</strong>
+            </div>
+
+        </div>
+
+        <div class="profile-actions">
+
+            <button id="messageButton" type="button">
+                Message
             </button>
 
+            <button id="viewSphereButton" type="button">
+                View in Sphere
+            </button>
 
-            <div class="profile-header">
+        </div>
 
-                <div
-                    class="profile-avatar"
-                    id="profileAvatar"
-                >
-                    ?
-                </div>
+        <section class="profile-section">
+            <h3>Interests</h3>
+            <div id="profileInterests" class="interest-list"></div>
+        </section>
 
-                <div class="profile-title">
+        <section class="profile-section">
+            <h3>About</h3>
+            <p id="profileAbout"></p>
+        </section>
 
-                    <h2 id="profileName">
-                        Profile
-                    </h2>
+        <section class="profile-section">
+            <h3>Upcoming Events</h3>
+            <div id="profileEvents"></div>
+        </section>
 
-                    <p id="profileLocation"></p>
+        <section class="profile-section">
+            <h3>Your Connection</h3>
+            <p id="profileConnection"></p>
+        </section>
 
-                </div>
-
-            </div>
-
-
-            <div class="profile-details">
-
-                <div class="profile-detail">
-                    <span>Age</span>
-                    <strong id="profileAge">-</strong>
-                </div>
-
-                <div class="profile-detail">
-                    <span>MBTI</span>
-                    <strong id="profileMBTI">-</strong>
-                </div>
-
-            </div>
-
-
-            <div class="profile-actions">
-
-                <button
-                    id="messageButton"
-                    type="button"
-                >
-                    Message
-                </button>
-
-                <button
-                    id="viewSphereButton"
-                    type="button"
-                >
-                    View in Sphere
-                </button>
-
-            </div>
-
-
-            <section class="profile-section">
-
-                <h3>Interests</h3>
-
-                <div
-                    id="profileInterests"
-                    class="interest-list"
-                ></div>
-
-            </section>
-
-
-            <section class="profile-section">
-
-                <h3>About</h3>
-
-                <p id="profileAbout"></p>
-
-            </section>
-
-
-            <section class="profile-section">
-
-                <h3>Upcoming Events</h3>
-
-                <div id="profileEvents"></div>
-
-            </section>
-
-
-            <section class="profile-section">
-
-                <h3>Your Connection</h3>
-
-                <p id="profileConnection"></p>
-
-            </section>
-
-        </aside>
-
-    </main>
-
+    </aside>
 
     <script src="js/main.js"></script>
 
