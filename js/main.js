@@ -4,38 +4,41 @@ const ctx = canvas.getContext("2d");
 const tooltip = document.getElementById("tooltip");
 
 const profilePanel = document.getElementById("profilePanel");
-const panelClose = document.getElementById("panelClose");
+const closeProfile = document.getElementById("closeProfile");
 
 const profileAvatar = document.getElementById("profileAvatar");
 const profileName = document.getElementById("profileName");
 const profileLocation = document.getElementById("profileLocation");
 const profileAge = document.getElementById("profileAge");
-const profileMBTI = document.getElementById("profileMBTI");
+const profileGender = document.getElementById("profileGender");
+const profileMbti = document.getElementById("profileMbti");
 const profileInterests = document.getElementById("profileInterests");
 const profileAbout = document.getElementById("profileAbout");
 const profileEvents = document.getElementById("profileEvents");
 const profileConnection = document.getElementById("profileConnection");
 
-const messageButton = document.getElementById("messageButton");
-const viewSphereButton = document.getElementById("viewSphereButton");
+const messageProfile = document.getElementById("messageProfile");
 
 const homeSearch = document.getElementById("homeSearch");
 const searchSuggestions = document.getElementById("searchSuggestions");
 
 const infoButton = document.getElementById("infoButton");
-const infoPopup = document.getElementById("infoPopup");
-const closeInfo = document.getElementById("closeInfo");
+const aboutOverlay = document.getElementById("aboutOverlay");
+const closeAbout = document.getElementById("closeAbout");
 
-let personas = [];
+const referenceButton = document.getElementById("referenceButton");
+const referenceList = document.getElementById("referenceList");
 
-const fallbackPersonas = [
+const people = [
     {
-        id: "U001",
+        id: "samuel",
         name: "Samuel Smith",
+        shortName: "You",
+        initials: "SS",
         age: 22,
         gender: "Male",
         mbti: "INFP",
-        friends: 10,
+        suburb: "South Bank",
         interests: [
             "Gaming",
             "Pottery",
@@ -43,199 +46,196 @@ const fallbackPersonas = [
             "Museums",
             "Reading"
         ],
-        suburb: "South Bank",
-        preference: "No preferences"
+        about:
+            "An introvert looking to build meaningful connections through shared interests and local events.",
+        events: [
+            "Beginner Pottery Workshop",
+            "Museum Social"
+        ],
+        connection:
+            "This is your profile.",
+        angle: 0,
+        distance: 0,
+        colour: "#a855f7"
     },
 
     {
-        id: "U002",
+        id: "zach",
         name: "Zach T",
+        shortName: "Zach",
+        initials: "ZT",
         age: 23,
         gender: "Male",
         mbti: "INFJ",
-        friends: 8,
+        suburb: "Toowong",
         interests: [
             "Horse Back Riding",
             "Reading",
             "Football"
         ],
-        suburb: "Toowong",
-        preference: "Same Sex"
+        about:
+            "Enjoys quiet activities, reading and outdoor experiences.",
+        events: [
+            "Weekend Reading Club",
+            "Social Horse Riding"
+        ],
+        connection:
+            "You connected through a shared interest in reading.",
+        angle: 3.55,
+        distance: 0.82,
+        colour: "#34d6b2"
     },
 
     {
-        id: "U003",
+        id: "mike",
         name: "Mike S",
+        shortName: "Mike",
+        initials: "MS",
         age: 31,
         gender: "Male",
         mbti: "ISFP",
-        friends: 12,
+        suburb: "Toowong",
         interests: [
             "Boxing",
             "Reading",
             "Eating"
         ],
-        suburb: "Toowong",
-        preference: "No preferences"
+        about:
+            "Interested in fitness, books and discovering new food.",
+        events: [
+            "Beginner Boxing Session",
+            "Food Market Meetup"
+        ],
+        connection:
+            "Mike is part of your wider social sphere.",
+        angle: 5.55,
+        distance: 0.84,
+        colour: "#a855f7"
     },
 
     {
-        id: "U004",
+        id: "sally",
         name: "Sally S",
+        shortName: "Sally",
+        initials: "SA",
         age: 27,
         gender: "Non-Binary",
         mbti: "ISFJ",
-        friends: 7,
+        suburb: "Indooroopilly",
         interests: [
             "Ballet",
             "Painting",
             "Netball"
         ],
-        suburb: "Indooroopilly",
-        preference: "No preferences"
+        about:
+            "Enjoys creative activities, sport and meeting people through shared experiences.",
+        events: [
+            "Ballet Social",
+            "Community Painting"
+        ],
+        connection:
+            "You share an interest in ballet.",
+        angle: 0.05,
+        distance: 0.91,
+        colour: "#38bdf8"
     },
 
     {
-        id: "U005",
+        id: "holly",
         name: "Holly M",
+        shortName: "Holly",
+        initials: "HM",
         age: 24,
         gender: "Female",
-        mbti: "",
-        friends: 9,
+        mbti: "Unknown",
+        suburb: "Carindale",
         interests: [
             "Swimming",
             "Museums",
             "Gaming"
         ],
-        suburb: "Carindale",
-        preference: "No preferences"
+        about:
+            "Enjoys gaming, museums and swimming.",
+        events: [
+            "Museum Social",
+            "Gaming Meetup"
+        ],
+        connection:
+            "You share interests in gaming and museums.",
+        angle: 2.35,
+        distance: 0.88,
+        colour: "#38bdf8"
     },
 
     {
-        id: "U006",
+        id: "priya",
         name: "Priya K",
+        shortName: "Priya",
+        initials: "PK",
         age: 20,
         gender: "Female",
         mbti: "ESFP",
-        friends: 6,
+        suburb: "Mt Gravatt",
         interests: [
             "Pottery",
             "Horse Back Riding",
             "Fencing",
             "Eating"
         ],
-        suburb: "Mt Gravatt",
-        preference: "No preferences"
-    }
-];
-
-const spherePeople = [
-    {
-        personaId: "U002",
-        shortName: "Zach",
-        initials: "ZT",
-        x: -0.72,
-        y: -0.35,
-        z: 0.35,
-        colour: "#38d6b4"
-    },
-
-    {
-        personaId: "U003",
-        shortName: "Mike",
-        initials: "MS",
-        x: 0.72,
-        y: -0.40,
-        z: 0.25,
-        colour: "#9c5cff"
-    },
-
-    {
-        personaId: "U004",
-        shortName: "Sally",
-        initials: "SA",
-        x: 0.88,
-        y: 0.02,
-        z: 0.1,
-        colour: "#3ba4d8"
-    },
-
-    {
-        personaId: "U005",
-        shortName: "Holly",
-        initials: "HM",
-        x: -0.72,
-        y: 0.58,
-        z: 0.18,
-        colour: "#49a5d1"
-    },
-
-    {
-        personaId: "U006",
-        shortName: "Priya",
-        initials: "PK",
-        x: 0.55,
-        y: 0.72,
-        z: 0.2,
-        colour: "#d767a5"
+        about:
+            "Enjoys creative workshops, outdoor activities and food experiences.",
+        events: [
+            "Beginner Pottery Workshop",
+            "Food Market Meetup"
+        ],
+        connection:
+            "You share an interest in pottery.",
+        angle: 0.85,
+        distance: 0.88,
+        colour: "#f062a6"
     }
 ];
 
 const lockedPeople = [
     {
-        x: -0.10,
-        y: -0.92,
-        z: 0.15
+        angle: 4.55,
+        distance: 0.93
     },
-
     {
-        x: 0.45,
-        y: -0.78,
-        z: -0.45
+        angle: 5.1,
+        distance: 0.7
     },
-
     {
-        x: 0.20,
-        y: -0.25,
-        z: -0.7
+        angle: 3.0,
+        distance: 0.93
     },
-
     {
-        x: -0.82,
-        y: -0.10,
-        z: -0.35
+        angle: 1.4,
+        distance: 0.88
     },
-
     {
-        x: 0.30,
-        y: 0.35,
-        z: -0.75
-    },
-
-    {
-        x: -0.15,
-        y: 0.92,
-        z: -0.1
+        angle: 0.65,
+        distance: 0.47
     }
 ];
 
-let rotationY = 0;
-let rotationX = 0;
+let canvasWidth = 470;
+let canvasHeight = 470;
 
-let targetRotationY = 0;
-let targetRotationX = 0;
+let centreX = canvasWidth / 2;
+let centreY = canvasHeight / 2;
 
-let sphereZoom = 1;
+let sphereRadius = 185;
+
+let rotation = 0;
+let zoom = 1;
 
 let dragging = false;
+let movedWhileDragging = false;
 
 let lastMouseX = 0;
-let lastMouseY = 0;
-
-let clickableProfiles = [];
 
 let lastTouchDistance = null;
-
 
 function resizeCanvas() {
 
@@ -255,85 +255,51 @@ function resizeCanvas() {
         0
     );
 
+    canvasWidth = rect.width;
+    canvasHeight = rect.height;
+
+    centreX = canvasWidth / 2;
+    centreY = canvasHeight / 2;
+
+    sphereRadius =
+        Math.min(
+            canvasWidth,
+            canvasHeight
+        ) * 0.395;
 }
 
+function getPersonPosition(person) {
 
-function rotatePoint(point) {
+    const radius =
+        sphereRadius * zoom;
 
-    const cosY = Math.cos(rotationY);
-    const sinY = Math.sin(rotationY);
-
-    const x1 =
-        point.x * cosY -
-        point.z * sinY;
-
-    const z1 =
-        point.x * sinY +
-        point.z * cosY;
-
-
-    const cosX = Math.cos(rotationX);
-    const sinX = Math.sin(rotationX);
-
-    const y2 =
-        point.y * cosX -
-        z1 * sinX;
-
-    const z2 =
-        point.y * sinX +
-        z1 * cosX;
-
-
-    return {
-        x: x1,
-        y: y2,
-        z: z2
-    };
-
-}
-
-
-function projectPoint(point, radius, centerX, centerY) {
-
-    const rotated = rotatePoint(point);
-
-    const depth =
-        1 +
-        rotated.z * 0.18;
+    const angle =
+        person.angle + rotation;
 
     return {
         x:
-            centerX +
-            rotated.x *
+            centreX +
+            Math.cos(angle) *
             radius *
-            sphereZoom *
-            depth,
+            person.distance,
 
         y:
-            centerY +
-            rotated.y *
+            centreY +
+            Math.sin(angle) *
             radius *
-            sphereZoom *
-            depth,
-
-        z: rotated.z
+            person.distance
     };
-
 }
-
 
 function drawGlowCircle(
     x,
     y,
     radius,
     colour,
-    fill
+    glow
 ) {
 
     ctx.save();
-
-    ctx.shadowColor = colour;
-    ctx.shadowBlur = 20;
 
     ctx.beginPath();
 
@@ -345,7 +311,10 @@ function drawGlowCircle(
         Math.PI * 2
     );
 
-    ctx.fillStyle = fill;
+    ctx.fillStyle = "#27375a";
+
+    ctx.shadowColor = colour;
+    ctx.shadowBlur = glow;
 
     ctx.fill();
 
@@ -355,196 +324,46 @@ function drawGlowCircle(
     ctx.stroke();
 
     ctx.restore();
-
 }
 
+function drawSphereBackground() {
 
-function drawSphereGrid(
-    centerX,
-    centerY,
-    radius
-) {
-
-    ctx.save();
-
-    ctx.strokeStyle =
-        "rgba(130, 82, 220, 0.30)";
-
-    ctx.lineWidth = 1;
-
-
-    for (let latitude = -60; latitude <= 60; latitude += 30) {
-
-        const latitudeRadians =
-            latitude *
-            Math.PI /
-            180;
-
-        const y =
-            Math.sin(latitudeRadians);
-
-        const horizontalRadius =
-            Math.cos(latitudeRadians);
-
-
-        ctx.beginPath();
-
-        for (
-            let longitude = 0;
-            longitude <= 360;
-            longitude += 4
-        ) {
-
-            const longitudeRadians =
-                longitude *
-                Math.PI /
-                180;
-
-            const point = {
-                x:
-                    Math.cos(longitudeRadians) *
-                    horizontalRadius,
-
-                y: y,
-
-                z:
-                    Math.sin(longitudeRadians) *
-                    horizontalRadius
-            };
-
-            const projected =
-                projectPoint(
-                    point,
-                    radius,
-                    centerX,
-                    centerY
-                );
-
-            if (longitude === 0) {
-
-                ctx.moveTo(
-                    projected.x,
-                    projected.y
-                );
-
-            } else {
-
-                ctx.lineTo(
-                    projected.x,
-                    projected.y
-                );
-
-            }
-
-        }
-
-        ctx.stroke();
-
-    }
-
-
-    for (
-        let longitude = 0;
-        longitude < 180;
-        longitude += 30
-    ) {
-
-        const longitudeRadians =
-            longitude *
-            Math.PI /
-            180;
-
-        ctx.beginPath();
-
-        for (
-            let latitude = -90;
-            latitude <= 90;
-            latitude += 3
-        ) {
-
-            const latitudeRadians =
-                latitude *
-                Math.PI /
-                180;
-
-            const point = {
-                x:
-                    Math.cos(latitudeRadians) *
-                    Math.cos(longitudeRadians),
-
-                y:
-                    Math.sin(latitudeRadians),
-
-                z:
-                    Math.cos(latitudeRadians) *
-                    Math.sin(longitudeRadians)
-            };
-
-            const projected =
-                projectPoint(
-                    point,
-                    radius,
-                    centerX,
-                    centerY
-                );
-
-            if (latitude === -90) {
-
-                ctx.moveTo(
-                    projected.x,
-                    projected.y
-                );
-
-            } else {
-
-                ctx.lineTo(
-                    projected.x,
-                    projected.y
-                );
-
-            }
-
-        }
-
-        ctx.stroke();
-
-    }
-
+    const radius =
+        sphereRadius * zoom;
 
     const gradient =
         ctx.createRadialGradient(
-            centerX - radius * 0.25,
-            centerY - radius * 0.25,
+            centreX,
+            centreY,
             radius * 0.1,
-
-            centerX,
-            centerY,
+            centreX,
+            centreY,
             radius
         );
 
-
     gradient.addColorStop(
         0,
-        "rgba(103, 56, 185, 0.34)"
+        "rgba(96, 51, 165, 0.50)"
     );
 
     gradient.addColorStop(
         0.65,
-        "rgba(52, 29, 108, 0.23)"
+        "rgba(59, 37, 123, 0.24)"
     );
 
     gradient.addColorStop(
         1,
-        "rgba(25, 16, 60, 0.08)"
+        "rgba(20, 20, 60, 0.10)"
     );
 
+    ctx.save();
 
     ctx.beginPath();
 
     ctx.arc(
-        centerX,
-        centerY,
-        radius * sphereZoom,
+        centreX,
+        centreY,
+        radius,
         0,
         Math.PI * 2
     );
@@ -553,84 +372,161 @@ function drawSphereGrid(
 
     ctx.fill();
 
-
-    ctx.shadowColor =
-        "rgba(138, 77, 255, 0.9)";
-
-    ctx.shadowBlur = 15;
-
     ctx.lineWidth = 2.5;
 
     ctx.strokeStyle =
-        "rgba(132, 79, 240, 0.85)";
+        "rgba(132, 73, 245, 0.9)";
+
+    ctx.shadowColor =
+        "#8b5cf6";
+
+    ctx.shadowBlur = 8;
 
     ctx.stroke();
 
-    ctx.restore();
+    ctx.shadowBlur = 0;
 
+    ctx.clip();
+
+    ctx.strokeStyle =
+        "rgba(124, 91, 200, 0.25)";
+
+    ctx.lineWidth = 1;
+
+    for (
+        let offset = -0.7;
+        offset <= 0.7;
+        offset += 0.35
+    ) {
+
+        ctx.beginPath();
+
+        ctx.ellipse(
+            centreX,
+            centreY,
+            radius * Math.cos(offset),
+            radius,
+            0,
+            0,
+            Math.PI * 2
+        );
+
+        ctx.stroke();
+    }
+
+    for (
+        let offset = -0.7;
+        offset <= 0.7;
+        offset += 0.35
+    ) {
+
+        ctx.beginPath();
+
+        ctx.ellipse(
+            centreX,
+            centreY,
+            radius,
+            radius * Math.cos(offset),
+            0,
+            0,
+            Math.PI * 2
+        );
+
+        ctx.stroke();
+    }
+
+    ctx.restore();
 }
 
+function drawPersonConnections() {
 
-function drawConnection(
-    centerX,
-    centerY,
-    target,
-    colour
-) {
+    const outerPeople =
+        people.slice(1);
 
-    ctx.save();
+    outerPeople.forEach(
+        function (person) {
+
+            const position =
+                getPersonPosition(person);
+
+            ctx.beginPath();
+
+            ctx.moveTo(
+                centreX,
+                centreY
+            );
+
+            ctx.lineTo(
+                position.x,
+                position.y
+            );
+
+            ctx.strokeStyle =
+                person.colour + "99";
+
+            ctx.lineWidth = 1.4;
+
+            ctx.stroke();
+        }
+    );
 
     ctx.beginPath();
 
-    ctx.moveTo(
-        centerX,
-        centerY
+    outerPeople.forEach(
+        function (person, index) {
+
+            const position =
+                getPersonPosition(person);
+
+            if (index === 0) {
+
+                ctx.moveTo(
+                    position.x,
+                    position.y
+                );
+
+            } else {
+
+                ctx.lineTo(
+                    position.x,
+                    position.y
+                );
+            }
+
+        }
     );
 
-    ctx.lineTo(
-        target.x,
-        target.y
-    );
+    ctx.strokeStyle =
+        "rgba(43, 211, 189, 0.55)";
 
-    ctx.strokeStyle = colour;
-    ctx.globalAlpha = 0.7;
-
-    ctx.lineWidth = 2;
+    ctx.lineWidth = 1;
 
     ctx.stroke();
-
-    ctx.restore();
-
 }
 
+function drawPerson(person) {
 
-function drawProfileNode(
-    person,
-    position
-) {
+    const position =
+        getPersonPosition(person);
 
-    const nodeRadius =
-        27 +
-        position.z * 4;
+    const radius =
+        22 * zoom;
 
     drawGlowCircle(
         position.x,
         position.y,
-        nodeRadius,
+        radius,
         person.colour,
-        "rgba(35, 38, 68, 0.94)"
+        12
     );
-
-
-    ctx.save();
 
     ctx.fillStyle = "white";
 
+    ctx.font =
+        `bold ${10 * zoom}px Arial`;
+
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-
-    ctx.font =
-        "bold 12px Arial";
 
     ctx.fillText(
         person.initials,
@@ -638,371 +534,252 @@ function drawProfileNode(
         position.y
     );
 
-
     ctx.font =
-        "12px Arial";
-
-    ctx.fillStyle =
-        "rgba(255,255,255,0.9)";
+        `${10 * zoom}px Arial`;
 
     ctx.fillText(
         person.shortName,
         position.x,
-        position.y + nodeRadius + 16
+        position.y +
+        radius +
+        12 * zoom
     );
-
-    ctx.restore();
-
-
-    clickableProfiles.push({
-        x: position.x,
-        y: position.y,
-        radius: nodeRadius + 10,
-        person: person
-    });
-
 }
 
+function drawCentrePerson(person) {
 
-function drawLockedNode(position) {
+    const radius =
+        35 * zoom;
 
-    const radius = 18;
+    drawGlowCircle(
+        centreX,
+        centreY,
+        radius,
+        "#a855f7",
+        18
+    );
+
+    ctx.fillStyle = "white";
+
+    ctx.font =
+        `bold ${15 * zoom}px Arial`;
+
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+
+    ctx.fillText(
+        person.initials,
+        centreX,
+        centreY
+    );
+
+    ctx.font =
+        `bold ${11 * zoom}px Arial`;
+
+    ctx.fillText(
+        "You",
+        centreX,
+        centreY +
+        radius +
+        14 * zoom
+    );
+}
+
+function drawLockedPerson(person) {
+
+    const radius =
+        sphereRadius * zoom;
+
+    const angle =
+        person.angle + rotation;
+
+    const x =
+        centreX +
+        Math.cos(angle) *
+        radius *
+        person.distance;
+
+    const y =
+        centreY +
+        Math.sin(angle) *
+        radius *
+        person.distance;
 
     ctx.save();
-
-    ctx.shadowColor =
-        "rgba(255,255,255,0.25)";
-
-    ctx.shadowBlur = 12;
 
     ctx.beginPath();
 
     ctx.arc(
-        position.x,
-        position.y,
-        radius,
+        x,
+        y,
+        14 * zoom,
         0,
         Math.PI * 2
     );
 
     ctx.fillStyle =
-        "rgba(50, 51, 67, 0.82)";
+        "rgba(90, 90, 105, 0.5)";
+
+    ctx.shadowColor =
+        "rgba(255, 255, 255, 0.35)";
+
+    ctx.shadowBlur = 9;
 
     ctx.fill();
 
-    ctx.lineWidth = 2;
+    ctx.lineWidth = 1.5;
 
     ctx.strokeStyle =
-        "rgba(255,255,255,0.20)";
+        "rgba(255, 255, 255, 0.25)";
 
     ctx.stroke();
 
+    ctx.shadowBlur = 0;
 
-    ctx.font = "14px Arial";
+    ctx.fillStyle =
+        "rgba(255, 255, 255, 0.65)";
+
+    ctx.font =
+        `${10 * zoom}px Arial`;
 
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
 
-    ctx.fillStyle =
-        "rgba(255,255,255,0.6)";
-
     ctx.fillText(
         "🔒",
-        position.x,
-        position.y
+        x,
+        y
     );
 
     ctx.restore();
-
 }
-
-
-function drawCenterUser(
-    centerX,
-    centerY
-) {
-
-    drawGlowCircle(
-        centerX,
-        centerY,
-        48,
-        "#9b52ff",
-        "rgba(60, 36, 91, 0.98)"
-    );
-
-
-    ctx.save();
-
-    ctx.textAlign = "center";
-
-    ctx.fillStyle = "white";
-
-    ctx.font =
-        "bold 20px Arial";
-
-    ctx.fillText(
-        "SS",
-        centerX,
-        centerY + 7
-    );
-
-
-    ctx.font =
-        "bold 14px Arial";
-
-    ctx.fillText(
-        "You",
-        centerX,
-        centerY + 72
-    );
-
-    ctx.restore();
-
-}
-
 
 function drawSphere() {
-
-    const width =
-        canvas.clientWidth;
-
-    const height =
-        canvas.clientHeight;
 
     ctx.clearRect(
         0,
         0,
-        width,
-        height
+        canvasWidth,
+        canvasHeight
     );
 
+    drawSphereBackground();
 
-    rotationY +=
-        (targetRotationY - rotationY) *
-        0.08;
+    drawPersonConnections();
 
-    rotationX +=
-        (targetRotationX - rotationX) *
-        0.08;
-
-
-    const centerX =
-        width / 2;
-
-    const centerY =
-        height / 2;
-
-    const radius =
-        Math.min(
-            width,
-            height
-        ) * 0.39;
-
-
-    clickableProfiles = [];
-
-
-    drawSphereGrid(
-        centerX,
-        centerY,
-        radius
-    );
-
-
-    const projectedPeople =
-        spherePeople.map(
-            function (person) {
-
-                return {
-                    person: person,
-
-                    position:
-                        projectPoint(
-                            person,
-                            radius,
-                            centerX,
-                            centerY
-                        )
-                };
-
-            }
-        );
-
-
-    projectedPeople.forEach(
-        function (item) {
-
-            drawConnection(
-                centerX,
-                centerY,
-                item.position,
-                item.person.colour
-            );
-
-        }
-    );
-
-
-    const lockedProjected =
-        lockedPeople.map(
-            function (person) {
-
-                return projectPoint(
-                    person,
-                    radius,
-                    centerX,
-                    centerY
-                );
-
-            }
-        );
-
-
-    const allNodes = [];
-
-
-    projectedPeople.forEach(
-        function (item) {
-
-            allNodes.push({
-                type: "person",
-                z: item.position.z,
-                person: item.person,
-                position: item.position
-            });
-
-        }
-    );
-
-
-    lockedProjected.forEach(
-        function (position) {
-
-            allNodes.push({
-                type: "locked",
-                z: position.z,
-                position: position
-            });
-
-        }
-    );
-
-
-    allNodes.sort(
-        function (a, b) {
-
-            return a.z - b.z;
-
-        }
-    );
-
-
-    allNodes.forEach(
-        function (node) {
-
-            if (node.type === "person") {
-
-                drawProfileNode(
-                    node.person,
-                    node.position
-                );
-
-            } else {
-
-                drawLockedNode(
-                    node.position
-                );
-
-            }
-
-        }
-    );
-
-
-    drawCenterUser(
-        centerX,
-        centerY
-    );
-
-
-    requestAnimationFrame(
-        drawSphere
-    );
-
-}
-
-
-function getInitials(name) {
-
-    return name
-        .split(" ")
-        .map(function (part) {
-
-            return part[0];
-
-        })
-        .join("")
-        .substring(0, 2)
-        .toUpperCase();
-
-}
-
-
-function getPersonaById(id) {
-
-    return personas.find(
+    lockedPeople.forEach(
         function (person) {
-
-            return person.id === id;
-
+            drawLockedPerson(person);
         }
     );
 
+    people
+        .slice(1)
+        .forEach(
+            function (person) {
+                drawPerson(person);
+            }
+        );
+
+    drawCentrePerson(
+        people[0]
+    );
 }
 
+function findPersonAt(x, y) {
 
-function openProfile(person) {
+    const centreDistance =
+        Math.hypot(
+            x - centreX,
+            y - centreY
+        );
 
-    if (!person) {
-        return;
+    if (
+        centreDistance <
+        40 * zoom
+    ) {
+        return people[0];
     }
 
+    for (
+        let i = 1;
+        i < people.length;
+        i++
+    ) {
+
+        const position =
+            getPersonPosition(
+                people[i]
+            );
+
+        const distance =
+            Math.hypot(
+                x - position.x,
+                y - position.y
+            );
+
+        if (
+            distance <
+            30 * zoom
+        ) {
+            return people[i];
+        }
+    }
+
+    return null;
+}
+
+function getCanvasPosition(event) {
+
+    const rect =
+        canvas.getBoundingClientRect();
+
+    return {
+        x:
+            event.clientX -
+            rect.left,
+
+        y:
+            event.clientY -
+            rect.top
+    };
+}
+
+function showProfile(person) {
 
     profileAvatar.textContent =
-        getInitials(person.name);
-
+        person.initials;
 
     profileName.textContent =
         person.name;
 
-
     profileLocation.textContent =
-        person.suburb ||
-        "Brisbane";
-
+        person.suburb;
 
     profileAge.textContent =
-        person.age ||
-        "-";
+        person.age;
 
+    profileGender.textContent =
+        person.gender;
 
-    profileMBTI.textContent =
-        person.mbti ||
-        "Not specified";
+    profileMbti.textContent =
+        person.mbti;
 
+    profileAbout.textContent =
+        person.about;
+
+    profileConnection.textContent =
+        person.connection;
 
     profileInterests.innerHTML = "";
 
-
-    const interests =
-        person.interests || [];
-
-
-    interests.forEach(
+    person.interests.forEach(
         function (interest) {
 
             const chip =
-                document.createElement("span");
+                document.createElement(
+                    "span"
+                );
 
             chip.className =
                 "interest-chip";
@@ -1013,258 +790,443 @@ function openProfile(person) {
             profileInterests.appendChild(
                 chip
             );
-
         }
     );
 
+    profileEvents.innerHTML = "";
 
-    profileAbout.textContent =
-        person.persona ||
-        "Interested in meeting people through shared interests and local events.";
+    person.events.forEach(
+        function (eventName) {
 
+            const eventElement =
+                document.createElement(
+                    "div"
+                );
 
-    profileConnection.textContent =
-        person.friends
-            ? person.friends +
-              " connections in their Sphere."
-            : "Potential connection";
+            eventElement.className =
+                "event-small";
 
+            eventElement.textContent =
+                eventName;
 
-    profileEvents.innerHTML = `
-        <div class="event-mini-card">
-            Explore shared events and interests
-        </div>
-    `;
-
-
-    messageButton.onclick =
-        function () {
-
-            window.location.href =
-                "chat.html";
-
-        };
-
-
-    viewSphereButton.onclick =
-        function () {
-
-            profilePanel.classList.remove(
-                "open"
+            profileEvents.appendChild(
+                eventElement
             );
+        }
+    );
 
-        };
-
+    messageProfile.dataset.person =
+        person.id;
 
     profilePanel.classList.add(
-        "open"
+        "show"
     );
-
 }
 
+canvas.addEventListener(
+    "mousedown",
+    function (event) {
 
-async function loadPersonas() {
+        dragging = true;
+        movedWhileDragging = false;
 
-    try {
+        lastMouseX =
+            event.clientX;
+    }
+);
 
-        const response =
-            await fetch(
-                "data/personas.json"
-            );
+window.addEventListener(
+    "mousemove",
+    function (event) {
 
+        if (dragging) {
 
-        if (!response.ok) {
+            const difference =
+                event.clientX -
+                lastMouseX;
 
-            throw new Error(
-                "Could not load personas.json"
-            );
+            if (
+                Math.abs(difference) >
+                1
+            ) {
+                movedWhileDragging = true;
+            }
 
+            rotation +=
+                difference * 0.006;
+
+            lastMouseX =
+                event.clientX;
+
+            drawSphere();
+
+            tooltip.style.display =
+                "none";
+
+            return;
         }
 
+        const rect =
+            canvas.getBoundingClientRect();
 
-        personas =
-            await response.json();
+        if (
+            event.clientX <
+                rect.left ||
+            event.clientX >
+                rect.right ||
+            event.clientY <
+                rect.top ||
+            event.clientY >
+                rect.bottom
+        ) {
 
+            tooltip.style.display =
+                "none";
 
-        console.log(
-            "Personas loaded:",
-            personas.length
-        );
+            return;
+        }
 
+        const position =
+            getCanvasPosition(event);
 
-    } catch (error) {
+        const person =
+            findPersonAt(
+                position.x,
+                position.y
+            );
 
-        console.warn(
-            "Using fallback personas:",
-            error
-        );
+        if (person) {
 
-        personas =
-            fallbackPersonas;
+            tooltip.style.display =
+                "block";
 
+            tooltip.textContent =
+                person.name +
+                " · " +
+                person.suburb;
+
+            tooltip.style.left =
+                event.clientX +
+                12 +
+                "px";
+
+            tooltip.style.top =
+                event.clientY +
+                12 +
+                "px";
+
+        } else {
+
+            tooltip.style.display =
+                "none";
+        }
     }
+);
 
-}
+window.addEventListener(
+    "mouseup",
+    function () {
 
-
-function displaySearchSuggestions(
-    results
-) {
-
-    searchSuggestions.innerHTML = "";
-
-
-    if (results.length === 0) {
-
-        searchSuggestions.classList.remove(
-            "active"
-        );
-
-        return;
-
+        dragging = false;
     }
+);
 
+canvas.addEventListener(
+    "click",
+    function (event) {
 
-    results
-        .slice(0, 6)
-        .forEach(
-            function (person) {
+        if (movedWhileDragging) {
 
-                const button =
-                    document.createElement(
-                        "button"
+            movedWhileDragging = false;
+
+            return;
+        }
+
+        const position =
+            getCanvasPosition(event);
+
+        const person =
+            findPersonAt(
+                position.x,
+                position.y
+            );
+
+        if (person) {
+            showProfile(person);
+        }
+    }
+);
+
+canvas.addEventListener(
+    "wheel",
+    function () {
+
+    },
+    {
+        passive: true
+    }
+);
+
+canvas.addEventListener(
+    "touchstart",
+    function (event) {
+
+        if (
+            event.touches.length === 2
+        ) {
+
+            lastTouchDistance =
+                getTouchDistance(
+                    event.touches
+                );
+
+        } else if (
+            event.touches.length === 1
+        ) {
+
+            lastMouseX =
+                event.touches[0]
+                    .clientX;
+        }
+    },
+    {
+        passive: true
+    }
+);
+
+canvas.addEventListener(
+    "touchmove",
+    function (event) {
+
+        if (
+            event.touches.length === 2
+        ) {
+
+            const distance =
+                getTouchDistance(
+                    event.touches
+                );
+
+            if (
+                lastTouchDistance !== null
+            ) {
+
+                const difference =
+                    distance -
+                    lastTouchDistance;
+
+                zoom +=
+                    difference * 0.002;
+
+                zoom =
+                    Math.max(
+                        0.75,
+                        Math.min(
+                            1.25,
+                            zoom
+                        )
                     );
 
-                button.type = "button";
-
-                button.className =
-                    "suggestion-item";
-
-
-                button.innerHTML = `
-                    <span class="suggestion-avatar">
-                        ${getInitials(person.name)}
-                    </span>
-
-                    <span class="suggestion-info">
-                        <strong>
-                            ${person.name}
-                        </strong>
-
-                        <span>
-                            ${person.suburb || "Brisbane"}
-                            ·
-                            ${(person.interests || [])
-                                .slice(0, 2)
-                                .join(", ")}
-                        </span>
-                    </span>
-                `;
-
-
-                button.addEventListener(
-                    "click",
-                    function () {
-
-                        homeSearch.value =
-                            person.name;
-
-                        searchSuggestions.classList.remove(
-                            "active"
-                        );
-
-                        openProfile(
-                            person
-                        );
-
-                    }
-                );
-
-
-                searchSuggestions.appendChild(
-                    button
-                );
-
+                drawSphere();
             }
-        );
 
+            lastTouchDistance =
+                distance;
 
-    searchSuggestions.classList.add(
-        "active"
+        } else if (
+            event.touches.length === 1
+        ) {
+
+            const currentX =
+                event.touches[0]
+                    .clientX;
+
+            const difference =
+                currentX -
+                lastMouseX;
+
+            rotation +=
+                difference * 0.006;
+
+            lastMouseX =
+                currentX;
+
+            drawSphere();
+        }
+    },
+    {
+        passive: true
+    }
+);
+
+canvas.addEventListener(
+    "touchend",
+    function () {
+
+        lastTouchDistance = null;
+    }
+);
+
+function getTouchDistance(touches) {
+
+    const x =
+        touches[0].clientX -
+        touches[1].clientX;
+
+    const y =
+        touches[0].clientY -
+        touches[1].clientY;
+
+    return Math.hypot(
+        x,
+        y
     );
-
 }
 
+closeProfile.addEventListener(
+    "click",
+    function () {
+
+        profilePanel.classList.remove(
+            "show"
+        );
+    }
+);
+
+messageProfile.addEventListener(
+    "click",
+    function () {
+
+        window.location.href =
+            "chat.html";
+    }
+);
 
 homeSearch.addEventListener(
     "input",
     function () {
 
-        const searchTerm =
+        const query =
             homeSearch.value
                 .trim()
                 .toLowerCase();
 
+        searchSuggestions.innerHTML =
+            "";
 
-        if (searchTerm.length < 2) {
+        if (
+            query.length < 2
+        ) {
 
-            searchSuggestions.classList.remove(
-                "active"
-            );
+            searchSuggestions
+                .classList
+                .remove("show");
 
             return;
-
         }
 
-
         const results =
-            personas.filter(
+            people.filter(
                 function (person) {
 
-                    const name =
-                        (
-                            person.name ||
-                            ""
-                        ).toLowerCase();
-
-                    const suburb =
-                        (
-                            person.suburb ||
-                            ""
-                        ).toLowerCase();
-
                     const interests =
-                        (
-                            person.interests ||
-                            []
-                        )
+                        person.interests
                             .join(" ")
                             .toLowerCase();
 
-
                     return (
-                        name.includes(
-                            searchTerm
-                        ) ||
-                        suburb.includes(
-                            searchTerm
-                        ) ||
-                        interests.includes(
-                            searchTerm
-                        )
-                    );
+                        person.name
+                            .toLowerCase()
+                            .includes(query) ||
 
+                        person.suburb
+                            .toLowerCase()
+                            .includes(query) ||
+
+                        person.mbti
+                            .toLowerCase()
+                            .includes(query) ||
+
+                        interests
+                            .includes(query)
+                    );
                 }
             );
 
+        if (
+            results.length === 0
+        ) {
 
-        displaySearchSuggestions(
-            results
-        );
+            searchSuggestions
+                .classList
+                .remove("show");
 
+            return;
+        }
+
+        results
+            .slice(0, 5)
+            .forEach(
+                function (person) {
+
+                    const button =
+                        document.createElement(
+                            "button"
+                        );
+
+                    button.type =
+                        "button";
+
+                    button.className =
+                        "suggestion";
+
+                    button.innerHTML = `
+                        <span class="suggestion-avatar">
+                            ${person.initials}
+                        </span>
+
+                        <span class="suggestion-text">
+                            <strong>
+                                ${person.name}
+                            </strong>
+
+                            <span>
+                                ${person.suburb} · ${person.mbti}
+                            </span>
+                        </span>
+                    `;
+
+                    button.addEventListener(
+                        "click",
+                        function () {
+
+                            homeSearch.value =
+                                person.name;
+
+                            searchSuggestions
+                                .classList
+                                .remove(
+                                    "show"
+                                );
+
+                            showProfile(
+                                person
+                            );
+                        }
+                    );
+
+                    searchSuggestions
+                        .appendChild(
+                            button
+                        );
+                }
+            );
+
+        searchSuggestions
+            .classList
+            .add("show");
     }
 );
-
 
 document.addEventListener(
     "click",
@@ -1276,494 +1238,110 @@ document.addEventListener(
             )
         ) {
 
-            searchSuggestions.classList.remove(
-                "active"
-            );
-
+            searchSuggestions
+                .classList
+                .remove("show");
         }
-
     }
 );
-
-
-canvas.addEventListener(
-    "mousedown",
-    function (event) {
-
-        dragging = true;
-
-        lastMouseX =
-            event.clientX;
-
-        lastMouseY =
-            event.clientY;
-
-    }
-);
-
-
-window.addEventListener(
-    "mouseup",
-    function () {
-
-        dragging = false;
-
-    }
-);
-
-
-window.addEventListener(
-    "mousemove",
-    function (event) {
-
-        if (!dragging) {
-            return;
-        }
-
-
-        const differenceX =
-            event.clientX -
-            lastMouseX;
-
-        const differenceY =
-            event.clientY -
-            lastMouseY;
-
-
-        targetRotationY +=
-            differenceX *
-            0.008;
-
-        targetRotationX +=
-            differenceY *
-            0.008;
-
-
-        targetRotationX =
-            Math.max(
-                -1,
-                Math.min(
-                    1,
-                    targetRotationX
-                )
-            );
-
-
-        lastMouseX =
-            event.clientX;
-
-        lastMouseY =
-            event.clientY;
-
-    }
-);
-
-
-canvas.addEventListener(
-    "mousemove",
-    function (event) {
-
-        if (dragging) {
-            return;
-        }
-
-
-        const rect =
-            canvas.getBoundingClientRect();
-
-
-        const mouseX =
-            event.clientX -
-            rect.left;
-
-        const mouseY =
-            event.clientY -
-            rect.top;
-
-
-        const hovered =
-            clickableProfiles.find(
-                function (profile) {
-
-                    const dx =
-                        mouseX -
-                        profile.x;
-
-                    const dy =
-                        mouseY -
-                        profile.y;
-
-
-                    return (
-                        Math.sqrt(
-                            dx * dx +
-                            dy * dy
-                        ) <
-                        profile.radius
-                    );
-
-                }
-            );
-
-
-        if (hovered) {
-
-            canvas.style.cursor =
-                "pointer";
-
-            const person =
-                getPersonaById(
-                    hovered.person.personaId
-                );
-
-
-            tooltip.style.display =
-                "block";
-
-            tooltip.style.left =
-                event.clientX + 15 + "px";
-
-            tooltip.style.top =
-                event.clientY + 15 + "px";
-
-
-            tooltip.textContent =
-                person
-                    ? person.name
-                    : hovered.person.shortName;
-
-
-        } else {
-
-            canvas.style.cursor =
-                "grab";
-
-            tooltip.style.display =
-                "none";
-
-        }
-
-    }
-);
-
-
-canvas.addEventListener(
-    "mouseleave",
-    function () {
-
-        tooltip.style.display =
-            "none";
-
-    }
-);
-
-
-canvas.addEventListener(
-    "click",
-    function (event) {
-
-        const rect =
-            canvas.getBoundingClientRect();
-
-
-        const mouseX =
-            event.clientX -
-            rect.left;
-
-        const mouseY =
-            event.clientY -
-            rect.top;
-
-
-        const selected =
-            clickableProfiles.find(
-                function (profile) {
-
-                    const dx =
-                        mouseX -
-                        profile.x;
-
-                    const dy =
-                        mouseY -
-                        profile.y;
-
-
-                    return (
-                        Math.sqrt(
-                            dx * dx +
-                            dy * dy
-                        ) <
-                        profile.radius
-                    );
-
-                }
-            );
-
-
-        if (!selected) {
-            return;
-        }
-
-
-        const person =
-            getPersonaById(
-                selected.person.personaId
-            );
-
-
-        openProfile(
-            person
-        );
-
-    }
-);
-
-
-canvas.addEventListener(
-    "touchstart",
-    function (event) {
-
-        if (event.touches.length === 1) {
-
-            dragging = true;
-
-            lastMouseX =
-                event.touches[0].clientX;
-
-            lastMouseY =
-                event.touches[0].clientY;
-
-        }
-
-
-        if (event.touches.length === 2) {
-
-            dragging = false;
-
-
-            const dx =
-                event.touches[0].clientX -
-                event.touches[1].clientX;
-
-            const dy =
-                event.touches[0].clientY -
-                event.touches[1].clientY;
-
-
-            lastTouchDistance =
-                Math.sqrt(
-                    dx * dx +
-                    dy * dy
-                );
-
-        }
-
-    },
-    {
-        passive: true
-    }
-);
-
-
-canvas.addEventListener(
-    "touchmove",
-    function (event) {
-
-        if (
-            event.touches.length === 1 &&
-            dragging
-        ) {
-
-            const touch =
-                event.touches[0];
-
-
-            const differenceX =
-                touch.clientX -
-                lastMouseX;
-
-            const differenceY =
-                touch.clientY -
-                lastMouseY;
-
-
-            targetRotationY +=
-                differenceX *
-                0.008;
-
-            targetRotationX +=
-                differenceY *
-                0.008;
-
-
-            lastMouseX =
-                touch.clientX;
-
-            lastMouseY =
-                touch.clientY;
-
-        }
-
-
-        if (
-            event.touches.length === 2
-        ) {
-
-            const dx =
-                event.touches[0].clientX -
-                event.touches[1].clientX;
-
-            const dy =
-                event.touches[0].clientY -
-                event.touches[1].clientY;
-
-
-            const distance =
-                Math.sqrt(
-                    dx * dx +
-                    dy * dy
-                );
-
-
-            if (lastTouchDistance) {
-
-                const difference =
-                    distance -
-                    lastTouchDistance;
-
-
-                sphereZoom +=
-                    difference *
-                    0.0025;
-
-
-                sphereZoom =
-                    Math.max(
-                        0.8,
-                        Math.min(
-                            1.18,
-                            sphereZoom
-                        )
-                    );
-
-            }
-
-
-            lastTouchDistance =
-                distance;
-
-        }
-
-    },
-    {
-        passive: true
-    }
-);
-
-
-canvas.addEventListener(
-    "touchend",
-    function () {
-
-        dragging = false;
-
-        lastTouchDistance = null;
-
-    }
-);
-
-
-panelClose.addEventListener(
-    "click",
-    function () {
-
-        profilePanel.classList.remove(
-            "open"
-        );
-
-    }
-);
-
 
 infoButton.addEventListener(
     "click",
     function () {
 
-        infoPopup.classList.toggle(
-            "open"
-        );
+        aboutOverlay
+            .classList
+            .add("show");
 
+        document.body.style.overflow =
+            "hidden";
     }
 );
 
-
-closeInfo.addEventListener(
+closeAbout.addEventListener(
     "click",
     function () {
 
-        infoPopup.classList.remove(
-            "open"
-        );
+        aboutOverlay
+            .classList
+            .remove("show");
 
+        document.body.style.overflow =
+            "";
     }
 );
 
+aboutOverlay.addEventListener(
+    "click",
+    function (event) {
+
+        if (
+            event.target ===
+            aboutOverlay
+        ) {
+
+            aboutOverlay
+                .classList
+                .remove("show");
+
+            document.body.style.overflow =
+                "";
+        }
+    }
+);
+
+referenceButton.addEventListener(
+    "click",
+    function () {
+
+        referenceList.hidden =
+            !referenceList.hidden;
+
+        if (
+            referenceList.hidden
+        ) {
+
+            referenceButton.textContent =
+                "View APA 7 Reference List";
+
+        } else {
+
+            referenceButton.textContent =
+                "Hide APA 7 Reference List";
+        }
+    }
+);
+
+document.addEventListener(
+    "keydown",
+    function (event) {
+
+        if (
+            event.key === "Escape"
+        ) {
+
+            aboutOverlay
+                .classList
+                .remove("show");
+
+            profilePanel
+                .classList
+                .remove("show");
+
+            document.body.style.overflow =
+                "";
+        }
+    }
+);
 
 window.addEventListener(
     "resize",
-    resizeCanvas
+    function () {
+
+        resizeCanvas();
+        drawSphere();
+    }
 );
 
-
-async function initialiseHomePage() {
-
-    await loadPersonas();
-
-    resizeCanvas();
-
-    drawSphere();
-
-}
-
-
-initialiseHomePage();
-
-const openAbout = document.getElementById("openAbout");
-const aboutOverlay = document.getElementById("aboutOverlay");
-const closeAbout = document.getElementById("closeAbout");
-const openReferences = document.getElementById("openReferences");
-const referenceList = document.getElementById("referenceList");
-
-openAbout.addEventListener("click", function () {
-    aboutOverlay.classList.add("show");
-    document.body.style.overflow = "hidden";
-});
-
-closeAbout.addEventListener("click", function () {
-    aboutOverlay.classList.remove("show");
-    document.body.style.overflow = "";
-});
-
-aboutOverlay.addEventListener("click", function (event) {
-    if (event.target === aboutOverlay) {
-        aboutOverlay.classList.remove("show");
-        document.body.style.overflow = "";
-    }
-});
-
-openReferences.addEventListener("click", function () {
-    const isHidden = referenceList.hidden;
-
-    referenceList.hidden = !isHidden;
-
-    openReferences.textContent = isHidden
-        ? "Hide APA 7 Reference List"
-        : "View APA 7 Reference List";
-});
-
-document.addEventListener("keydown", function (event) {
-    if (event.key === "Escape") {
-        aboutOverlay.classList.remove("show");
-        document.body.style.overflow = "";
-    }
-});
+resizeCanvas();
+drawSphere();
