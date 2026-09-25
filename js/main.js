@@ -54,7 +54,8 @@ const people = [
         ],
         connection:
             "This is your profile.",
-        angle: 0,
+        longitude: 0,
+        latitude: 0,
         distance: 0,
         colour: "#a855f7"
     },
@@ -81,8 +82,9 @@ const people = [
         ],
         connection:
             "You connected through a shared interest in reading.",
-        angle: 3.55,
-        distance: 0.82,
+        longitude: -2.4,
+        latitude: 0.35,
+        distance: 0.86,
         colour: "#34d6b2"
     },
 
@@ -108,8 +110,9 @@ const people = [
         ],
         connection:
             "Mike is part of your wider social sphere.",
-        angle: 5.55,
-        distance: 0.84,
+        longitude: -0.6,
+        latitude: -0.25,
+        distance: 0.88,
         colour: "#a855f7"
     },
 
@@ -135,8 +138,9 @@ const people = [
         ],
         connection:
             "You share an interest in ballet.",
-        angle: 0.05,
-        distance: 0.91,
+        longitude: 0.2,
+        latitude: 0.35,
+        distance: 0.9,
         colour: "#38bdf8"
     },
 
@@ -162,8 +166,9 @@ const people = [
         ],
         connection:
             "You share interests in gaming and museums.",
-        angle: 2.35,
-        distance: 0.88,
+        longitude: 2.4,
+        latitude: -0.3,
+        distance: 0.87,
         colour: "#38bdf8"
     },
 
@@ -190,32 +195,38 @@ const people = [
         ],
         connection:
             "You share an interest in pottery.",
-        angle: 0.85,
-        distance: 0.88,
+        longitude: 1.2,
+        latitude: 0.7,
+        distance: 0.86,
         colour: "#f062a6"
     }
 ];
 
 const lockedPeople = [
     {
-        angle: 4.55,
-        distance: 0.93
+        longitude: 3.1,
+        latitude: 0.5,
+        distance: 0.9
     },
     {
-        angle: 5.1,
-        distance: 0.7
+        longitude: -1.4,
+        latitude: 0.75,
+        distance: 0.82
     },
     {
-        angle: 3.0,
-        distance: 0.93
+        longitude: 2.8,
+        latitude: -0.65,
+        distance: 0.9
     },
     {
-        angle: 1.4,
-        distance: 0.88
+        longitude: 0.7,
+        latitude: -0.8,
+        distance: 0.85
     },
     {
-        angle: 0.65,
-        distance: 0.47
+        longitude: -2.1,
+        latitude: -0.4,
+        distance: 0.72
     }
 ];
 
@@ -227,15 +238,22 @@ let centreY = canvasHeight / 2;
 
 let sphereRadius = 185;
 
-let rotation = 0;
+let rotationX = 0;
+let rotationY = 0;
+
 let zoom = 1;
 
 let dragging = false;
 let movedWhileDragging = false;
 
 let lastMouseX = 0;
+let lastMouseY = 0;
 
 let lastTouchDistance = null;
+
+const AUTO_ROTATE_SPEED = 0.0005;
+
+let lastAnimationTime = performance.now();
 
 function resizeCanvas() {
 
@@ -268,26 +286,98 @@ function resizeCanvas() {
         ) * 0.395;
 }
 
+function rotatePoint(x, y, z) {
+
+    const cosY = Math.cos(rotationY);
+    const sinY = Math.sin(rotationY);
+
+    let rotatedX =
+        x * cosY +
+        z * sinY;
+
+    let rotatedZ =
+        -x * sinY +
+        z * cosY;
+
+    const cosX = Math.cos(rotationX);
+    const sinX = Math.sin(rotationX);
+
+    let rotatedY =
+        y * cosX -
+        rotatedZ * sinX;
+
+    rotatedZ =
+        y * sinX +
+        rotatedZ * cosX;
+
+    return {
+        x: rotatedX,
+        y: rotatedY,
+        z: rotatedZ
+    };
+}
+
 function getPersonPosition(person) {
 
     const radius =
-        sphereRadius * zoom;
+        sphereRadius *
+        zoom *
+        person.distance;
 
-    const angle =
-        person.angle + rotation;
+    const longitude =
+        person.longitude;
+
+    const latitude =
+        person.latitude;
+
+    const x =
+        Math.cos(latitude) *
+        Math.cos(longitude) *
+        radius;
+
+    const y =
+        Math.sin(latitude) *
+        radius;
+
+    const z =
+        Math.cos(latitude) *
+        Math.sin(longitude) *
+        radius;
+
+    const rotated =
+        rotatePoint(
+            x,
+            y,
+            z
+        );
+
+    const perspective =
+        1 +
+        rotated.z /
+        (sphereRadius * 5);
 
     return {
         x:
             centreX +
-            Math.cos(angle) *
-            radius *
-            person.distance,
+            rotated.x *
+            perspective,
 
         y:
             centreY +
-            Math.sin(angle) *
-            radius *
-            person.distance
+            rotated.y *
+            perspective,
+
+        z:
+            rotated.z,
+
+        scale:
+            Math.max(
+                0.7,
+                Math.min(
+                    1.25,
+                    perspective
+                )
+            )
     };
 }
 
@@ -311,15 +401,21 @@ function drawGlowCircle(
         Math.PI * 2
     );
 
-    ctx.fillStyle = "#27375a";
+    ctx.fillStyle =
+        "#27375a";
 
-    ctx.shadowColor = colour;
-    ctx.shadowBlur = glow;
+    ctx.shadowColor =
+        colour;
+
+    ctx.shadowBlur =
+        glow;
 
     ctx.fill();
 
     ctx.lineWidth = 3;
-    ctx.strokeStyle = colour;
+
+    ctx.strokeStyle =
+        colour;
 
     ctx.stroke();
 
@@ -368,7 +464,8 @@ function drawSphereBackground() {
         Math.PI * 2
     );
 
-    ctx.fillStyle = gradient;
+    ctx.fillStyle =
+        gradient;
 
     ctx.fill();
 
@@ -389,23 +486,26 @@ function drawSphereBackground() {
     ctx.clip();
 
     ctx.strokeStyle =
-        "rgba(124, 91, 200, 0.25)";
+        "rgba(124, 91, 200, 0.28)";
 
     ctx.lineWidth = 1;
 
     for (
-        let offset = -0.7;
-        offset <= 0.7;
-        offset += 0.35
+        let i = -3;
+        i <= 3;
+        i++
     ) {
+
+        const offset =
+            i * radius * 0.22;
 
         ctx.beginPath();
 
         ctx.ellipse(
             centreX,
-            centreY,
-            radius * Math.cos(offset),
+            centreY + offset,
             radius,
+            radius * 0.25,
             0,
             0,
             Math.PI * 2
@@ -415,18 +515,24 @@ function drawSphereBackground() {
     }
 
     for (
-        let offset = -0.7;
-        offset <= 0.7;
-        offset += 0.35
+        let i = -3;
+        i <= 3;
+        i++
     ) {
+
+        const width =
+            radius *
+            Math.cos(
+                i * 0.22
+            );
 
         ctx.beginPath();
 
         ctx.ellipse(
             centreX,
             centreY,
+            Math.abs(width),
             radius,
-            radius * Math.cos(offset),
             0,
             0,
             Math.PI * 2
@@ -440,68 +546,38 @@ function drawSphereBackground() {
 
 function drawPersonConnections() {
 
-    const outerPeople =
-        people.slice(1);
+    people
+        .slice(1)
+        .forEach(
+            function (person) {
 
-    outerPeople.forEach(
-        function (person) {
+                const position =
+                    getPersonPosition(
+                        person
+                    );
 
-            const position =
-                getPersonPosition(person);
-
-            ctx.beginPath();
-
-            ctx.moveTo(
-                centreX,
-                centreY
-            );
-
-            ctx.lineTo(
-                position.x,
-                position.y
-            );
-
-            ctx.strokeStyle =
-                person.colour + "99";
-
-            ctx.lineWidth = 1.4;
-
-            ctx.stroke();
-        }
-    );
-
-    ctx.beginPath();
-
-    outerPeople.forEach(
-        function (person, index) {
-
-            const position =
-                getPersonPosition(person);
-
-            if (index === 0) {
+                ctx.beginPath();
 
                 ctx.moveTo(
-                    position.x,
-                    position.y
+                    centreX,
+                    centreY
                 );
-
-            } else {
 
                 ctx.lineTo(
                     position.x,
                     position.y
                 );
+
+                ctx.strokeStyle =
+                    person.colour +
+                    "88";
+
+                ctx.lineWidth =
+                    1.3;
+
+                ctx.stroke();
             }
-
-        }
-    );
-
-    ctx.strokeStyle =
-        "rgba(43, 211, 189, 0.55)";
-
-    ctx.lineWidth = 1;
-
-    ctx.stroke();
+        );
 }
 
 function drawPerson(person) {
@@ -509,8 +585,13 @@ function drawPerson(person) {
     const position =
         getPersonPosition(person);
 
+    const size =
+        position.scale;
+
     const radius =
-        22 * zoom;
+        22 *
+        zoom *
+        size;
 
     drawGlowCircle(
         position.x,
@@ -520,13 +601,17 @@ function drawPerson(person) {
         12
     );
 
-    ctx.fillStyle = "white";
+    ctx.fillStyle =
+        "white";
 
     ctx.font =
-        `bold ${10 * zoom}px Arial`;
+        `bold ${10 * zoom * size}px Arial`;
 
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
+    ctx.textAlign =
+        "center";
+
+    ctx.textBaseline =
+        "middle";
 
     ctx.fillText(
         person.initials,
@@ -535,7 +620,7 @@ function drawPerson(person) {
     );
 
     ctx.font =
-        `${10 * zoom}px Arial`;
+        `${10 * zoom * size}px Arial`;
 
     ctx.fillText(
         person.shortName,
@@ -559,13 +644,17 @@ function drawCentrePerson(person) {
         18
     );
 
-    ctx.fillStyle = "white";
+    ctx.fillStyle =
+        "white";
 
     ctx.font =
         `bold ${15 * zoom}px Arial`;
 
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
+    ctx.textAlign =
+        "center";
+
+    ctx.textBaseline =
+        "middle";
 
     ctx.fillText(
         person.initials,
@@ -587,32 +676,22 @@ function drawCentrePerson(person) {
 
 function drawLockedPerson(person) {
 
-    const radius =
-        sphereRadius * zoom;
+    const position =
+        getPersonPosition(
+            person
+        );
 
-    const angle =
-        person.angle + rotation;
-
-    const x =
-        centreX +
-        Math.cos(angle) *
-        radius *
-        person.distance;
-
-    const y =
-        centreY +
-        Math.sin(angle) *
-        radius *
-        person.distance;
+    const size =
+        position.scale;
 
     ctx.save();
 
     ctx.beginPath();
 
     ctx.arc(
-        x,
-        y,
-        14 * zoom,
+        position.x,
+        position.y,
+        14 * zoom * size,
         0,
         Math.PI * 2
     );
@@ -621,7 +700,7 @@ function drawLockedPerson(person) {
         "rgba(90, 90, 105, 0.5)";
 
     ctx.shadowColor =
-        "rgba(255, 255, 255, 0.35)";
+        "rgba(255,255,255,0.35)";
 
     ctx.shadowBlur = 9;
 
@@ -630,25 +709,28 @@ function drawLockedPerson(person) {
     ctx.lineWidth = 1.5;
 
     ctx.strokeStyle =
-        "rgba(255, 255, 255, 0.25)";
+        "rgba(255,255,255,0.25)";
 
     ctx.stroke();
 
     ctx.shadowBlur = 0;
 
     ctx.fillStyle =
-        "rgba(255, 255, 255, 0.65)";
+        "rgba(255,255,255,0.65)";
 
     ctx.font =
-        `${10 * zoom}px Arial`;
+        `${10 * zoom * size}px Arial`;
 
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
+    ctx.textAlign =
+        "center";
+
+    ctx.textBaseline =
+        "middle";
 
     ctx.fillText(
         "🔒",
-        x,
-        y
+        position.x,
+        position.y
     );
 
     ctx.restore();
@@ -667,19 +749,70 @@ function drawSphere() {
 
     drawPersonConnections();
 
-    lockedPeople.forEach(
-        function (person) {
-            drawLockedPerson(person);
+    const drawablePeople =
+        people
+            .slice(1)
+            .map(
+                function (person) {
+                    return {
+                        type: "person",
+                        data: person,
+                        position:
+                            getPersonPosition(
+                                person
+                            )
+                    };
+                }
+            );
+
+    const drawableLocked =
+        lockedPeople.map(
+            function (person) {
+                return {
+                    type: "locked",
+                    data: person,
+                    position:
+                        getPersonPosition(
+                            person
+                        )
+                };
+            }
+        );
+
+    const allDrawable =
+        drawablePeople.concat(
+            drawableLocked
+        );
+
+    allDrawable.sort(
+        function (a, b) {
+            return (
+                a.position.z -
+                b.position.z
+            );
         }
     );
 
-    people
-        .slice(1)
-        .forEach(
-            function (person) {
-                drawPerson(person);
+    allDrawable.forEach(
+        function (item) {
+
+            if (
+                item.type ===
+                "person"
+            ) {
+
+                drawPerson(
+                    item.data
+                );
+
+            } else {
+
+                drawLockedPerson(
+                    item.data
+                );
             }
-        );
+        }
+    );
 
     drawCentrePerson(
         people[0]
@@ -698,6 +831,7 @@ function findPersonAt(x, y) {
         centreDistance <
         40 * zoom
     ) {
+
         return people[0];
     }
 
@@ -720,8 +854,11 @@ function findPersonAt(x, y) {
 
         if (
             distance <
-            30 * zoom
+            30 *
+            zoom *
+            position.scale
         ) {
+
             return people[i];
         }
     }
@@ -771,7 +908,8 @@ function showProfile(person) {
     profileConnection.textContent =
         person.connection;
 
-    profileInterests.innerHTML = "";
+    profileInterests.innerHTML =
+        "";
 
     person.interests.forEach(
         function (interest) {
@@ -793,7 +931,8 @@ function showProfile(person) {
         }
     );
 
-    profileEvents.innerHTML = "";
+    profileEvents.innerHTML =
+        "";
 
     person.events.forEach(
         function (eventName) {
@@ -823,15 +962,75 @@ function showProfile(person) {
     );
 }
 
+function startDragging(
+    clientX,
+    clientY
+) {
+
+    dragging = true;
+
+    movedWhileDragging =
+        false;
+
+    lastMouseX =
+        clientX;
+
+    lastMouseY =
+        clientY;
+}
+
+function dragSphere(
+    clientX,
+    clientY
+) {
+
+    if (!dragging) {
+        return;
+    }
+
+    const differenceX =
+        clientX -
+        lastMouseX;
+
+    const differenceY =
+        clientY -
+        lastMouseY;
+
+    if (
+        Math.abs(differenceX) > 1 ||
+        Math.abs(differenceY) > 1
+    ) {
+
+        movedWhileDragging =
+            true;
+    }
+
+    rotationY +=
+        differenceX *
+        0.007;
+
+    rotationX +=
+        differenceY *
+        0.007;
+
+    lastMouseX =
+        clientX;
+
+    lastMouseY =
+        clientY;
+
+    tooltip.style.display =
+        "none";
+}
+
 canvas.addEventListener(
     "mousedown",
     function (event) {
 
-        dragging = true;
-        movedWhileDragging = false;
-
-        lastMouseX =
-            event.clientX;
+        startDragging(
+            event.clientX,
+            event.clientY
+        );
     }
 );
 
@@ -841,27 +1040,10 @@ window.addEventListener(
 
         if (dragging) {
 
-            const difference =
-                event.clientX -
-                lastMouseX;
-
-            if (
-                Math.abs(difference) >
-                1
-            ) {
-                movedWhileDragging = true;
-            }
-
-            rotation +=
-                difference * 0.006;
-
-            lastMouseX =
-                event.clientX;
-
-            drawSphere();
-
-            tooltip.style.display =
-                "none";
+            dragSphere(
+                event.clientX,
+                event.clientY
+            );
 
             return;
         }
@@ -887,7 +1069,9 @@ window.addEventListener(
         }
 
         const position =
-            getCanvasPosition(event);
+            getCanvasPosition(
+                event
+            );
 
         const person =
             findPersonAt(
@@ -935,15 +1119,20 @@ canvas.addEventListener(
     "click",
     function (event) {
 
-        if (movedWhileDragging) {
+        if (
+            movedWhileDragging
+        ) {
 
-            movedWhileDragging = false;
+            movedWhileDragging =
+                false;
 
             return;
         }
 
         const position =
-            getCanvasPosition(event);
+            getCanvasPosition(
+                event
+            );
 
         const person =
             findPersonAt(
@@ -952,18 +1141,11 @@ canvas.addEventListener(
             );
 
         if (person) {
-            showProfile(person);
+
+            showProfile(
+                person
+            );
         }
-    }
-);
-
-canvas.addEventListener(
-    "wheel",
-    function () {
-
-    },
-    {
-        passive: true
     }
 );
 
@@ -984,9 +1166,13 @@ canvas.addEventListener(
             event.touches.length === 1
         ) {
 
-            lastMouseX =
+            startDragging(
                 event.touches[0]
-                    .clientX;
+                    .clientX,
+
+                event.touches[0]
+                    .clientY
+            );
         }
     },
     {
@@ -1008,7 +1194,8 @@ canvas.addEventListener(
                 );
 
             if (
-                lastTouchDistance !== null
+                lastTouchDistance !==
+                null
             ) {
 
                 const difference =
@@ -1016,7 +1203,8 @@ canvas.addEventListener(
                     lastTouchDistance;
 
                 zoom +=
-                    difference * 0.002;
+                    difference *
+                    0.002;
 
                 zoom =
                     Math.max(
@@ -1026,8 +1214,6 @@ canvas.addEventListener(
                             zoom
                         )
                     );
-
-                drawSphere();
             }
 
             lastTouchDistance =
@@ -1037,21 +1223,13 @@ canvas.addEventListener(
             event.touches.length === 1
         ) {
 
-            const currentX =
+            dragSphere(
                 event.touches[0]
-                    .clientX;
+                    .clientX,
 
-            const difference =
-                currentX -
-                lastMouseX;
-
-            rotation +=
-                difference * 0.006;
-
-            lastMouseX =
-                currentX;
-
-            drawSphere();
+                event.touches[0]
+                    .clientY
+            );
         }
     },
     {
@@ -1063,7 +1241,10 @@ canvas.addEventListener(
     "touchend",
     function () {
 
-        lastTouchDistance = null;
+        dragging = false;
+
+        lastTouchDistance =
+            null;
     }
 );
 
@@ -1339,9 +1520,41 @@ window.addEventListener(
     function () {
 
         resizeCanvas();
-        drawSphere();
     }
 );
 
+function animateSphere(
+    currentTime
+) {
+
+    const deltaTime =
+        currentTime -
+        lastAnimationTime;
+
+    lastAnimationTime =
+        currentTime;
+
+    if (
+        !dragging &&
+        !profilePanel.classList.contains(
+            "show"
+        )
+    ) {
+
+        rotationY +=
+            AUTO_ROTATE_SPEED *
+            deltaTime;
+    }
+
+    drawSphere();
+
+    requestAnimationFrame(
+        animateSphere
+    );
+}
+
 resizeCanvas();
-drawSphere();
+
+requestAnimationFrame(
+    animateSphere
+);
