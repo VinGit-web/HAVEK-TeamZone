@@ -16,7 +16,6 @@ const backupUsers = [
         about:
             "An introvert who wants to build meaningful connections through shared interests and local events."
     },
-
     {
         id: "zach",
         name: "Zach T",
@@ -32,7 +31,6 @@ const backupUsers = [
         about:
             "Interested in meeting people through reading, sport and outdoor activities."
     },
-
     {
         id: "mike",
         name: "Mike S",
@@ -48,7 +46,6 @@ const backupUsers = [
         about:
             "Enjoys boxing, reading and discovering new places to eat."
     },
-
     {
         id: "sally",
         name: "Sally S",
@@ -64,7 +61,6 @@ const backupUsers = [
         about:
             "Interested in creative activities, ballet and sport."
     },
-
     {
         id: "holly",
         name: "Holly M",
@@ -80,7 +76,6 @@ const backupUsers = [
         about:
             "Enjoys swimming, visiting museums and gaming."
     },
-
     {
         id: "priya",
         name: "Priya K",
@@ -101,7 +96,6 @@ const backupUsers = [
 
 
 let users = [...backupUsers];
-
 let selectedUser = null;
 
 
@@ -114,19 +108,8 @@ const searchSuggestions =
 const searchMessage =
     document.getElementById("searchMessage");
 
-
 const currentUserButton =
     document.getElementById("currentUserButton");
-
-const currentAvatar =
-    document.getElementById("currentAvatar");
-
-const currentUserName =
-    document.getElementById("currentUserName");
-
-const sphereCurrentAvatar =
-    document.getElementById("sphereCurrentAvatar");
-
 
 const profilePanel =
     document.getElementById("profilePanel");
@@ -173,22 +156,26 @@ const connectButton =
 const messageButton =
     document.getElementById("messageButton");
 
-
-const infoButton =
-    document.getElementById("infoButton");
-
-const infoPopup =
-    document.getElementById("infoPopup");
-
-const closeInfo =
-    document.getElementById("closeInfo");
-
-
 const sphere =
     document.getElementById("sphere");
 
 const sphereContainer =
     document.getElementById("sphereContainer");
+
+const aboutButton =
+    document.getElementById("aboutButton");
+
+const aboutModal =
+    document.getElementById("aboutModal");
+
+const closeAbout =
+    document.getElementById("closeAbout");
+
+const showReferences =
+    document.getElementById("showReferences");
+
+const referenceList =
+    document.getElementById("referenceList");
 
 
 function getUserName(user) {
@@ -197,52 +184,11 @@ function getUserName(user) {
         return "";
     }
 
-
-    if (user.name) {
-        return user.name;
-    }
-
-
-    if (user.fullName) {
-        return user.fullName;
-    }
-
-
-    if (user.full_name) {
-        return user.full_name;
-    }
-
-
-    const firstName =
-        user.firstName ||
-        user.first_name ||
-        "";
-
-
-    const lastName =
-        user.lastName ||
-        user.last_name ||
-        "";
-
-
     return (
-        firstName +
-        " " +
-        lastName
-    ).trim();
-
-}
-
-
-function getFirstName(user) {
-
-    const name =
-        getUserName(user);
-
-
-    return (
-        name.split(" ")[0] ||
-        "User"
+        user.name ||
+        user.fullName ||
+        user.full_name ||
+        ""
     );
 
 }
@@ -254,9 +200,7 @@ function getInitials(name) {
         .split(" ")
         .filter(Boolean)
         .map(function (word) {
-
             return word.charAt(0);
-
         })
         .join("")
         .substring(0, 2)
@@ -265,42 +209,40 @@ function getInitials(name) {
 }
 
 
-function getUserId(user) {
+function findUser(value) {
+
+    const searchValue =
+        value.trim().toLowerCase();
+
+    if (!searchValue) {
+        return null;
+    }
+
+    const exact =
+        users.find(function (user) {
+
+            return (
+                getUserName(user)
+                    .toLowerCase() ===
+                searchValue
+            );
+
+        });
+
+    if (exact) {
+        return exact;
+    }
 
     return (
-        user.id ||
-        user.userId ||
-        user.user_id ||
-        getUserName(user)
+        users.find(function (user) {
+
+            return getUserName(user)
+                .toLowerCase()
+                .includes(searchValue);
+
+        }) ||
+        null
     );
-
-}
-
-
-function normaliseUsers(data) {
-
-    if (Array.isArray(data)) {
-        return data;
-    }
-
-
-    if (
-        data &&
-        Array.isArray(data.users)
-    ) {
-        return data.users;
-    }
-
-
-    if (
-        data &&
-        Array.isArray(data.personas)
-    ) {
-        return data.personas;
-    }
-
-
-    return [];
 
 }
 
@@ -314,274 +256,130 @@ async function loadUsers() {
                 "data/userpersona.json"
             );
 
-
         if (!response.ok) {
-
             throw new Error(
-                "Could not load userpersona.json"
+                "Persona dataset unavailable"
             );
-
         }
-
 
         const data =
             await response.json();
 
+        let loadedUsers = [];
 
-        const loadedUsers =
-            normaliseUsers(data);
-
+        if (Array.isArray(data)) {
+            loadedUsers = data;
+        }
 
         if (
-            loadedUsers.length > 0
+            data &&
+            Array.isArray(data.users)
         ) {
+            loadedUsers = data.users;
+        }
 
-            users =
-                mergeUsersWithBackup(
-                    loadedUsers
-                );
+        if (
+            data &&
+            Array.isArray(data.personas)
+        ) {
+            loadedUsers = data.personas;
+        }
+
+        if (loadedUsers.length > 0) {
+
+            backupUsers.forEach(
+                function (backup) {
+
+                    const exists =
+                        loadedUsers.some(
+                            function (user) {
+
+                                return (
+                                    getUserName(user)
+                                        .toLowerCase() ===
+                                    backup.name
+                                        .toLowerCase()
+                                );
+
+                            }
+                        );
+
+                    if (!exists) {
+                        loadedUsers.push(
+                            backup
+                        );
+                    }
+
+                }
+            );
+
+            users = loadedUsers;
 
         }
 
-
-        console.log(
-            "Personas loaded:",
-            users
-        );
-
-
     } catch (error) {
-
-        console.warn(
-            "Using backup personas because the JSON file could not be loaded.",
-            error
-        );
-
 
         users =
             [...backupUsers];
 
-    }
-
-
-    setupCurrentUser();
-
-}
-
-
-function mergeUsersWithBackup(loadedUsers) {
-
-    const combined =
-        [...loadedUsers];
-
-
-    backupUsers.forEach(
-        function (backupUser) {
-
-            const alreadyExists =
-                combined.some(
-                    function (user) {
-
-                        return (
-                            getUserName(user)
-                                .toLowerCase() ===
-                            getUserName(
-                                backupUser
-                            ).toLowerCase()
-                        );
-
-                    }
-                );
-
-
-            if (!alreadyExists) {
-
-                combined.push(
-                    backupUser
-                );
-
-            }
-
-        }
-    );
-
-
-    return combined;
-
-}
-
-
-function setupCurrentUser() {
-
-    const samuel =
-        findUserExact(
-            "Samuel Smith"
-        ) ||
-        backupUsers[0];
-
-
-    const name =
-        getUserName(samuel);
-
-
-    const initials =
-        getInitials(name);
-
-
-    currentAvatar.textContent =
-        initials;
-
-
-    sphereCurrentAvatar.textContent =
-        initials;
-
-
-    currentUserName.textContent =
-        getFirstName(samuel);
-
-}
-
-
-function findUserExact(value) {
-
-    const searchValue =
-        value
-            .trim()
-            .toLowerCase();
-
-
-    return (
-        users.find(
-            function (user) {
-
-                return (
-                    getUserName(user)
-                        .toLowerCase() ===
-                    searchValue
-                );
-
-            }
-        ) ||
-        null
-    );
-
-}
-
-
-function findUser(value) {
-
-    const searchValue =
-        value
-            .trim()
-            .toLowerCase();
-
-
-    if (!searchValue) {
-        return null;
-    }
-
-
-    const exactMatch =
-        findUserExact(
-            searchValue
+        console.warn(
+            "Using backup persona data.",
+            error
         );
 
-
-    if (exactMatch) {
-        return exactMatch;
     }
-
-
-    return (
-        users.find(
-            function (user) {
-
-                return (
-                    getUserName(user)
-                        .toLowerCase()
-                        .includes(
-                            searchValue
-                        )
-                );
-
-            }
-        ) ||
-        null
-    );
 
 }
 
 
-function openUserProfile(user) {
+function openProfile(user) {
 
     if (!user) {
         return;
     }
 
-
-    selectedUser =
-        user;
-
+    selectedUser = user;
 
     const name =
         getUserName(user);
 
-
     profileAvatar.textContent =
         getInitials(name);
 
-
     profileName.textContent =
-        name ||
-        "User";
-
+        name;
 
     profileLocation.textContent =
         user.suburb ||
         user.location ||
         "Location unavailable";
 
-
     profileAge.textContent =
         user.age ||
         "Not available";
 
-
     profileGender.textContent =
         user.gender ||
         "Not available";
-
 
     profileMBTI.textContent =
         user.mbti ||
         user.MBTI ||
         "Not available";
 
-
     profileAbout.textContent =
         user.about ||
-        "Connect through shared interests and local experiences.";
+        "Connect through shared interests and local events.";
 
+    displayInterests(user);
 
-    displayInterests(
-        user
-    );
+    displayEvents(user);
 
-
-    displayEvents(
-        user
-    );
-
-
-    updateConnectionStatus(
-        user
-    );
-
+    updateConnection(user);
 
     profilePanel.classList.add(
         "open"
     );
-
 
     profileOverlay.classList.add(
         "open"
@@ -590,12 +388,11 @@ function openUserProfile(user) {
 }
 
 
-function closeUserProfile() {
+function closeProfilePanel() {
 
     profilePanel.classList.remove(
         "open"
     );
-
 
     profileOverlay.classList.remove(
         "open"
@@ -609,11 +406,8 @@ function displayInterests(user) {
     profileInterests.innerHTML =
         "";
 
-
     let interests =
-        user.interests ||
-        [];
-
+        user.interests || [];
 
     if (
         typeof interests ===
@@ -621,34 +415,21 @@ function displayInterests(user) {
     ) {
 
         interests =
-            interests
-                .split(",")
-                .map(
-                    function (interest) {
-
-                        return interest.trim();
-
-                    }
-                );
+            interests.split(",");
 
     }
 
-
     if (
-        !Array.isArray(
-            interests
-        ) ||
+        !Array.isArray(interests) ||
         interests.length === 0
     ) {
 
         profileInterests.innerHTML =
             '<span class="empty-text">No interests available.</span>';
 
-
         return;
 
     }
-
 
     interests.forEach(
         function (interest) {
@@ -658,14 +439,11 @@ function displayInterests(user) {
                     "span"
                 );
 
-
             chip.className =
                 "interest-chip";
 
-
             chip.textContent =
-                interest;
-
+                interest.trim();
 
             profileInterests.appendChild(
                 chip
@@ -682,27 +460,19 @@ function displayEvents(user) {
     profileEvents.innerHTML =
         "";
 
-
     const events =
-        Array.isArray(
-            user.events
-        )
+        Array.isArray(user.events)
             ? user.events
             : [];
 
-
-    if (
-        events.length === 0
-    ) {
+    if (events.length === 0) {
 
         profileEvents.innerHTML =
             '<p class="empty-text">No upcoming events.</p>';
 
-
         return;
 
     }
-
 
     events.forEach(
         function (event) {
@@ -712,24 +482,12 @@ function displayEvents(user) {
                     "p"
                 );
 
-
-            if (
-                typeof event ===
-                "string"
-            ) {
-
-                item.textContent =
-                    event;
-
-            } else {
-
-                item.textContent =
-                    event.name ||
-                    event.title ||
-                    "Upcoming event";
-
-            }
-
+            item.textContent =
+                typeof event === "string"
+                    ? event
+                    : event.name ||
+                      event.title ||
+                      "Upcoming event";
 
             profileEvents.appendChild(
                 item
@@ -741,22 +499,14 @@ function displayEvents(user) {
 }
 
 
-function getConnectionKey() {
-
-    return "introspheerConnections";
-
-}
-
-
 function getConnections() {
 
     try {
 
         const saved =
             localStorage.getItem(
-                getConnectionKey()
+                "introspheerConnections"
             );
-
 
         if (!saved) {
 
@@ -770,78 +520,47 @@ function getConnections() {
 
         }
 
+        return JSON.parse(saved);
 
-        return (
-            JSON.parse(saved) ||
-            []
-        );
+    } catch {
 
-
-    } catch (error) {
-
-        return [
-            "zach",
-            "mike",
-            "sally",
-            "holly",
-            "priya"
-        ];
+        return [];
 
     }
 
 }
 
 
-function isConnected(user) {
+function updateConnection(user) {
 
     const connections =
         getConnections();
 
-
     const userId =
-        getUserId(user);
-
-
-    const userName =
+        user.id ||
         getUserName(user);
 
-
-    return connections.some(
-        function (connection) {
-
-            return (
-                String(connection)
-                    .toLowerCase() ===
-                    String(userId)
-                        .toLowerCase() ||
-
-                String(connection)
-                    .toLowerCase() ===
-                    userName
-                        .toLowerCase()
-            );
-
-        }
-    );
-
-}
-
-
-function updateConnectionStatus(user) {
-
     const connected =
-        isConnected(user);
+        connections.some(
+            function (item) {
 
+                return (
+                    String(item)
+                        .toLowerCase() ===
+                    String(userId)
+                        .toLowerCase()
+                );
+
+            }
+        );
 
     if (connected) {
 
         profileConnection.textContent =
             "This person is part of your Sphere.";
 
-
         connectButton.textContent =
             "Connected";
-
 
         connectButton.disabled =
             true;
@@ -851,10 +570,8 @@ function updateConnectionStatus(user) {
         profileConnection.textContent =
             "You have not connected with this person yet.";
 
-
         connectButton.textContent =
             "Connect";
-
 
         connectButton.disabled =
             false;
@@ -872,34 +589,21 @@ connectButton.addEventListener(
             return;
         }
 
-
         const connections =
             getConnections();
 
-
         const userId =
-            getUserId(
-                selectedUser
-            );
-
-
-        const alreadyConnected =
-            isConnected(
-                selectedUser
-            );
-
+            selectedUser.id ||
+            getUserName(selectedUser);
 
         if (
-            !alreadyConnected
+            !connections.includes(userId)
         ) {
 
-            connections.push(
-                userId
-            );
-
+            connections.push(userId);
 
             localStorage.setItem(
-                getConnectionKey(),
+                "introspheerConnections",
                 JSON.stringify(
                     connections
                 )
@@ -907,8 +611,7 @@ connectButton.addEventListener(
 
         }
 
-
-        updateConnectionStatus(
+        updateConnection(
             selectedUser
         );
 
@@ -924,7 +627,6 @@ messageButton.addEventListener(
             return;
         }
 
-
         localStorage.setItem(
             "selectedChatUser",
             getUserName(
@@ -932,23 +634,10 @@ messageButton.addEventListener(
             )
         );
 
-
         window.location.href =
             "chat.html";
 
     }
-);
-
-
-closeProfile.addEventListener(
-    "click",
-    closeUserProfile
-);
-
-
-profileOverlay.addEventListener(
-    "click",
-    closeUserProfile
 );
 
 
@@ -963,48 +652,15 @@ document
                 "click",
                 function (event) {
 
-                    event.preventDefault();
-
                     event.stopPropagation();
 
-
-                    const name =
-                        node.dataset.user;
-
-
-                    let user =
-                        findUserExact(
-                            name
+                    const user =
+                        findUser(
+                            node.dataset.user
                         );
-
-
-                    if (!user) {
-
-                        user =
-                            backupUsers.find(
-                                function (
-                                    backupUser
-                                ) {
-
-                                    return (
-                                        getUserName(
-                                            backupUser
-                                        ).toLowerCase() ===
-                                        name.toLowerCase()
-                                    );
-
-                                }
-                            );
-
-                    }
-
 
                     if (user) {
-
-                        openUserProfile(
-                            user
-                        );
-
+                        openProfile(user);
                     }
 
                 }
@@ -1014,14 +670,25 @@ document
     );
 
 
+closeProfile.addEventListener(
+    "click",
+    closeProfilePanel
+);
+
+
+profileOverlay.addEventListener(
+    "click",
+    closeProfilePanel
+);
+
+
 function hideSuggestions() {
-
-    searchSuggestions.hidden =
-        true;
-
 
     searchSuggestions.innerHTML =
         "";
+
+    searchSuggestions.hidden =
+        true;
 
 }
 
@@ -1031,17 +698,13 @@ function showSuggestions(matches) {
     searchSuggestions.innerHTML =
         "";
 
-
-    if (
-        matches.length === 0
-    ) {
+    if (matches.length === 0) {
 
         hideSuggestions();
 
         return;
 
     }
-
 
     matches.forEach(
         function (user) {
@@ -1051,111 +714,70 @@ function showSuggestions(matches) {
                     "button"
                 );
 
-
             button.type =
                 "button";
 
-
             button.className =
                 "search-suggestion";
-
-
-            const name =
-                getUserName(user);
-
-
-            const suburb =
-                user.suburb ||
-                user.location ||
-                "";
-
 
             const avatar =
                 document.createElement(
                     "span"
                 );
 
-
             avatar.className =
                 "suggestion-avatar";
 
-
             avatar.textContent =
-                getInitials(name);
-
+                getInitials(
+                    getUserName(user)
+                );
 
             const info =
                 document.createElement(
                     "span"
                 );
 
-
             info.className =
                 "suggestion-info";
 
-
-            const strong =
+            const name =
                 document.createElement(
                     "strong"
                 );
 
+            name.textContent =
+                getUserName(user);
 
-            strong.textContent =
-                name;
-
-
-            const small =
+            const suburb =
                 document.createElement(
                     "small"
                 );
 
+            suburb.textContent =
+                user.suburb ||
+                user.location ||
+                "";
 
-            small.textContent =
-                suburb;
+            info.appendChild(name);
+            info.appendChild(suburb);
 
-
-            info.appendChild(
-                strong
-            );
-
-
-            info.appendChild(
-                small
-            );
-
-
-            button.appendChild(
-                avatar
-            );
-
-
-            button.appendChild(
-                info
-            );
-
+            button.appendChild(avatar);
+            button.appendChild(info);
 
             button.addEventListener(
                 "click",
                 function () {
 
                     userSearch.value =
-                        name;
-
-
-                    searchMessage.textContent =
-                        "";
-
+                        getUserName(user);
 
                     hideSuggestions();
 
-
-                    openUserProfile(
-                        user
-                    );
+                    openProfile(user);
 
                 }
             );
-
 
             searchSuggestions.appendChild(
                 button
@@ -1163,7 +785,6 @@ function showSuggestions(matches) {
 
         }
     );
-
 
     searchSuggestions.hidden =
         false;
@@ -1180,14 +801,10 @@ userSearch.addEventListener(
                 .trim()
                 .toLowerCase();
 
-
         searchMessage.textContent =
             "";
 
-
-        if (
-            value.length < 2
-        ) {
+        if (value.length < 2) {
 
             hideSuggestions();
 
@@ -1195,33 +812,22 @@ userSearch.addEventListener(
 
         }
 
-
         const matches =
             users
                 .filter(
                     function (user) {
 
-                        return (
-                            getUserName(
-                                user
-                            )
-                                .toLowerCase()
-                                .includes(
-                                    value
-                                )
-                        );
+                        return getUserName(
+                            user
+                        )
+                            .toLowerCase()
+                            .includes(value);
 
                     }
                 )
-                .slice(
-                    0,
-                    6
-                );
+                .slice(0, 6);
 
-
-        showSuggestions(
-            matches
-        );
+        showSuggestions(matches);
 
     }
 );
@@ -1232,74 +838,37 @@ userSearch.addEventListener(
     function (event) {
 
         if (
-            event.key ===
+            event.key !==
             "Enter"
         ) {
+            return;
+        }
 
-            event.preventDefault();
+        event.preventDefault();
 
-
-            const value =
+        const user =
+            findUser(
                 userSearch.value
-                    .trim();
-
-
-            hideSuggestions();
-
-
-            if (!value) {
-
-                searchMessage.textContent =
-                    "Enter a person's name.";
-
-
-                return;
-
-            }
-
-
-            const user =
-                findUser(
-                    value
-                );
-
-
-            if (!user) {
-
-                searchMessage.textContent =
-                    "User not found.";
-
-
-                return;
-
-            }
-
-
-            searchMessage.textContent =
-                "";
-
-
-            userSearch.value =
-                getUserName(
-                    user
-                );
-
-
-            openUserProfile(
-                user
             );
 
+        hideSuggestions();
+
+        if (!user) {
+
+            searchMessage.textContent =
+                "User not found.";
+
+            return;
+
         }
 
+        searchMessage.textContent =
+            "";
 
-        if (
-            event.key ===
-            "Escape"
-        ) {
+        userSearch.value =
+            getUserName(user);
 
-            hideSuggestions();
-
-        }
+        openProfile(user);
 
     }
 );
@@ -1334,41 +903,69 @@ currentUserButton.addEventListener(
 );
 
 
-infoButton.addEventListener(
+aboutButton.addEventListener(
     "click",
     function () {
 
-        infoPopup.hidden =
+        aboutModal.hidden =
             false;
 
+        document.body.style.overflow =
+            "hidden";
+
     }
 );
 
 
-closeInfo.addEventListener(
+closeAbout.addEventListener(
     "click",
     function () {
 
-        infoPopup.hidden =
+        aboutModal.hidden =
             true;
+
+        document.body.style.overflow =
+            "";
 
     }
 );
 
 
-infoPopup.addEventListener(
+aboutModal.addEventListener(
     "click",
     function (event) {
 
         if (
             event.target ===
-            infoPopup
+            aboutModal
         ) {
 
-            infoPopup.hidden =
+            aboutModal.hidden =
                 true;
 
+            document.body.style.overflow =
+                "";
+
         }
+
+    }
+);
+
+
+showReferences.addEventListener(
+    "click",
+    function () {
+
+        const isHidden =
+            referenceList.hidden;
+
+        referenceList.hidden =
+            !isHidden;
+
+        showReferences.textContent =
+            isHidden
+                ? "Hide Reference List"
+                : "View APA 7 Reference List";
 
     }
 );
@@ -1385,10 +982,13 @@ document.addEventListener(
 
             hideSuggestions();
 
-            closeUserProfile();
+            closeProfilePanel();
 
-            infoPopup.hidden =
+            aboutModal.hidden =
                 true;
+
+            document.body.style.overflow =
+                "";
 
         }
 
@@ -1396,48 +996,26 @@ document.addEventListener(
 );
 
 
-let rotationX =
-    0;
+let rotationX = -8;
+let rotationY = 0;
 
+let scale = 1;
 
-let rotationY =
-    0;
+let dragging = false;
 
+let previousX = 0;
+let previousY = 0;
 
-let sphereScale =
-    1;
-
-
-let isDragging =
-    false;
-
-
-let previousX =
-    0;
-
-
-let previousY =
-    0;
-
-
-let lastAnimationTime =
+let lastTime =
     performance.now();
 
 
-function updateSphereTransform() {
+function updateSphere() {
 
     sphere.style.transform =
-        "rotateX(" +
-        rotationX +
-        "deg) " +
-
-        "rotateY(" +
-        rotationY +
-        "deg) " +
-
-        "scale(" +
-        sphereScale +
-        ")";
+        `rotateX(${rotationX}deg)
+         rotateY(${rotationY}deg)
+         scale3d(${scale}, ${scale}, ${scale})`;
 
 }
 
@@ -1445,26 +1023,18 @@ function updateSphereTransform() {
 function animateSphere(time) {
 
     const delta =
-        time -
-        lastAnimationTime;
+        time - lastTime;
 
+    lastTime = time;
 
-    lastAnimationTime =
-        time;
-
-
-    if (
-        !isDragging
-    ) {
+    if (!dragging) {
 
         rotationY +=
-            delta * 0.005;
+            delta * 0.01;
 
     }
 
-
-    updateSphereTransform();
-
+    updateSphere();
 
     requestAnimationFrame(
         animateSphere
@@ -1487,38 +1057,24 @@ sphere.addEventListener(
                 ".person-node"
             )
         ) {
-
             return;
-
         }
 
-
-        isDragging =
-            true;
-
+        dragging = true;
 
         previousX =
             event.clientX;
 
-
         previousY =
             event.clientY;
-
 
         sphere.classList.add(
             "dragging"
         );
 
-
-        try {
-
-            sphere.setPointerCapture(
-                event.pointerId
-            );
-
-        } catch (error) {
-
-        }
+        sphere.setPointerCapture(
+            event.pointerId
+        );
 
     }
 );
@@ -1528,90 +1084,78 @@ sphere.addEventListener(
     "pointermove",
     function (event) {
 
-        if (
-            !isDragging
-        ) {
+        if (!dragging) {
             return;
         }
 
-
-        const differenceX =
+        const deltaX =
             event.clientX -
             previousX;
 
-
-        const differenceY =
+        const deltaY =
             event.clientY -
             previousY;
 
-
         rotationY +=
-            differenceX *
-            0.35;
-
+            deltaX * 0.4;
 
         rotationX -=
-            differenceY *
-            0.35;
+            deltaY * 0.4;
 
+        rotationX =
+            Math.max(
+                -80,
+                Math.min(
+                    80,
+                    rotationX
+                )
+            );
 
         previousX =
             event.clientX;
 
-
         previousY =
             event.clientY;
 
-
-        updateSphereTransform();
+        updateSphere();
 
     }
 );
 
 
-function finishDragging(
-    event
-) {
+sphere.addEventListener(
+    "pointerup",
+    function (event) {
 
-    isDragging =
-        false;
+        dragging = false;
 
+        sphere.classList.remove(
+            "dragging"
+        );
 
-    sphere.classList.remove(
-        "dragging"
-    );
-
-
-    try {
-
-        if (
-            sphere.hasPointerCapture(
-                event.pointerId
-            )
-        ) {
+        try {
 
             sphere.releasePointerCapture(
                 event.pointerId
             );
 
-        }
-
-    } catch (error) {
+        } catch {}
 
     }
-
-}
-
-
-sphere.addEventListener(
-    "pointerup",
-    finishDragging
 );
 
 
 sphere.addEventListener(
     "pointercancel",
-    finishDragging
+    function () {
+
+        dragging = false;
+
+        sphere.classList.remove(
+            "dragging"
+        );
+
+    }
 );
 
 
@@ -1619,180 +1163,40 @@ sphereContainer.addEventListener(
     "wheel",
     function (event) {
 
-        if (
-            !event.ctrlKey
-        ) {
+        if (!event.ctrlKey) {
 
             return;
 
         }
 
-
         event.preventDefault();
-
 
         if (
             event.deltaY < 0
         ) {
 
-            sphereScale +=
-                0.05;
+            scale += 0.05;
 
         } else {
 
-            sphereScale -=
-                0.05;
+            scale -= 0.05;
 
         }
 
-
-        sphereScale =
+        scale =
             Math.max(
-                0.75,
+                0.7,
                 Math.min(
-                    1.35,
-                    sphereScale
+                    1.4,
+                    scale
                 )
             );
 
-
-        updateSphereTransform();
+        updateSphere();
 
     },
     {
         passive: false
-    }
-);
-
-
-let pinchStartDistance =
-    null;
-
-
-let pinchStartScale =
-    1;
-
-
-sphereContainer.addEventListener(
-    "touchstart",
-    function (event) {
-
-        if (
-            event.touches.length !==
-            2
-        ) {
-
-            return;
-
-        }
-
-
-        const first =
-            event.touches[0];
-
-
-        const second =
-            event.touches[1];
-
-
-        pinchStartDistance =
-            Math.hypot(
-                second.clientX -
-                first.clientX,
-
-                second.clientY -
-                first.clientY
-            );
-
-
-        pinchStartScale =
-            sphereScale;
-
-    },
-    {
-        passive: true
-    }
-);
-
-
-sphereContainer.addEventListener(
-    "touchmove",
-    function (event) {
-
-        if (
-            event.touches.length !==
-            2 ||
-            pinchStartDistance ===
-            null
-        ) {
-
-            return;
-
-        }
-
-
-        const first =
-            event.touches[0];
-
-
-        const second =
-            event.touches[1];
-
-
-        const currentDistance =
-            Math.hypot(
-                second.clientX -
-                first.clientX,
-
-                second.clientY -
-                first.clientY
-            );
-
-
-        sphereScale =
-            pinchStartScale *
-            (
-                currentDistance /
-                pinchStartDistance
-            );
-
-
-        sphereScale =
-            Math.max(
-                0.75,
-                Math.min(
-                    1.35,
-                    sphereScale
-                )
-            );
-
-
-        updateSphereTransform();
-
-    },
-    {
-        passive: true
-    }
-);
-
-
-sphereContainer.addEventListener(
-    "touchend",
-    function (event) {
-
-        if (
-            event.touches.length <
-            2
-        ) {
-
-            pinchStartDistance =
-                null;
-
-        }
-
-    },
-    {
-        passive: true
     }
 );
 
