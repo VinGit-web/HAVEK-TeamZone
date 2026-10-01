@@ -2,17 +2,19 @@
     box-sizing: border-box;
 }
 
-html {
+html,
+body {
     margin: 0;
     padding: 0;
     width: 100%;
     min-height: 100%;
 }
 
+html {
+    scroll-behavior: smooth;
+}
+
 body {
-    margin: 0;
-    padding: 0;
-    width: 100%;
     min-height: 100vh;
     font-family: Arial, Helvetica, sans-serif;
     background: #071126;
@@ -22,6 +24,10 @@ body {
 button,
 input {
     font-family: inherit;
+}
+
+button {
+    -webkit-tap-highlight-color: transparent;
 }
 
 .navbar {
@@ -78,8 +84,8 @@ input {
     overflow: hidden;
     background:
         radial-gradient(
-            circle at 50% 45%,
-            rgba(104, 58, 171, 0.2),
+            circle at 50% 42%,
+            rgba(104, 58, 171, 0.22),
             transparent 48%
         ),
         #071126;
@@ -102,7 +108,7 @@ input {
 
 .home-header {
     position: relative;
-    z-index: 10;
+    z-index: 20;
     width: 90%;
     max-width: 1450px;
     margin: 0 auto;
@@ -147,6 +153,7 @@ input {
     position: relative;
     width: 100%;
     margin-top: 22px;
+    z-index: 300;
 }
 
 #userSearch {
@@ -156,7 +163,7 @@ input {
     border: 1px solid rgba(255, 255, 255, 0.6);
     border-radius: 8px;
     outline: none;
-    background: rgba(7, 17, 38, 0.85);
+    background: rgba(7, 17, 38, 0.95);
     color: white;
     font-size: 14px;
 }
@@ -175,12 +182,16 @@ input {
     top: 54px;
     left: 0;
     right: 0;
-    z-index: 200;
+    z-index: 500;
     overflow: hidden;
     border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 9px;
     background: #101a35;
     box-shadow: 0 12px 35px rgba(0, 0, 0, 0.45);
+}
+
+.search-suggestions[hidden] {
+    display: none;
 }
 
 .search-suggestion {
@@ -225,6 +236,7 @@ input {
 }
 
 .suggestion-info strong {
+    color: white;
     font-size: 14px;
 }
 
@@ -285,6 +297,7 @@ input {
     align-items: center;
     justify-content: center;
     perspective: 1200px;
+    touch-action: pan-y;
 }
 
 .sphere {
@@ -359,7 +372,7 @@ input {
 
 .person-node {
     position: absolute;
-    z-index: 20;
+    z-index: 30;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -369,6 +382,10 @@ input {
     background: transparent;
     color: white;
     cursor: pointer;
+}
+
+.person-node:hover .node-avatar {
+    transform: scale(1.08);
 }
 
 .node-avatar {
@@ -384,12 +401,13 @@ input {
     font-size: 15px;
     font-weight: 700;
     box-shadow: 0 0 15px rgba(155, 77, 255, 0.65);
+    transition: transform 0.2s ease;
 }
 
 .node-name {
     padding: 3px 8px;
     border-radius: 10px;
-    background: rgba(7, 17, 38, 0.7);
+    background: rgba(7, 17, 38, 0.78);
     font-size: 13px;
     white-space: nowrap;
 }
@@ -470,7 +488,7 @@ input {
     background: rgba(66, 67, 87, 0.9);
     color: #c9c9d3;
     font-size: 18px;
-    cursor: default;
+    pointer-events: none;
     box-shadow: 0 0 12px rgba(255, 255, 255, 0.1);
 }
 
@@ -555,7 +573,7 @@ input {
     position: absolute;
     left: 35px;
     bottom: 35px;
-    z-index: 50;
+    z-index: 80;
     width: 54px;
     height: 54px;
     border: 2px solid white;
@@ -573,17 +591,35 @@ input {
     transform: scale(1.05);
 }
 
+.profile-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 390;
+    visibility: hidden;
+    opacity: 0;
+    background: rgba(0, 0, 0, 0.35);
+    transition: 0.3s ease;
+    pointer-events: none;
+}
+
+.profile-overlay.open {
+    visibility: visible;
+    opacity: 1;
+    pointer-events: auto;
+}
+
 .profile-panel {
     position: fixed;
     top: 0;
-    right: -440px;
-    z-index: 500;
+    right: -460px;
+    z-index: 400;
     width: 420px;
     max-width: 92vw;
     height: 100vh;
     overflow-y: auto;
-    padding: 35px 28px;
+    padding: 35px 28px 50px;
     background: #10182e;
+    color: white;
     border-left: 1px solid rgba(255, 255, 255, 0.15);
     box-shadow: -10px 0 40px rgba(0, 0, 0, 0.4);
     transition: right 0.3s ease;
@@ -625,12 +661,12 @@ input {
     font-weight: 700;
 }
 
-.profile-top h2 {
+.profile-heading h2 {
     margin: 0 0 6px;
     font-size: 25px;
 }
 
-.profile-top p {
+.profile-heading p {
     margin: 0;
     color: #aaaac0;
 }
@@ -660,6 +696,12 @@ input {
     border: 1px solid rgba(255, 255, 255, 0.4);
     background: transparent;
     color: white;
+}
+
+.secondary-button:disabled {
+    border-color: #50cba9;
+    color: #50cba9;
+    cursor: default;
 }
 
 .profile-section {
@@ -723,22 +765,31 @@ input {
 
 .info-popup-card {
     position: relative;
-    width: min(430px, 100%);
-    padding: 35px;
+    width: min(470px, 100%);
+    padding: 38px;
     border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 16px;
     background: #111a35;
+    color: white;
     text-align: center;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
 }
 
 .info-popup-card h2 {
-    margin-top: 0;
+    margin: 5px 0 18px;
+    font-size: 28px;
 }
 
 .info-popup-card p {
     color: #c5c5d2;
     line-height: 1.6;
+}
+
+.about-label {
+    color: #a86cff !important;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 2px;
 }
 
 .close-info {
@@ -754,8 +805,8 @@ input {
 
 .about-link {
     display: inline-block;
-    margin-top: 12px;
-    padding: 10px 20px;
+    margin-top: 15px;
+    padding: 11px 22px;
     border-radius: 8px;
     background: #9147e8;
     color: white;
@@ -793,6 +844,11 @@ input {
 
 @media (max-width: 700px) {
 
+    .navbar {
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+
     .nav-links a {
         min-width: auto;
         padding: 9px 14px;
@@ -803,17 +859,28 @@ input {
         font-size: 36px;
     }
 
+    .sphere-title p {
+        padding: 0 20px;
+    }
+
     .sphere-container {
         width: 100%;
-        height: 520px;
+        height: 550px;
     }
 
     .sphere {
-        transform: scale(0.8);
+        width: 500px;
+        height: 500px;
     }
 
     .sphere-instructions {
         font-size: 11px;
+    }
+
+    .profile-panel {
+        width: 100%;
+        max-width: 100%;
+        right: -100%;
     }
 
 }

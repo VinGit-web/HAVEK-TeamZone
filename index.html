@@ -38,16 +38,16 @@
 
                 <button
                     class="current-user"
+                    id="currentUserButton"
                     type="button"
-                    onclick="window.location.href='account.html'"
                 >
 
-                    <div
+                    <span
                         class="current-avatar"
                         id="currentAvatar"
                     >
                         SS
-                    </div>
+                    </span>
 
                     <span id="currentUserName">
                         Samuel
@@ -59,7 +59,7 @@
                 <div class="search-wrapper">
 
                     <input
-                        type="search"
+                        type="text"
                         id="userSearch"
                         placeholder="Search people..."
                         autocomplete="off"
@@ -117,25 +117,11 @@
                     <div class="sphere-longitude longitude-two"></div>
 
 
-                    <div
-                        class="connection-line connection-zach"
-                    ></div>
-
-                    <div
-                        class="connection-line connection-mike"
-                    ></div>
-
-                    <div
-                        class="connection-line connection-sally"
-                    ></div>
-
-                    <div
-                        class="connection-line connection-holly"
-                    ></div>
-
-                    <div
-                        class="connection-line connection-priya"
-                    ></div>
+                    <div class="connection-line connection-zach"></div>
+                    <div class="connection-line connection-mike"></div>
+                    <div class="connection-line connection-sally"></div>
+                    <div class="connection-line connection-holly"></div>
+                    <div class="connection-line connection-priya"></div>
 
 
                     <button
@@ -239,33 +225,21 @@
                     </div>
 
 
-                    <button
-                        class="locked-node locked-one"
-                        type="button"
-                    >
-                        <span>?</span>
-                    </button>
+                    <div class="locked-node locked-one">
+                        ?
+                    </div>
 
-                    <button
-                        class="locked-node locked-two"
-                        type="button"
-                    >
-                        <span>?</span>
-                    </button>
+                    <div class="locked-node locked-two">
+                        ?
+                    </div>
 
-                    <button
-                        class="locked-node locked-three"
-                        type="button"
-                    >
-                        <span>?</span>
-                    </button>
+                    <div class="locked-node locked-three">
+                        ?
+                    </div>
 
-                    <button
-                        class="locked-node locked-four"
-                        type="button"
-                    >
-                        <span>?</span>
-                    </button>
+                    <div class="locked-node locked-four">
+                        ?
+                    </div>
 
                 </div>
 
@@ -305,6 +279,12 @@
     </main>
 
 
+    <div
+        id="profileOverlay"
+        class="profile-overlay"
+    ></div>
+
+
     <aside
         id="profilePanel"
         class="profile-panel"
@@ -314,6 +294,7 @@
             id="closeProfile"
             class="close-profile"
             type="button"
+            aria-label="Close profile"
         >
             ×
         </button>
@@ -328,13 +309,16 @@
                 ?
             </div>
 
-            <div>
+
+            <div class="profile-heading">
 
                 <h2 id="profileName">
                     Profile
                 </h2>
 
-                <p id="profileLocation"></p>
+                <p id="profileLocation">
+                    Location
+                </p>
 
             </div>
 
@@ -427,7 +411,7 @@
             <h3>Your Connection</h3>
 
             <p id="profileConnection">
-                View your connection with this person.
+                You have not connected with this person yet.
             </p>
 
         </section>
@@ -447,23 +431,40 @@
                 id="closeInfo"
                 class="close-info"
                 type="button"
+                aria-label="Close"
             >
                 ×
             </button>
 
-            <h2>About INTROSPHEER</h2>
+
+            <p class="about-label">
+                ABOUT US
+            </p>
+
+            <h2>
+                About INTROSPHEER
+            </h2>
+
 
             <p>
-                INTROSPHEER helps people build meaningful
-                connections through shared interests,
-                conversations and local events.
+                INTROSPHEER is designed to help people
+                create meaningful social connections through
+                shared interests, local events and conversation.
             </p>
+
+
+            <p>
+                Discover events, meet people with similar
+                interests and grow your Sphere as you make
+                new connections.
+            </p>
+
 
             <a
                 href="about.html"
                 class="about-link"
             >
-                Learn more
+                View About Page
             </a>
 
         </div>

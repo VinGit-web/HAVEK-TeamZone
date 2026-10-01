@@ -1,819 +1,1800 @@
-* {
-    box-sizing: border-box;
+const backupUsers = [
+    {
+        id: "samuel",
+        name: "Samuel Smith",
+        age: 22,
+        gender: "Male",
+        mbti: "INFP",
+        suburb: "South Bank",
+        interests: [
+            "Gaming",
+            "Pottery",
+            "Ballet",
+            "Museums",
+            "Reading"
+        ],
+        about:
+            "An introvert who wants to build meaningful connections through shared interests and local events."
+    },
+
+    {
+        id: "zach",
+        name: "Zach T",
+        age: 23,
+        gender: "Male",
+        mbti: "INFJ",
+        suburb: "Toowong",
+        interests: [
+            "Horse Back Riding",
+            "Reading",
+            "Football"
+        ],
+        about:
+            "Interested in meeting people through reading, sport and outdoor activities."
+    },
+
+    {
+        id: "mike",
+        name: "Mike S",
+        age: 31,
+        gender: "Male",
+        mbti: "ISFP",
+        suburb: "Toowong",
+        interests: [
+            "Boxing",
+            "Reading",
+            "Eating"
+        ],
+        about:
+            "Enjoys boxing, reading and discovering new places to eat."
+    },
+
+    {
+        id: "sally",
+        name: "Sally S",
+        age: 27,
+        gender: "Non-Binary",
+        mbti: "ISFJ",
+        suburb: "Indooroopilly",
+        interests: [
+            "Ballet",
+            "Painting",
+            "Netball"
+        ],
+        about:
+            "Interested in creative activities, ballet and sport."
+    },
+
+    {
+        id: "holly",
+        name: "Holly M",
+        age: 24,
+        gender: "Female",
+        mbti: "Not available",
+        suburb: "Carindale",
+        interests: [
+            "Swimming",
+            "Museums",
+            "Gaming"
+        ],
+        about:
+            "Enjoys swimming, visiting museums and gaming."
+    },
+
+    {
+        id: "priya",
+        name: "Priya K",
+        age: 20,
+        gender: "Female",
+        mbti: "ESFP",
+        suburb: "Mt Gravatt",
+        interests: [
+            "Pottery",
+            "Horse Back Riding",
+            "Fencing",
+            "Eating"
+        ],
+        about:
+            "Enjoys creative activities, sport and trying new experiences."
+    }
+];
+
+
+let users = [...backupUsers];
+
+let selectedUser = null;
+
+
+const userSearch =
+    document.getElementById("userSearch");
+
+const searchSuggestions =
+    document.getElementById("searchSuggestions");
+
+const searchMessage =
+    document.getElementById("searchMessage");
+
+
+const currentUserButton =
+    document.getElementById("currentUserButton");
+
+const currentAvatar =
+    document.getElementById("currentAvatar");
+
+const currentUserName =
+    document.getElementById("currentUserName");
+
+const sphereCurrentAvatar =
+    document.getElementById("sphereCurrentAvatar");
+
+
+const profilePanel =
+    document.getElementById("profilePanel");
+
+const profileOverlay =
+    document.getElementById("profileOverlay");
+
+const closeProfile =
+    document.getElementById("closeProfile");
+
+const profileAvatar =
+    document.getElementById("profileAvatar");
+
+const profileName =
+    document.getElementById("profileName");
+
+const profileLocation =
+    document.getElementById("profileLocation");
+
+const profileAge =
+    document.getElementById("profileAge");
+
+const profileGender =
+    document.getElementById("profileGender");
+
+const profileMBTI =
+    document.getElementById("profileMBTI");
+
+const profileInterests =
+    document.getElementById("profileInterests");
+
+const profileAbout =
+    document.getElementById("profileAbout");
+
+const profileEvents =
+    document.getElementById("profileEvents");
+
+const profileConnection =
+    document.getElementById("profileConnection");
+
+const connectButton =
+    document.getElementById("connectButton");
+
+const messageButton =
+    document.getElementById("messageButton");
+
+
+const infoButton =
+    document.getElementById("infoButton");
+
+const infoPopup =
+    document.getElementById("infoPopup");
+
+const closeInfo =
+    document.getElementById("closeInfo");
+
+
+const sphere =
+    document.getElementById("sphere");
+
+const sphereContainer =
+    document.getElementById("sphereContainer");
+
+
+function getUserName(user) {
+
+    if (!user) {
+        return "";
+    }
+
+
+    if (user.name) {
+        return user.name;
+    }
+
+
+    if (user.fullName) {
+        return user.fullName;
+    }
+
+
+    if (user.full_name) {
+        return user.full_name;
+    }
+
+
+    const firstName =
+        user.firstName ||
+        user.first_name ||
+        "";
+
+
+    const lastName =
+        user.lastName ||
+        user.last_name ||
+        "";
+
+
+    return (
+        firstName +
+        " " +
+        lastName
+    ).trim();
+
 }
 
-html {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    min-height: 100%;
-}
 
-body {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    min-height: 100vh;
-    font-family: Arial, Helvetica, sans-serif;
-    background: #071126;
-    color: white;
-}
+function getFirstName(user) {
 
-button,
-input {
-    font-family: inherit;
-}
+    const name =
+        getUserName(user);
 
-.navbar {
-    position: relative;
-    z-index: 100;
-    width: 100%;
-    min-height: 100px;
-    padding: 22px 5%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: #071126;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
-}
 
-.nav-logo {
-    color: white;
-    text-decoration: none;
-    font-size: 25px;
-    font-weight: 800;
-    letter-spacing: 0.5px;
-}
-
-.nav-links {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-.nav-links a {
-    min-width: 105px;
-    padding: 11px 20px;
-    border: 1px solid rgba(255, 255, 255, 0.65);
-    border-radius: 24px;
-    color: white;
-    text-decoration: none;
-    text-align: center;
-    font-size: 15px;
-    transition: 0.2s ease;
-}
-
-.nav-links a:hover {
-    background: rgba(255, 255, 255, 0.1);
-}
-
-.nav-links a.active {
-    background: white;
-    color: #071126;
-}
-
-.home-page {
-    position: relative;
-    min-height: 1100px;
-    overflow: hidden;
-    background:
-        radial-gradient(
-            circle at 50% 45%,
-            rgba(104, 58, 171, 0.2),
-            transparent 48%
-        ),
-        #071126;
-}
-
-.home-page::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    opacity: 0.55;
-    background-image:
-        radial-gradient(
-            circle,
-            rgba(157, 95, 255, 0.7) 1.3px,
-            transparent 1.5px
-        );
-    background-size: 170px 150px;
-}
-
-.home-header {
-    position: relative;
-    z-index: 10;
-    width: 90%;
-    max-width: 1450px;
-    margin: 0 auto;
-    padding-top: 35px;
-    display: grid;
-    grid-template-columns: 340px 1fr 340px;
-    align-items: start;
-}
-
-.user-area {
-    grid-column: 1;
-}
-
-.current-user {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 6px 18px 6px 6px;
-    border: 2px solid #9b4dff;
-    border-radius: 22px;
-    background: white;
-    color: #171026;
-    font-size: 17px;
-    font-weight: 700;
-    cursor: pointer;
-    box-shadow: 0 0 14px rgba(155, 77, 255, 0.4);
-}
-
-.current-avatar {
-    width: 46px;
-    height: 46px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    background: #482568;
-    color: white;
-    font-size: 14px;
-}
-
-.search-wrapper {
-    position: relative;
-    width: 100%;
-    margin-top: 22px;
-}
-
-#userSearch {
-    width: 100%;
-    height: 48px;
-    padding: 0 17px;
-    border: 1px solid rgba(255, 255, 255, 0.6);
-    border-radius: 8px;
-    outline: none;
-    background: rgba(7, 17, 38, 0.85);
-    color: white;
-    font-size: 14px;
-}
-
-#userSearch::placeholder {
-    color: rgba(255, 255, 255, 0.6);
-}
-
-#userSearch:focus {
-    border-color: #9b4dff;
-    box-shadow: 0 0 0 2px rgba(155, 77, 255, 0.18);
-}
-
-.search-suggestions {
-    position: absolute;
-    top: 54px;
-    left: 0;
-    right: 0;
-    z-index: 200;
-    overflow: hidden;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 9px;
-    background: #101a35;
-    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.45);
-}
-
-.search-suggestion {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    width: 100%;
-    padding: 12px 15px;
-    border: 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-    background: transparent;
-    color: white;
-    text-align: left;
-    cursor: pointer;
-}
-
-.search-suggestion:last-child {
-    border-bottom: 0;
-}
-
-.search-suggestion:hover {
-    background: rgba(155, 77, 255, 0.18);
-}
-
-.suggestion-avatar {
-    width: 34px;
-    height: 34px;
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    background: #4d286d;
-    font-size: 11px;
-    font-weight: 700;
-}
-
-.suggestion-info {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-}
-
-.suggestion-info strong {
-    font-size: 14px;
-}
-
-.suggestion-info small {
-    color: #aaa8c5;
-    font-size: 12px;
-}
-
-.search-message {
-    min-height: 18px;
-    margin: 7px 0 0;
-    color: #d4c2ff;
-    font-size: 12px;
-}
-
-.sphere-title {
-    grid-column: 2;
-    text-align: center;
-}
-
-.sphere-title h1 {
-    margin: 0;
-    font-size: 44px;
-    line-height: 1.1;
-    font-weight: 800;
-}
-
-.title-line {
-    width: 300px;
-    height: 2px;
-    margin: 14px auto 12px;
-    background: linear-gradient(
-        90deg,
-        transparent,
-        #9b4dff,
-        transparent
+    return (
+        name.split(" ")[0] ||
+        "User"
     );
+
 }
 
-.sphere-title p {
-    margin: 0;
-    color: #c9c8da;
-    font-size: 15px;
+
+function getInitials(name) {
+
+    return name
+        .split(" ")
+        .filter(Boolean)
+        .map(function (word) {
+
+            return word.charAt(0);
+
+        })
+        .join("")
+        .substring(0, 2)
+        .toUpperCase();
+
 }
 
-.sphere-area {
-    position: relative;
-    z-index: 5;
-    padding: 20px 0 230px;
+
+function getUserId(user) {
+
+    return (
+        user.id ||
+        user.userId ||
+        user.user_id ||
+        getUserName(user)
+    );
+
 }
 
-.sphere-container {
-    position: relative;
-    width: 650px;
-    height: 650px;
-    margin: 0 auto;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    perspective: 1200px;
+
+function normaliseUsers(data) {
+
+    if (Array.isArray(data)) {
+        return data;
+    }
+
+
+    if (
+        data &&
+        Array.isArray(data.users)
+    ) {
+        return data.users;
+    }
+
+
+    if (
+        data &&
+        Array.isArray(data.personas)
+    ) {
+        return data.personas;
+    }
+
+
+    return [];
+
 }
 
-.sphere {
-    position: relative;
-    width: 500px;
-    height: 500px;
-    flex-shrink: 0;
-    border: 3px solid #864be5;
-    border-radius: 50%;
-    background:
-        radial-gradient(
-            circle at 50% 50%,
-            rgba(103, 53, 167, 0.42),
-            rgba(38, 35, 93, 0.68) 58%,
-            rgba(12, 20, 50, 0.72) 100%
+
+async function loadUsers() {
+
+    try {
+
+        const response =
+            await fetch(
+                "data/userpersona.json"
+            );
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Could not load userpersona.json"
+            );
+
+        }
+
+
+        const data =
+            await response.json();
+
+
+        const loadedUsers =
+            normaliseUsers(data);
+
+
+        if (
+            loadedUsers.length > 0
+        ) {
+
+            users =
+                mergeUsersWithBackup(
+                    loadedUsers
+                );
+
+        }
+
+
+        console.log(
+            "Personas loaded:",
+            users
         );
-    box-shadow:
-        0 0 20px rgba(134, 75, 229, 0.55),
-        inset 0 0 40px rgba(134, 75, 229, 0.25);
-    transform-style: preserve-3d;
-    cursor: grab;
-    user-select: none;
-    will-change: transform;
-}
 
-.sphere.dragging {
-    cursor: grabbing;
-}
 
-.sphere-latitude,
-.sphere-longitude {
-    position: absolute;
-    pointer-events: none;
-    border: 1px solid rgba(151, 103, 231, 0.28);
-    border-radius: 50%;
-}
+    } catch (error) {
 
-.latitude-one {
-    left: 12px;
-    right: 12px;
-    top: 90px;
-    height: 95px;
-}
+        console.warn(
+            "Using backup personas because the JSON file could not be loaded.",
+            error
+        );
 
-.latitude-two {
-    left: 0;
-    right: 0;
-    top: 220px;
-    height: 65px;
-}
 
-.latitude-three {
-    left: 15px;
-    right: 15px;
-    bottom: 85px;
-    height: 100px;
-}
+        users =
+            [...backupUsers];
 
-.longitude-one {
-    top: 5px;
-    bottom: 5px;
-    left: 170px;
-    width: 160px;
-}
-
-.longitude-two {
-    top: 5px;
-    bottom: 5px;
-    left: 215px;
-    width: 70px;
-}
-
-.person-node {
-    position: absolute;
-    z-index: 20;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 6px;
-    padding: 0;
-    border: 0;
-    background: transparent;
-    color: white;
-    cursor: pointer;
-}
-
-.node-avatar {
-    width: 64px;
-    height: 64px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 3px solid #9b4dff;
-    border-radius: 50%;
-    background: #37285e;
-    color: white;
-    font-size: 15px;
-    font-weight: 700;
-    box-shadow: 0 0 15px rgba(155, 77, 255, 0.65);
-}
-
-.node-name {
-    padding: 3px 8px;
-    border-radius: 10px;
-    background: rgba(7, 17, 38, 0.7);
-    font-size: 13px;
-    white-space: nowrap;
-}
-
-.green {
-    border-color: #38dcb8;
-    box-shadow: 0 0 15px rgba(56, 220, 184, 0.6);
-}
-
-.purple {
-    border-color: #9b4dff;
-}
-
-.blue {
-    border-color: #36b8e8;
-    box-shadow: 0 0 15px rgba(54, 184, 232, 0.6);
-}
-
-.cyan {
-    border-color: #45c7de;
-    box-shadow: 0 0 15px rgba(69, 199, 222, 0.6);
-}
-
-.pink {
-    border-color: #f06baa;
-    box-shadow: 0 0 15px rgba(240, 107, 170, 0.6);
-}
-
-.zach-node {
-    top: 120px;
-    left: 20px;
-}
-
-.mike-node {
-    top: 105px;
-    right: 15px;
-}
-
-.sally-node {
-    top: 260px;
-    right: -25px;
-}
-
-.holly-node {
-    bottom: 55px;
-    left: 35px;
-}
-
-.priya-node {
-    bottom: 15px;
-    right: 80px;
-}
-
-.centre-node {
-    top: 205px;
-    left: 205px;
-    cursor: default;
-}
-
-.centre-avatar {
-    width: 90px;
-    height: 90px;
-    border-color: #a44dff;
-    background: #4b276c;
-    font-size: 22px;
-}
-
-.locked-node {
-    position: absolute;
-    z-index: 15;
-    width: 44px;
-    height: 44px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 2px solid rgba(255, 255, 255, 0.22);
-    border-radius: 50%;
-    background: rgba(66, 67, 87, 0.9);
-    color: #c9c9d3;
-    font-size: 18px;
-    cursor: default;
-    box-shadow: 0 0 12px rgba(255, 255, 255, 0.1);
-}
-
-.locked-one {
-    top: -12px;
-    left: 225px;
-}
-
-.locked-two {
-    top: 55px;
-    right: 105px;
-}
-
-.locked-three {
-    top: 245px;
-    left: 55px;
-}
-
-.locked-four {
-    bottom: 5px;
-    left: 220px;
-}
-
-.connection-line {
-    position: absolute;
-    z-index: 5;
-    top: 250px;
-    left: 250px;
-    height: 2px;
-    transform-origin: left center;
-    pointer-events: none;
-    background: rgba(155, 77, 255, 0.65);
-}
-
-.connection-zach {
-    width: 190px;
-    transform: rotate(208deg);
-    background: rgba(56, 220, 184, 0.7);
-}
-
-.connection-mike {
-    width: 195px;
-    transform: rotate(-38deg);
-}
-
-.connection-sally {
-    width: 225px;
-    transform: rotate(4deg);
-    background: rgba(54, 184, 232, 0.7);
-}
-
-.connection-holly {
-    width: 200px;
-    transform: rotate(140deg);
-    background: rgba(69, 199, 222, 0.7);
-}
-
-.connection-priya {
-    width: 190px;
-    transform: rotate(55deg);
-    background: rgba(240, 107, 170, 0.7);
-}
-
-.sphere-instructions {
-    width: max-content;
-    max-width: 90%;
-    margin: 8px auto 0;
-    padding: 9px 20px;
-    border: 1px solid rgba(255, 255, 255, 0.75);
-    border-radius: 25px;
-    color: #cac9d9;
-    font-size: 13px;
-    text-align: center;
-}
-
-.instruction-dot {
-    margin: 0 10px;
-    color: #9b4dff;
-}
-
-.info-button {
-    position: absolute;
-    left: 35px;
-    bottom: 35px;
-    z-index: 50;
-    width: 54px;
-    height: 54px;
-    border: 2px solid white;
-    border-radius: 50%;
-    background: transparent;
-    color: white;
-    font-family: Georgia, serif;
-    font-size: 31px;
-    cursor: pointer;
-    transition: 0.2s ease;
-}
-
-.info-button:hover {
-    background: rgba(255, 255, 255, 0.1);
-    transform: scale(1.05);
-}
-
-.profile-panel {
-    position: fixed;
-    top: 0;
-    right: -440px;
-    z-index: 500;
-    width: 420px;
-    max-width: 92vw;
-    height: 100vh;
-    overflow-y: auto;
-    padding: 35px 28px;
-    background: #10182e;
-    border-left: 1px solid rgba(255, 255, 255, 0.15);
-    box-shadow: -10px 0 40px rgba(0, 0, 0, 0.4);
-    transition: right 0.3s ease;
-}
-
-.profile-panel.open {
-    right: 0;
-}
-
-.close-profile {
-    position: absolute;
-    top: 15px;
-    right: 20px;
-    border: 0;
-    background: transparent;
-    color: white;
-    font-size: 30px;
-    cursor: pointer;
-}
-
-.profile-top {
-    display: flex;
-    align-items: center;
-    gap: 18px;
-    padding-top: 25px;
-}
-
-.profile-avatar {
-    width: 80px;
-    height: 80px;
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 3px solid #9b4dff;
-    border-radius: 50%;
-    background: #4b276c;
-    font-size: 21px;
-    font-weight: 700;
-}
-
-.profile-top h2 {
-    margin: 0 0 6px;
-    font-size: 25px;
-}
-
-.profile-top p {
-    margin: 0;
-    color: #aaaac0;
-}
-
-.profile-actions {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    margin-top: 25px;
-}
-
-.primary-button,
-.secondary-button {
-    padding: 11px 15px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 14px;
-}
-
-.primary-button {
-    border: 1px solid #9b4dff;
-    background: #9147e8;
-    color: white;
-}
-
-.secondary-button {
-    border: 1px solid rgba(255, 255, 255, 0.4);
-    background: transparent;
-    color: white;
-}
-
-.profile-section {
-    margin-top: 30px;
-    padding-top: 20px;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.profile-section h3 {
-    margin: 0 0 14px;
-    font-size: 16px;
-}
-
-.profile-section p {
-    color: #c5c5d2;
-    line-height: 1.55;
-}
-
-.detail-row {
-    display: flex;
-    justify-content: space-between;
-    gap: 20px;
-    padding: 7px 0;
-    color: #c5c5d2;
-}
-
-.interest-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-}
-
-.interest-chip {
-    padding: 7px 11px;
-    border: 1px solid rgba(155, 77, 255, 0.5);
-    border-radius: 20px;
-    background: rgba(155, 77, 255, 0.12);
-    color: #ddd4ed;
-    font-size: 12px;
-}
-
-.empty-text {
-    color: #8f90a5 !important;
-    font-size: 13px;
-}
-
-.info-popup {
-    position: fixed;
-    inset: 0;
-    z-index: 800;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    background: rgba(2, 7, 20, 0.82);
-}
-
-.info-popup[hidden] {
-    display: none;
-}
-
-.info-popup-card {
-    position: relative;
-    width: min(430px, 100%);
-    padding: 35px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 16px;
-    background: #111a35;
-    text-align: center;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-}
-
-.info-popup-card h2 {
-    margin-top: 0;
-}
-
-.info-popup-card p {
-    color: #c5c5d2;
-    line-height: 1.6;
-}
-
-.close-info {
-    position: absolute;
-    top: 10px;
-    right: 15px;
-    border: 0;
-    background: transparent;
-    color: white;
-    font-size: 30px;
-    cursor: pointer;
-}
-
-.about-link {
-    display: inline-block;
-    margin-top: 12px;
-    padding: 10px 20px;
-    border-radius: 8px;
-    background: #9147e8;
-    color: white;
-    text-decoration: none;
-}
-
-@media (max-width: 1050px) {
-
-    .navbar {
-        flex-direction: column;
-        gap: 20px;
     }
 
-    .nav-links {
-        flex-wrap: wrap;
-        justify-content: center;
+
+    setupCurrentUser();
+
+}
+
+
+function mergeUsersWithBackup(loadedUsers) {
+
+    const combined =
+        [...loadedUsers];
+
+
+    backupUsers.forEach(
+        function (backupUser) {
+
+            const alreadyExists =
+                combined.some(
+                    function (user) {
+
+                        return (
+                            getUserName(user)
+                                .toLowerCase() ===
+                            getUserName(
+                                backupUser
+                            ).toLowerCase()
+                        );
+
+                    }
+                );
+
+
+            if (!alreadyExists) {
+
+                combined.push(
+                    backupUser
+                );
+
+            }
+
+        }
+    );
+
+
+    return combined;
+
+}
+
+
+function setupCurrentUser() {
+
+    const samuel =
+        findUserExact(
+            "Samuel Smith"
+        ) ||
+        backupUsers[0];
+
+
+    const name =
+        getUserName(samuel);
+
+
+    const initials =
+        getInitials(name);
+
+
+    currentAvatar.textContent =
+        initials;
+
+
+    sphereCurrentAvatar.textContent =
+        initials;
+
+
+    currentUserName.textContent =
+        getFirstName(samuel);
+
+}
+
+
+function findUserExact(value) {
+
+    const searchValue =
+        value
+            .trim()
+            .toLowerCase();
+
+
+    return (
+        users.find(
+            function (user) {
+
+                return (
+                    getUserName(user)
+                        .toLowerCase() ===
+                    searchValue
+                );
+
+            }
+        ) ||
+        null
+    );
+
+}
+
+
+function findUser(value) {
+
+    const searchValue =
+        value
+            .trim()
+            .toLowerCase();
+
+
+    if (!searchValue) {
+        return null;
     }
 
-    .home-header {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 30px;
+
+    const exactMatch =
+        findUserExact(
+            searchValue
+        );
+
+
+    if (exactMatch) {
+        return exactMatch;
     }
 
-    .sphere-title {
-        order: -1;
+
+    return (
+        users.find(
+            function (user) {
+
+                return (
+                    getUserName(user)
+                        .toLowerCase()
+                        .includes(
+                            searchValue
+                        )
+                );
+
+            }
+        ) ||
+        null
+    );
+
+}
+
+
+function openUserProfile(user) {
+
+    if (!user) {
+        return;
     }
 
-    .user-area {
-        width: min(400px, 100%);
+
+    selectedUser =
+        user;
+
+
+    const name =
+        getUserName(user);
+
+
+    profileAvatar.textContent =
+        getInitials(name);
+
+
+    profileName.textContent =
+        name ||
+        "User";
+
+
+    profileLocation.textContent =
+        user.suburb ||
+        user.location ||
+        "Location unavailable";
+
+
+    profileAge.textContent =
+        user.age ||
+        "Not available";
+
+
+    profileGender.textContent =
+        user.gender ||
+        "Not available";
+
+
+    profileMBTI.textContent =
+        user.mbti ||
+        user.MBTI ||
+        "Not available";
+
+
+    profileAbout.textContent =
+        user.about ||
+        "Connect through shared interests and local experiences.";
+
+
+    displayInterests(
+        user
+    );
+
+
+    displayEvents(
+        user
+    );
+
+
+    updateConnectionStatus(
+        user
+    );
+
+
+    profilePanel.classList.add(
+        "open"
+    );
+
+
+    profileOverlay.classList.add(
+        "open"
+    );
+
+}
+
+
+function closeUserProfile() {
+
+    profilePanel.classList.remove(
+        "open"
+    );
+
+
+    profileOverlay.classList.remove(
+        "open"
+    );
+
+}
+
+
+function displayInterests(user) {
+
+    profileInterests.innerHTML =
+        "";
+
+
+    let interests =
+        user.interests ||
+        [];
+
+
+    if (
+        typeof interests ===
+        "string"
+    ) {
+
+        interests =
+            interests
+                .split(",")
+                .map(
+                    function (interest) {
+
+                        return interest.trim();
+
+                    }
+                );
+
+    }
+
+
+    if (
+        !Array.isArray(
+            interests
+        ) ||
+        interests.length === 0
+    ) {
+
+        profileInterests.innerHTML =
+            '<span class="empty-text">No interests available.</span>';
+
+
+        return;
+
+    }
+
+
+    interests.forEach(
+        function (interest) {
+
+            const chip =
+                document.createElement(
+                    "span"
+                );
+
+
+            chip.className =
+                "interest-chip";
+
+
+            chip.textContent =
+                interest;
+
+
+            profileInterests.appendChild(
+                chip
+            );
+
+        }
+    );
+
+}
+
+
+function displayEvents(user) {
+
+    profileEvents.innerHTML =
+        "";
+
+
+    const events =
+        Array.isArray(
+            user.events
+        )
+            ? user.events
+            : [];
+
+
+    if (
+        events.length === 0
+    ) {
+
+        profileEvents.innerHTML =
+            '<p class="empty-text">No upcoming events.</p>';
+
+
+        return;
+
+    }
+
+
+    events.forEach(
+        function (event) {
+
+            const item =
+                document.createElement(
+                    "p"
+                );
+
+
+            if (
+                typeof event ===
+                "string"
+            ) {
+
+                item.textContent =
+                    event;
+
+            } else {
+
+                item.textContent =
+                    event.name ||
+                    event.title ||
+                    "Upcoming event";
+
+            }
+
+
+            profileEvents.appendChild(
+                item
+            );
+
+        }
+    );
+
+}
+
+
+function getConnectionKey() {
+
+    return "introspheerConnections";
+
+}
+
+
+function getConnections() {
+
+    try {
+
+        const saved =
+            localStorage.getItem(
+                getConnectionKey()
+            );
+
+
+        if (!saved) {
+
+            return [
+                "zach",
+                "mike",
+                "sally",
+                "holly",
+                "priya"
+            ];
+
+        }
+
+
+        return (
+            JSON.parse(saved) ||
+            []
+        );
+
+
+    } catch (error) {
+
+        return [
+            "zach",
+            "mike",
+            "sally",
+            "holly",
+            "priya"
+        ];
+
     }
 
 }
 
-@media (max-width: 700px) {
 
-    .nav-links a {
-        min-width: auto;
-        padding: 9px 14px;
-        font-size: 13px;
-    }
+function isConnected(user) {
 
-    .sphere-title h1 {
-        font-size: 36px;
-    }
+    const connections =
+        getConnections();
 
-    .sphere-container {
-        width: 100%;
-        height: 520px;
-    }
 
-    .sphere {
-        transform: scale(0.8);
-    }
+    const userId =
+        getUserId(user);
 
-    .sphere-instructions {
-        font-size: 11px;
+
+    const userName =
+        getUserName(user);
+
+
+    return connections.some(
+        function (connection) {
+
+            return (
+                String(connection)
+                    .toLowerCase() ===
+                    String(userId)
+                        .toLowerCase() ||
+
+                String(connection)
+                    .toLowerCase() ===
+                    userName
+                        .toLowerCase()
+            );
+
+        }
+    );
+
+}
+
+
+function updateConnectionStatus(user) {
+
+    const connected =
+        isConnected(user);
+
+
+    if (connected) {
+
+        profileConnection.textContent =
+            "This person is part of your Sphere.";
+
+
+        connectButton.textContent =
+            "Connected";
+
+
+        connectButton.disabled =
+            true;
+
+    } else {
+
+        profileConnection.textContent =
+            "You have not connected with this person yet.";
+
+
+        connectButton.textContent =
+            "Connect";
+
+
+        connectButton.disabled =
+            false;
+
     }
 
 }
+
+
+connectButton.addEventListener(
+    "click",
+    function () {
+
+        if (!selectedUser) {
+            return;
+        }
+
+
+        const connections =
+            getConnections();
+
+
+        const userId =
+            getUserId(
+                selectedUser
+            );
+
+
+        const alreadyConnected =
+            isConnected(
+                selectedUser
+            );
+
+
+        if (
+            !alreadyConnected
+        ) {
+
+            connections.push(
+                userId
+            );
+
+
+            localStorage.setItem(
+                getConnectionKey(),
+                JSON.stringify(
+                    connections
+                )
+            );
+
+        }
+
+
+        updateConnectionStatus(
+            selectedUser
+        );
+
+    }
+);
+
+
+messageButton.addEventListener(
+    "click",
+    function () {
+
+        if (!selectedUser) {
+            return;
+        }
+
+
+        localStorage.setItem(
+            "selectedChatUser",
+            getUserName(
+                selectedUser
+            )
+        );
+
+
+        window.location.href =
+            "chat.html";
+
+    }
+);
+
+
+closeProfile.addEventListener(
+    "click",
+    closeUserProfile
+);
+
+
+profileOverlay.addEventListener(
+    "click",
+    closeUserProfile
+);
+
+
+document
+    .querySelectorAll(
+        ".person-node[data-user]"
+    )
+    .forEach(
+        function (node) {
+
+            node.addEventListener(
+                "click",
+                function (event) {
+
+                    event.preventDefault();
+
+                    event.stopPropagation();
+
+
+                    const name =
+                        node.dataset.user;
+
+
+                    let user =
+                        findUserExact(
+                            name
+                        );
+
+
+                    if (!user) {
+
+                        user =
+                            backupUsers.find(
+                                function (
+                                    backupUser
+                                ) {
+
+                                    return (
+                                        getUserName(
+                                            backupUser
+                                        ).toLowerCase() ===
+                                        name.toLowerCase()
+                                    );
+
+                                }
+                            );
+
+                    }
+
+
+                    if (user) {
+
+                        openUserProfile(
+                            user
+                        );
+
+                    }
+
+                }
+            );
+
+        }
+    );
+
+
+function hideSuggestions() {
+
+    searchSuggestions.hidden =
+        true;
+
+
+    searchSuggestions.innerHTML =
+        "";
+
+}
+
+
+function showSuggestions(matches) {
+
+    searchSuggestions.innerHTML =
+        "";
+
+
+    if (
+        matches.length === 0
+    ) {
+
+        hideSuggestions();
+
+        return;
+
+    }
+
+
+    matches.forEach(
+        function (user) {
+
+            const button =
+                document.createElement(
+                    "button"
+                );
+
+
+            button.type =
+                "button";
+
+
+            button.className =
+                "search-suggestion";
+
+
+            const name =
+                getUserName(user);
+
+
+            const suburb =
+                user.suburb ||
+                user.location ||
+                "";
+
+
+            const avatar =
+                document.createElement(
+                    "span"
+                );
+
+
+            avatar.className =
+                "suggestion-avatar";
+
+
+            avatar.textContent =
+                getInitials(name);
+
+
+            const info =
+                document.createElement(
+                    "span"
+                );
+
+
+            info.className =
+                "suggestion-info";
+
+
+            const strong =
+                document.createElement(
+                    "strong"
+                );
+
+
+            strong.textContent =
+                name;
+
+
+            const small =
+                document.createElement(
+                    "small"
+                );
+
+
+            small.textContent =
+                suburb;
+
+
+            info.appendChild(
+                strong
+            );
+
+
+            info.appendChild(
+                small
+            );
+
+
+            button.appendChild(
+                avatar
+            );
+
+
+            button.appendChild(
+                info
+            );
+
+
+            button.addEventListener(
+                "click",
+                function () {
+
+                    userSearch.value =
+                        name;
+
+
+                    searchMessage.textContent =
+                        "";
+
+
+                    hideSuggestions();
+
+
+                    openUserProfile(
+                        user
+                    );
+
+                }
+            );
+
+
+            searchSuggestions.appendChild(
+                button
+            );
+
+        }
+    );
+
+
+    searchSuggestions.hidden =
+        false;
+
+}
+
+
+userSearch.addEventListener(
+    "input",
+    function () {
+
+        const value =
+            userSearch.value
+                .trim()
+                .toLowerCase();
+
+
+        searchMessage.textContent =
+            "";
+
+
+        if (
+            value.length < 2
+        ) {
+
+            hideSuggestions();
+
+            return;
+
+        }
+
+
+        const matches =
+            users
+                .filter(
+                    function (user) {
+
+                        return (
+                            getUserName(
+                                user
+                            )
+                                .toLowerCase()
+                                .includes(
+                                    value
+                                )
+                        );
+
+                    }
+                )
+                .slice(
+                    0,
+                    6
+                );
+
+
+        showSuggestions(
+            matches
+        );
+
+    }
+);
+
+
+userSearch.addEventListener(
+    "keydown",
+    function (event) {
+
+        if (
+            event.key ===
+            "Enter"
+        ) {
+
+            event.preventDefault();
+
+
+            const value =
+                userSearch.value
+                    .trim();
+
+
+            hideSuggestions();
+
+
+            if (!value) {
+
+                searchMessage.textContent =
+                    "Enter a person's name.";
+
+
+                return;
+
+            }
+
+
+            const user =
+                findUser(
+                    value
+                );
+
+
+            if (!user) {
+
+                searchMessage.textContent =
+                    "User not found.";
+
+
+                return;
+
+            }
+
+
+            searchMessage.textContent =
+                "";
+
+
+            userSearch.value =
+                getUserName(
+                    user
+                );
+
+
+            openUserProfile(
+                user
+            );
+
+        }
+
+
+        if (
+            event.key ===
+            "Escape"
+        ) {
+
+            hideSuggestions();
+
+        }
+
+    }
+);
+
+
+document.addEventListener(
+    "click",
+    function (event) {
+
+        if (
+            !event.target.closest(
+                ".search-wrapper"
+            )
+        ) {
+
+            hideSuggestions();
+
+        }
+
+    }
+);
+
+
+currentUserButton.addEventListener(
+    "click",
+    function () {
+
+        window.location.href =
+            "account.html";
+
+    }
+);
+
+
+infoButton.addEventListener(
+    "click",
+    function () {
+
+        infoPopup.hidden =
+            false;
+
+    }
+);
+
+
+closeInfo.addEventListener(
+    "click",
+    function () {
+
+        infoPopup.hidden =
+            true;
+
+    }
+);
+
+
+infoPopup.addEventListener(
+    "click",
+    function (event) {
+
+        if (
+            event.target ===
+            infoPopup
+        ) {
+
+            infoPopup.hidden =
+                true;
+
+        }
+
+    }
+);
+
+
+document.addEventListener(
+    "keydown",
+    function (event) {
+
+        if (
+            event.key ===
+            "Escape"
+        ) {
+
+            hideSuggestions();
+
+            closeUserProfile();
+
+            infoPopup.hidden =
+                true;
+
+        }
+
+    }
+);
+
+
+let rotationX =
+    0;
+
+
+let rotationY =
+    0;
+
+
+let sphereScale =
+    1;
+
+
+let isDragging =
+    false;
+
+
+let previousX =
+    0;
+
+
+let previousY =
+    0;
+
+
+let lastAnimationTime =
+    performance.now();
+
+
+function updateSphereTransform() {
+
+    sphere.style.transform =
+        "rotateX(" +
+        rotationX +
+        "deg) " +
+
+        "rotateY(" +
+        rotationY +
+        "deg) " +
+
+        "scale(" +
+        sphereScale +
+        ")";
+
+}
+
+
+function animateSphere(time) {
+
+    const delta =
+        time -
+        lastAnimationTime;
+
+
+    lastAnimationTime =
+        time;
+
+
+    if (
+        !isDragging
+    ) {
+
+        rotationY +=
+            delta * 0.005;
+
+    }
+
+
+    updateSphereTransform();
+
+
+    requestAnimationFrame(
+        animateSphere
+    );
+
+}
+
+
+requestAnimationFrame(
+    animateSphere
+);
+
+
+sphere.addEventListener(
+    "pointerdown",
+    function (event) {
+
+        if (
+            event.target.closest(
+                ".person-node"
+            )
+        ) {
+
+            return;
+
+        }
+
+
+        isDragging =
+            true;
+
+
+        previousX =
+            event.clientX;
+
+
+        previousY =
+            event.clientY;
+
+
+        sphere.classList.add(
+            "dragging"
+        );
+
+
+        try {
+
+            sphere.setPointerCapture(
+                event.pointerId
+            );
+
+        } catch (error) {
+
+        }
+
+    }
+);
+
+
+sphere.addEventListener(
+    "pointermove",
+    function (event) {
+
+        if (
+            !isDragging
+        ) {
+            return;
+        }
+
+
+        const differenceX =
+            event.clientX -
+            previousX;
+
+
+        const differenceY =
+            event.clientY -
+            previousY;
+
+
+        rotationY +=
+            differenceX *
+            0.35;
+
+
+        rotationX -=
+            differenceY *
+            0.35;
+
+
+        previousX =
+            event.clientX;
+
+
+        previousY =
+            event.clientY;
+
+
+        updateSphereTransform();
+
+    }
+);
+
+
+function finishDragging(
+    event
+) {
+
+    isDragging =
+        false;
+
+
+    sphere.classList.remove(
+        "dragging"
+    );
+
+
+    try {
+
+        if (
+            sphere.hasPointerCapture(
+                event.pointerId
+            )
+        ) {
+
+            sphere.releasePointerCapture(
+                event.pointerId
+            );
+
+        }
+
+    } catch (error) {
+
+    }
+
+}
+
+
+sphere.addEventListener(
+    "pointerup",
+    finishDragging
+);
+
+
+sphere.addEventListener(
+    "pointercancel",
+    finishDragging
+);
+
+
+sphereContainer.addEventListener(
+    "wheel",
+    function (event) {
+
+        if (
+            !event.ctrlKey
+        ) {
+
+            return;
+
+        }
+
+
+        event.preventDefault();
+
+
+        if (
+            event.deltaY < 0
+        ) {
+
+            sphereScale +=
+                0.05;
+
+        } else {
+
+            sphereScale -=
+                0.05;
+
+        }
+
+
+        sphereScale =
+            Math.max(
+                0.75,
+                Math.min(
+                    1.35,
+                    sphereScale
+                )
+            );
+
+
+        updateSphereTransform();
+
+    },
+    {
+        passive: false
+    }
+);
+
+
+let pinchStartDistance =
+    null;
+
+
+let pinchStartScale =
+    1;
+
+
+sphereContainer.addEventListener(
+    "touchstart",
+    function (event) {
+
+        if (
+            event.touches.length !==
+            2
+        ) {
+
+            return;
+
+        }
+
+
+        const first =
+            event.touches[0];
+
+
+        const second =
+            event.touches[1];
+
+
+        pinchStartDistance =
+            Math.hypot(
+                second.clientX -
+                first.clientX,
+
+                second.clientY -
+                first.clientY
+            );
+
+
+        pinchStartScale =
+            sphereScale;
+
+    },
+    {
+        passive: true
+    }
+);
+
+
+sphereContainer.addEventListener(
+    "touchmove",
+    function (event) {
+
+        if (
+            event.touches.length !==
+            2 ||
+            pinchStartDistance ===
+            null
+        ) {
+
+            return;
+
+        }
+
+
+        const first =
+            event.touches[0];
+
+
+        const second =
+            event.touches[1];
+
+
+        const currentDistance =
+            Math.hypot(
+                second.clientX -
+                first.clientX,
+
+                second.clientY -
+                first.clientY
+            );
+
+
+        sphereScale =
+            pinchStartScale *
+            (
+                currentDistance /
+                pinchStartDistance
+            );
+
+
+        sphereScale =
+            Math.max(
+                0.75,
+                Math.min(
+                    1.35,
+                    sphereScale
+                )
+            );
+
+
+        updateSphereTransform();
+
+    },
+    {
+        passive: true
+    }
+);
+
+
+sphereContainer.addEventListener(
+    "touchend",
+    function (event) {
+
+        if (
+            event.touches.length <
+            2
+        ) {
+
+            pinchStartDistance =
+                null;
+
+        }
+
+    },
+    {
+        passive: true
+    }
+);
+
+
+loadUsers();
