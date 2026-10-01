@@ -1,1413 +1,424 @@
-const canvas = document.getElementById("canvas");
-const ctx = canvas.getContext("2d");
+let personas = [];
 
-const tooltip = document.getElementById("tooltip");
+const homeSearchInput =
+    document.getElementById("homeSearchInput");
 
-const profilePanel = document.getElementById("profilePanel");
-const closeProfile = document.getElementById("closeProfile");
+const searchSuggestions =
+    document.getElementById("searchSuggestions");
 
-const profileAvatar = document.getElementById("profileAvatar");
-const profileName = document.getElementById("profileName");
-const profileLocation = document.getElementById("profileLocation");
-const profileAge = document.getElementById("profileAge");
-const profileGender = document.getElementById("profileGender");
-const profileMbti = document.getElementById("profileMbti");
-const profileInterests = document.getElementById("profileInterests");
-const profileAbout = document.getElementById("profileAbout");
-const profileEvents = document.getElementById("profileEvents");
-const profileConnection = document.getElementById("profileConnection");
+const searchMessage =
+    document.getElementById("searchMessage");
 
-const messageProfile = document.getElementById("messageProfile");
+const profileModal =
+    document.getElementById("profileModal");
 
-const homeSearch = document.getElementById("homeSearch");
-const searchSuggestions = document.getElementById("searchSuggestions");
+const closeProfileModal =
+    document.getElementById("closeProfileModal");
 
-const infoButton = document.getElementById("infoButton");
-const aboutOverlay = document.getElementById("aboutOverlay");
-const closeAbout = document.getElementById("closeAbout");
+const profileInitials =
+    document.getElementById("profileInitials");
 
-const referenceButton = document.getElementById("referenceButton");
-const referenceList = document.getElementById("referenceList");
+const profileName =
+    document.getElementById("profileName");
 
-const people = [
-    {
-        id: "samuel",
-        name: "Samuel Smith",
-        shortName: "You",
-        initials: "SS",
-        age: 22,
-        gender: "Male",
-        mbti: "INFP",
-        suburb: "South Bank",
-        interests: [
-            "Gaming",
-            "Pottery",
-            "Ballet",
-            "Museums",
-            "Reading"
-        ],
-        about:
-            "An introvert looking to build meaningful connections through shared interests and local events.",
-        events: [
-            "Beginner Pottery Workshop",
-            "Museum Social"
-        ],
-        connection:
-            "This is your profile.",
-        longitude: 0,
-        latitude: 0,
-        distance: 0,
-        colour: "#a855f7"
-    },
+const profileAge =
+    document.getElementById("profileAge");
 
-    {
-        id: "zach",
-        name: "Zach T",
-        shortName: "Zach",
-        initials: "ZT",
-        age: 23,
-        gender: "Male",
-        mbti: "INFJ",
-        suburb: "Toowong",
-        interests: [
-            "Horse Back Riding",
-            "Reading",
-            "Football"
-        ],
-        about:
-            "Enjoys quiet activities, reading and outdoor experiences.",
-        events: [
-            "Weekend Reading Club",
-            "Social Horse Riding"
-        ],
-        connection:
-            "You connected through a shared interest in reading.",
-        longitude: -2.4,
-        latitude: 0.35,
-        distance: 0.86,
-        colour: "#34d6b2"
-    },
+const profileGender =
+    document.getElementById("profileGender");
 
-    {
-        id: "mike",
-        name: "Mike S",
-        shortName: "Mike",
-        initials: "MS",
-        age: 31,
-        gender: "Male",
-        mbti: "ISFP",
-        suburb: "Toowong",
-        interests: [
-            "Boxing",
-            "Reading",
-            "Eating"
-        ],
-        about:
-            "Interested in fitness, books and discovering new food.",
-        events: [
-            "Beginner Boxing Session",
-            "Food Market Meetup"
-        ],
-        connection:
-            "Mike is part of your wider social sphere.",
-        longitude: -0.6,
-        latitude: -0.25,
-        distance: 0.88,
-        colour: "#a855f7"
-    },
+const profileMBTI =
+    document.getElementById("profileMBTI");
 
-    {
-        id: "sally",
-        name: "Sally S",
-        shortName: "Sally",
-        initials: "SA",
-        age: 27,
-        gender: "Non-Binary",
-        mbti: "ISFJ",
-        suburb: "Indooroopilly",
-        interests: [
-            "Ballet",
-            "Painting",
-            "Netball"
-        ],
-        about:
-            "Enjoys creative activities, sport and meeting people through shared experiences.",
-        events: [
-            "Ballet Social",
-            "Community Painting"
-        ],
-        connection:
-            "You share an interest in ballet.",
-        longitude: 0.2,
-        latitude: 0.35,
-        distance: 0.9,
-        colour: "#38bdf8"
-    },
+const profileSuburb =
+    document.getElementById("profileSuburb");
 
-    {
-        id: "holly",
-        name: "Holly M",
-        shortName: "Holly",
-        initials: "HM",
-        age: 24,
-        gender: "Female",
-        mbti: "Unknown",
-        suburb: "Carindale",
-        interests: [
-            "Swimming",
-            "Museums",
-            "Gaming"
-        ],
-        about:
-            "Enjoys gaming, museums and swimming.",
-        events: [
-            "Museum Social",
-            "Gaming Meetup"
-        ],
-        connection:
-            "You share interests in gaming and museums.",
-        longitude: 2.4,
-        latitude: -0.3,
-        distance: 0.87,
-        colour: "#38bdf8"
-    },
+const profileInterests =
+    document.getElementById("profileInterests");
 
-    {
-        id: "priya",
-        name: "Priya K",
-        shortName: "Priya",
-        initials: "PK",
-        age: 20,
-        gender: "Female",
-        mbti: "ESFP",
-        suburb: "Mt Gravatt",
-        interests: [
-            "Pottery",
-            "Horse Back Riding",
-            "Fencing",
-            "Eating"
-        ],
-        about:
-            "Enjoys creative workshops, outdoor activities and food experiences.",
-        events: [
-            "Beginner Pottery Workshop",
-            "Food Market Meetup"
-        ],
-        connection:
-            "You share an interest in pottery.",
-        longitude: 1.2,
-        latitude: 0.7,
-        distance: 0.86,
-        colour: "#f062a6"
-    }
-];
+const connectButton =
+    document.getElementById("connectButton");
 
-const lockedPeople = [
-    {
-        longitude: 3.1,
-        latitude: 0.5,
-        distance: 0.9
-    },
-    {
-        longitude: -1.4,
-        latitude: 0.75,
-        distance: 0.82
-    },
-    {
-        longitude: 2.8,
-        latitude: -0.65,
-        distance: 0.9
-    },
-    {
-        longitude: 0.7,
-        latitude: -0.8,
-        distance: 0.85
-    },
-    {
-        longitude: -2.1,
-        latitude: -0.4,
-        distance: 0.72
-    }
-];
+const sphere =
+    document.getElementById("sphere");
 
-let canvasWidth = 470;
-let canvasHeight = 470;
+const sphereContainer =
+    document.getElementById("sphereContainer");
 
-let centreX = canvasWidth / 2;
-let centreY = canvasHeight / 2;
+const aboutInfoButton =
+    document.getElementById("aboutInfoButton");
 
-let sphereRadius = 185;
+const aboutPopup =
+    document.getElementById("aboutPopup");
 
-let rotationX = 0;
-let rotationY = 0;
+const closeAboutPopup =
+    document.getElementById("closeAboutPopup");
 
-let zoom = 1;
 
-let dragging = false;
-let movedWhileDragging = false;
+async function loadPersonas() {
 
-let lastMouseX = 0;
-let lastMouseY = 0;
+    try {
 
-let lastTouchDistance = null;
+        const response =
+            await fetch("data/personas.json");
 
-const AUTO_ROTATE_SPEED = 0.0005;
-
-let lastAnimationTime = performance.now();
-
-function resizeCanvas() {
-
-    const rect = canvas.getBoundingClientRect();
-
-    const ratio = window.devicePixelRatio || 1;
-
-    canvas.width = rect.width * ratio;
-    canvas.height = rect.height * ratio;
-
-    ctx.setTransform(
-        ratio,
-        0,
-        0,
-        ratio,
-        0,
-        0
-    );
-
-    canvasWidth = rect.width;
-    canvasHeight = rect.height;
-
-    centreX = canvasWidth / 2;
-    centreY = canvasHeight / 2;
-
-    sphereRadius =
-        Math.min(
-            canvasWidth,
-            canvasHeight
-        ) * 0.395;
-}
-
-function rotatePoint(x, y, z) {
-
-    const cosY = Math.cos(rotationY);
-    const sinY = Math.sin(rotationY);
-
-    let rotatedX =
-        x * cosY +
-        z * sinY;
-
-    let rotatedZ =
-        -x * sinY +
-        z * cosY;
-
-    const cosX = Math.cos(rotationX);
-    const sinX = Math.sin(rotationX);
-
-    let rotatedY =
-        y * cosX -
-        rotatedZ * sinX;
-
-    rotatedZ =
-        y * sinX +
-        rotatedZ * cosX;
-
-    return {
-        x: rotatedX,
-        y: rotatedY,
-        z: rotatedZ
-    };
-}
-
-function getPersonPosition(person) {
-
-    const radius =
-        sphereRadius *
-        zoom *
-        person.distance;
-
-    const longitude =
-        person.longitude;
-
-    const latitude =
-        person.latitude;
-
-    const x =
-        Math.cos(latitude) *
-        Math.cos(longitude) *
-        radius;
-
-    const y =
-        Math.sin(latitude) *
-        radius;
-
-    const z =
-        Math.cos(latitude) *
-        Math.sin(longitude) *
-        radius;
-
-    const rotated =
-        rotatePoint(
-            x,
-            y,
-            z
-        );
-
-    const perspective =
-        1 +
-        rotated.z /
-        (sphereRadius * 5);
-
-    return {
-        x:
-            centreX +
-            rotated.x *
-            perspective,
-
-        y:
-            centreY +
-            rotated.y *
-            perspective,
-
-        z:
-            rotated.z,
-
-        scale:
-            Math.max(
-                0.7,
-                Math.min(
-                    1.25,
-                    perspective
-                )
-            )
-    };
-}
-
-function drawGlowCircle(
-    x,
-    y,
-    radius,
-    colour,
-    glow
-) {
-
-    ctx.save();
-
-    ctx.beginPath();
-
-    ctx.arc(
-        x,
-        y,
-        radius,
-        0,
-        Math.PI * 2
-    );
-
-    ctx.fillStyle =
-        "#27375a";
-
-    ctx.shadowColor =
-        colour;
-
-    ctx.shadowBlur =
-        glow;
-
-    ctx.fill();
-
-    ctx.lineWidth = 3;
-
-    ctx.strokeStyle =
-        colour;
-
-    ctx.stroke();
-
-    ctx.restore();
-}
-
-function drawSphereBackground() {
-
-    const radius =
-        sphereRadius * zoom;
-
-    const gradient =
-        ctx.createRadialGradient(
-            centreX,
-            centreY,
-            radius * 0.1,
-            centreX,
-            centreY,
-            radius
-        );
-
-    gradient.addColorStop(
-        0,
-        "rgba(96, 51, 165, 0.50)"
-    );
-
-    gradient.addColorStop(
-        0.65,
-        "rgba(59, 37, 123, 0.24)"
-    );
-
-    gradient.addColorStop(
-        1,
-        "rgba(20, 20, 60, 0.10)"
-    );
-
-    ctx.save();
-
-    ctx.beginPath();
-
-    ctx.arc(
-        centreX,
-        centreY,
-        radius,
-        0,
-        Math.PI * 2
-    );
-
-    ctx.fillStyle =
-        gradient;
-
-    ctx.fill();
-
-    ctx.lineWidth = 2.5;
-
-    ctx.strokeStyle =
-        "rgba(132, 73, 245, 0.9)";
-
-    ctx.shadowColor =
-        "#8b5cf6";
-
-    ctx.shadowBlur = 8;
-
-    ctx.stroke();
-
-    ctx.shadowBlur = 0;
-
-    ctx.clip();
-
-    ctx.strokeStyle =
-        "rgba(124, 91, 200, 0.28)";
-
-    ctx.lineWidth = 1;
-
-    for (
-        let i = -3;
-        i <= 3;
-        i++
-    ) {
-
-        const offset =
-            i * radius * 0.22;
-
-        ctx.beginPath();
-
-        ctx.ellipse(
-            centreX,
-            centreY + offset,
-            radius,
-            radius * 0.25,
-            0,
-            0,
-            Math.PI * 2
-        );
-
-        ctx.stroke();
-    }
-
-    for (
-        let i = -3;
-        i <= 3;
-        i++
-    ) {
-
-        const width =
-            radius *
-            Math.cos(
-                i * 0.22
+        if (!response.ok) {
+            throw new Error(
+                "Could not load persona dataset."
             );
+        }
 
-        ctx.beginPath();
+        const data =
+            await response.json();
 
-        ctx.ellipse(
-            centreX,
-            centreY,
-            Math.abs(width),
-            radius,
-            0,
-            0,
-            Math.PI * 2
+        if (Array.isArray(data)) {
+            personas = data;
+        } else if (Array.isArray(data.personas)) {
+            personas = data.personas;
+        } else if (Array.isArray(data.users)) {
+            personas = data.users;
+        } else {
+            personas = [];
+        }
+
+        console.log(
+            "Personas loaded:",
+            personas
         );
 
-        ctx.stroke();
+    } catch (error) {
+
+        console.error(
+            "Error loading personas:",
+            error
+        );
+
+        personas = getBackupPersonas();
+
     }
 
-    ctx.restore();
 }
 
-function drawPersonConnections() {
 
-    people
-        .slice(1)
-        .forEach(
-            function (person) {
+function getBackupPersonas() {
 
-                const position =
-                    getPersonPosition(
-                        person
-                    );
+    return [
+        {
+            name: "Samuel Smith",
+            age: 22,
+            gender: "Male",
+            mbti: "INFP",
+            suburb: "South Bank",
+            interests: [
+                "Gaming",
+                "Pottery",
+                "Ballet",
+                "Museums",
+                "Reading"
+            ]
+        },
 
-                ctx.beginPath();
+        {
+            name: "Zach T",
+            age: 23,
+            gender: "Male",
+            mbti: "INFJ",
+            suburb: "Toowong",
+            interests: [
+                "Horse Back Riding",
+                "Reading",
+                "Football"
+            ]
+        },
 
-                ctx.moveTo(
-                    centreX,
-                    centreY
-                );
+        {
+            name: "Mike S",
+            age: 31,
+            gender: "Male",
+            mbti: "ISFP",
+            suburb: "Toowong",
+            interests: [
+                "Boxing",
+                "Reading",
+                "Eating"
+            ]
+        },
 
-                ctx.lineTo(
-                    position.x,
-                    position.y
-                );
+        {
+            name: "Sally S",
+            age: 27,
+            gender: "Non-Binary",
+            mbti: "ISFJ",
+            suburb: "Indooroopilly",
+            interests: [
+                "Ballet",
+                "Painting",
+                "Netball"
+            ]
+        },
 
-                ctx.strokeStyle =
-                    person.colour +
-                    "88";
+        {
+            name: "Holly M",
+            age: 24,
+            gender: "Female",
+            mbti: "",
+            suburb: "Carindale",
+            interests: [
+                "Swimming",
+                "Museums",
+                "Gaming"
+            ]
+        },
 
-                ctx.lineWidth =
-                    1.3;
+        {
+            name: "Priya K",
+            age: 20,
+            gender: "Female",
+            mbti: "ESFP",
+            suburb: "Mt Gravatt",
+            interests: [
+                "Pottery",
+                "Horse Back Riding",
+                "Fencing",
+                "Eating"
+            ]
+        }
+    ];
 
-                ctx.stroke();
-            }
-        );
 }
 
-function drawPerson(person) {
 
-    const position =
-        getPersonPosition(person);
+function getUserName(user) {
 
-    const size =
-        position.scale;
+    if (user.name) {
+        return user.name;
+    }
 
-    const radius =
-        22 *
-        zoom *
-        size;
+    if (user.fullName) {
+        return user.fullName;
+    }
 
-    drawGlowCircle(
-        position.x,
-        position.y,
-        radius,
-        person.colour,
-        12
-    );
+    if (user.full_name) {
+        return user.full_name;
+    }
 
-    ctx.fillStyle =
-        "white";
+    const firstName =
+        user.firstName ||
+        user.first_name ||
+        "";
 
-    ctx.font =
-        `bold ${10 * zoom * size}px Arial`;
+    const lastName =
+        user.lastName ||
+        user.last_name ||
+        "";
 
-    ctx.textAlign =
-        "center";
+    return (
+        firstName +
+        " " +
+        lastName
+    ).trim();
 
-    ctx.textBaseline =
-        "middle";
-
-    ctx.fillText(
-        person.initials,
-        position.x,
-        position.y
-    );
-
-    ctx.font =
-        `${10 * zoom * size}px Arial`;
-
-    ctx.fillText(
-        person.shortName,
-        position.x,
-        position.y +
-        radius +
-        12 * zoom
-    );
 }
 
-function drawCentrePerson(person) {
 
-    const radius =
-        35 * zoom;
+function findUser(searchValue) {
 
-    drawGlowCircle(
-        centreX,
-        centreY,
-        radius,
-        "#a855f7",
-        18
-    );
+    const value =
+        searchValue
+            .trim()
+            .toLowerCase();
 
-    ctx.fillStyle =
-        "white";
+    if (!value) {
+        return null;
+    }
 
-    ctx.font =
-        `bold ${15 * zoom}px Arial`;
+    let exactMatch =
+        personas.find(function (user) {
 
-    ctx.textAlign =
-        "center";
-
-    ctx.textBaseline =
-        "middle";
-
-    ctx.fillText(
-        person.initials,
-        centreX,
-        centreY
-    );
-
-    ctx.font =
-        `bold ${11 * zoom}px Arial`;
-
-    ctx.fillText(
-        "You",
-        centreX,
-        centreY +
-        radius +
-        14 * zoom
-    );
-}
-
-function drawLockedPerson(person) {
-
-    const position =
-        getPersonPosition(
-            person
-        );
-
-    const size =
-        position.scale;
-
-    ctx.save();
-
-    ctx.beginPath();
-
-    ctx.arc(
-        position.x,
-        position.y,
-        14 * zoom * size,
-        0,
-        Math.PI * 2
-    );
-
-    ctx.fillStyle =
-        "rgba(90, 90, 105, 0.5)";
-
-    ctx.shadowColor =
-        "rgba(255,255,255,0.35)";
-
-    ctx.shadowBlur = 9;
-
-    ctx.fill();
-
-    ctx.lineWidth = 1.5;
-
-    ctx.strokeStyle =
-        "rgba(255,255,255,0.25)";
-
-    ctx.stroke();
-
-    ctx.shadowBlur = 0;
-
-    ctx.fillStyle =
-        "rgba(255,255,255,0.65)";
-
-    ctx.font =
-        `${10 * zoom * size}px Arial`;
-
-    ctx.textAlign =
-        "center";
-
-    ctx.textBaseline =
-        "middle";
-
-    ctx.fillText(
-        "🔒",
-        position.x,
-        position.y
-    );
-
-    ctx.restore();
-}
-
-function drawSphere() {
-
-    ctx.clearRect(
-        0,
-        0,
-        canvasWidth,
-        canvasHeight
-    );
-
-    drawSphereBackground();
-
-    drawPersonConnections();
-
-    const drawablePeople =
-        people
-            .slice(1)
-            .map(
-                function (person) {
-                    return {
-                        type: "person",
-                        data: person,
-                        position:
-                            getPersonPosition(
-                                person
-                            )
-                    };
-                }
-            );
-
-    const drawableLocked =
-        lockedPeople.map(
-            function (person) {
-                return {
-                    type: "locked",
-                    data: person,
-                    position:
-                        getPersonPosition(
-                            person
-                        )
-                };
-            }
-        );
-
-    const allDrawable =
-        drawablePeople.concat(
-            drawableLocked
-        );
-
-    allDrawable.sort(
-        function (a, b) {
             return (
-                a.position.z -
-                b.position.z
+                getUserName(user)
+                    .toLowerCase() === value
             );
-        }
-    );
 
-    allDrawable.forEach(
-        function (item) {
+        });
 
-            if (
-                item.type ===
-                "person"
-            ) {
+    if (exactMatch) {
+        return exactMatch;
+    }
 
-                drawPerson(
-                    item.data
-                );
 
-            } else {
+    return personas.find(function (user) {
 
-                drawLockedPerson(
-                    item.data
-                );
-            }
-        }
-    );
-
-    drawCentrePerson(
-        people[0]
-    );
-}
-
-function findPersonAt(x, y) {
-
-    const centreDistance =
-        Math.hypot(
-            x - centreX,
-            y - centreY
+        return (
+            getUserName(user)
+                .toLowerCase()
+                .includes(value)
         );
 
-    if (
-        centreDistance <
-        40 * zoom
-    ) {
+    }) || null;
 
-        return people[0];
-    }
-
-    for (
-        let i = 1;
-        i < people.length;
-        i++
-    ) {
-
-        const position =
-            getPersonPosition(
-                people[i]
-            );
-
-        const distance =
-            Math.hypot(
-                x - position.x,
-                y - position.y
-            );
-
-        if (
-            distance <
-            30 *
-            zoom *
-            position.scale
-        ) {
-
-            return people[i];
-        }
-    }
-
-    return null;
 }
 
-function getCanvasPosition(event) {
 
-    const rect =
-        canvas.getBoundingClientRect();
+function searchForUser() {
 
-    return {
-        x:
-            event.clientX -
-            rect.left,
+    const searchValue =
+        homeSearchInput.value.trim();
 
-        y:
-            event.clientY -
-            rect.top
-    };
-}
+    hideSuggestions();
 
-function showProfile(person) {
+    if (searchValue.length === 0) {
 
-    profileAvatar.textContent =
-        person.initials;
+        searchMessage.textContent =
+            "Please enter a user name.";
 
-    profileName.textContent =
-        person.name;
-
-    profileLocation.textContent =
-        person.suburb;
-
-    profileAge.textContent =
-        person.age;
-
-    profileGender.textContent =
-        person.gender;
-
-    profileMbti.textContent =
-        person.mbti;
-
-    profileAbout.textContent =
-        person.about;
-
-    profileConnection.textContent =
-        person.connection;
-
-    profileInterests.innerHTML =
-        "";
-
-    person.interests.forEach(
-        function (interest) {
-
-            const chip =
-                document.createElement(
-                    "span"
-                );
-
-            chip.className =
-                "interest-chip";
-
-            chip.textContent =
-                interest;
-
-            profileInterests.appendChild(
-                chip
-            );
-        }
-    );
-
-    profileEvents.innerHTML =
-        "";
-
-    person.events.forEach(
-        function (eventName) {
-
-            const eventElement =
-                document.createElement(
-                    "div"
-                );
-
-            eventElement.className =
-                "event-small";
-
-            eventElement.textContent =
-                eventName;
-
-            profileEvents.appendChild(
-                eventElement
-            );
-        }
-    );
-
-    messageProfile.dataset.person =
-        person.id;
-
-    profilePanel.classList.add(
-        "show"
-    );
-}
-
-function startDragging(
-    clientX,
-    clientY
-) {
-
-    dragging = true;
-
-    movedWhileDragging =
-        false;
-
-    lastMouseX =
-        clientX;
-
-    lastMouseY =
-        clientY;
-}
-
-function dragSphere(
-    clientX,
-    clientY
-) {
-
-    if (!dragging) {
         return;
     }
 
-    const differenceX =
-        clientX -
-        lastMouseX;
 
-    const differenceY =
-        clientY -
-        lastMouseY;
+    const foundUser =
+        findUser(searchValue);
 
-    if (
-        Math.abs(differenceX) > 1 ||
-        Math.abs(differenceY) > 1
-    ) {
 
-        movedWhileDragging =
-            true;
+    if (!foundUser) {
+
+        searchMessage.textContent =
+            "User not found.";
+
+        return;
     }
 
-    rotationY +=
-        differenceX *
-        0.007;
 
-    rotationX +=
-        differenceY *
-        0.007;
+    searchMessage.textContent = "";
 
-    lastMouseX =
-        clientX;
+    homeSearchInput.value =
+        getUserName(foundUser);
 
-    lastMouseY =
-        clientY;
+    openUserProfile(foundUser);
 
-    tooltip.style.display =
-        "none";
 }
 
-canvas.addEventListener(
-    "mousedown",
+
+homeSearchInput.addEventListener(
+    "keydown",
     function (event) {
 
-        startDragging(
-            event.clientX,
-            event.clientY
-        );
-    }
-);
+        if (event.key === "Enter") {
 
-window.addEventListener(
-    "mousemove",
-    function (event) {
+            event.preventDefault();
 
-        if (dragging) {
+            searchForUser();
 
-            dragSphere(
-                event.clientX,
-                event.clientY
-            );
-
-            return;
         }
 
-        const rect =
-            canvas.getBoundingClientRect();
-
-        if (
-            event.clientX <
-                rect.left ||
-            event.clientX >
-                rect.right ||
-            event.clientY <
-                rect.top ||
-            event.clientY >
-                rect.bottom
-        ) {
-
-            tooltip.style.display =
-                "none";
-
-            return;
-        }
-
-        const position =
-            getCanvasPosition(
-                event
-            );
-
-        const person =
-            findPersonAt(
-                position.x,
-                position.y
-            );
-
-        if (person) {
-
-            tooltip.style.display =
-                "block";
-
-            tooltip.textContent =
-                person.name +
-                " · " +
-                person.suburb;
-
-            tooltip.style.left =
-                event.clientX +
-                12 +
-                "px";
-
-            tooltip.style.top =
-                event.clientY +
-                12 +
-                "px";
-
-        } else {
-
-            tooltip.style.display =
-                "none";
-        }
     }
 );
 
-window.addEventListener(
-    "mouseup",
-    function () {
 
-        dragging = false;
-    }
-);
-
-canvas.addEventListener(
-    "click",
-    function (event) {
-
-        if (
-            movedWhileDragging
-        ) {
-
-            movedWhileDragging =
-                false;
-
-            return;
-        }
-
-        const position =
-            getCanvasPosition(
-                event
-            );
-
-        const person =
-            findPersonAt(
-                position.x,
-                position.y
-            );
-
-        if (person) {
-
-            showProfile(
-                person
-            );
-        }
-    }
-);
-
-canvas.addEventListener(
-    "touchstart",
-    function (event) {
-
-        if (
-            event.touches.length === 2
-        ) {
-
-            lastTouchDistance =
-                getTouchDistance(
-                    event.touches
-                );
-
-        } else if (
-            event.touches.length === 1
-        ) {
-
-            startDragging(
-                event.touches[0]
-                    .clientX,
-
-                event.touches[0]
-                    .clientY
-            );
-        }
-    },
-    {
-        passive: true
-    }
-);
-
-canvas.addEventListener(
-    "touchmove",
-    function (event) {
-
-        if (
-            event.touches.length === 2
-        ) {
-
-            const distance =
-                getTouchDistance(
-                    event.touches
-                );
-
-            if (
-                lastTouchDistance !==
-                null
-            ) {
-
-                const difference =
-                    distance -
-                    lastTouchDistance;
-
-                zoom +=
-                    difference *
-                    0.002;
-
-                zoom =
-                    Math.max(
-                        0.75,
-                        Math.min(
-                            1.25,
-                            zoom
-                        )
-                    );
-            }
-
-            lastTouchDistance =
-                distance;
-
-        } else if (
-            event.touches.length === 1
-        ) {
-
-            dragSphere(
-                event.touches[0]
-                    .clientX,
-
-                event.touches[0]
-                    .clientY
-            );
-        }
-    },
-    {
-        passive: true
-    }
-);
-
-canvas.addEventListener(
-    "touchend",
-    function () {
-
-        dragging = false;
-
-        lastTouchDistance =
-            null;
-    }
-);
-
-function getTouchDistance(touches) {
-
-    const x =
-        touches[0].clientX -
-        touches[1].clientX;
-
-    const y =
-        touches[0].clientY -
-        touches[1].clientY;
-
-    return Math.hypot(
-        x,
-        y
-    );
-}
-
-closeProfile.addEventListener(
-    "click",
-    function () {
-
-        profilePanel.classList.remove(
-            "show"
-        );
-    }
-);
-
-messageProfile.addEventListener(
-    "click",
-    function () {
-
-        window.location.href =
-            "chat.html";
-    }
-);
-
-homeSearch.addEventListener(
+homeSearchInput.addEventListener(
     "input",
     function () {
 
-        const query =
-            homeSearch.value
+        const value =
+            homeSearchInput.value
                 .trim()
                 .toLowerCase();
 
-        searchSuggestions.innerHTML =
-            "";
+        searchMessage.textContent = "";
 
-        if (
-            query.length < 2
-        ) {
 
-            searchSuggestions
-                .classList
-                .remove("show");
+        if (value.length < 2) {
+
+            hideSuggestions();
 
             return;
+
         }
 
-        const results =
-            people.filter(
-                function (person) {
 
-                    const interests =
-                        person.interests
-                            .join(" ")
-                            .toLowerCase();
+        const matches =
+            personas
+                .filter(function (user) {
 
                     return (
-                        person.name
+                        getUserName(user)
                             .toLowerCase()
-                            .includes(query) ||
-
-                        person.suburb
-                            .toLowerCase()
-                            .includes(query) ||
-
-                        person.mbti
-                            .toLowerCase()
-                            .includes(query) ||
-
-                        interests
-                            .includes(query)
-                    );
-                }
-            );
-
-        if (
-            results.length === 0
-        ) {
-
-            searchSuggestions
-                .classList
-                .remove("show");
-
-            return;
-        }
-
-        results
-            .slice(0, 5)
-            .forEach(
-                function (person) {
-
-                    const button =
-                        document.createElement(
-                            "button"
-                        );
-
-                    button.type =
-                        "button";
-
-                    button.className =
-                        "suggestion";
-
-                    button.innerHTML = `
-                        <span class="suggestion-avatar">
-                            ${person.initials}
-                        </span>
-
-                        <span class="suggestion-text">
-                            <strong>
-                                ${person.name}
-                            </strong>
-
-                            <span>
-                                ${person.suburb} · ${person.mbti}
-                            </span>
-                        </span>
-                    `;
-
-                    button.addEventListener(
-                        "click",
-                        function () {
-
-                            homeSearch.value =
-                                person.name;
-
-                            searchSuggestions
-                                .classList
-                                .remove(
-                                    "show"
-                                );
-
-                            showProfile(
-                                person
-                            );
-                        }
+                            .includes(value)
                     );
 
-                    searchSuggestions
-                        .appendChild(
-                            button
-                        );
-                }
-            );
+                })
+                .slice(0, 5);
 
-        searchSuggestions
-            .classList
-            .add("show");
+
+        showSuggestions(matches);
+
     }
 );
+
+
+function showSuggestions(users) {
+
+    searchSuggestions.innerHTML = "";
+
+
+    if (users.length === 0) {
+
+        hideSuggestions();
+
+        return;
+
+    }
+
+
+    users.forEach(function (user) {
+
+        const button =
+            document.createElement("button");
+
+        button.type = "button";
+
+        button.className =
+            "search-suggestion";
+
+        button.textContent =
+            getUserName(user);
+
+
+        button.addEventListener(
+            "click",
+            function () {
+
+                homeSearchInput.value =
+                    getUserName(user);
+
+                hideSuggestions();
+
+                openUserProfile(user);
+
+            }
+        );
+
+
+        searchSuggestions.appendChild(
+            button
+        );
+
+    });
+
+
+    searchSuggestions.hidden = false;
+
+}
+
+
+function hideSuggestions() {
+
+    searchSuggestions.hidden = true;
+
+    searchSuggestions.innerHTML = "";
+
+}
+
 
 document.addEventListener(
     "click",
@@ -1415,146 +426,543 @@ document.addEventListener(
 
         if (
             !event.target.closest(
-                ".search-container"
+                ".home-search-container"
             )
         ) {
 
-            searchSuggestions
-                .classList
-                .remove("show");
+            hideSuggestions();
+
         }
+
     }
 );
 
-infoButton.addEventListener(
+
+function getInitials(name) {
+
+    return name
+        .split(" ")
+        .filter(Boolean)
+        .map(function (part) {
+            return part.charAt(0);
+        })
+        .join("")
+        .substring(0, 2)
+        .toUpperCase();
+
+}
+
+
+function openUserProfile(user) {
+
+    const name =
+        getUserName(user);
+
+    profileInitials.textContent =
+        getInitials(name);
+
+    profileName.textContent =
+        name || "User";
+
+    profileAge.textContent =
+        user.age ||
+        "Not available";
+
+    profileGender.textContent =
+        user.gender ||
+        "Not available";
+
+    profileMBTI.textContent =
+        user.mbti ||
+        user.MBTI ||
+        "Not available";
+
+    profileSuburb.textContent =
+        user.suburb ||
+        user.location ||
+        "Not available";
+
+
+    if (
+        Array.isArray(user.interests)
+    ) {
+
+        profileInterests.textContent =
+            user.interests.join(", ");
+
+    } else {
+
+        profileInterests.textContent =
+            user.interests ||
+            "Not available";
+
+    }
+
+
+    profileModal.hidden = false;
+
+    profileModal.dataset.currentUser =
+        name;
+
+}
+
+
+closeProfileModal.addEventListener(
     "click",
     function () {
 
-        aboutOverlay
-            .classList
-            .add("show");
+        profileModal.hidden = true;
 
-        document.body.style.overflow =
-            "hidden";
     }
 );
 
-closeAbout.addEventListener(
-    "click",
-    function () {
 
-        aboutOverlay
-            .classList
-            .remove("show");
-
-        document.body.style.overflow =
-            "";
-    }
-);
-
-aboutOverlay.addEventListener(
+profileModal.addEventListener(
     "click",
     function (event) {
 
         if (
-            event.target ===
-            aboutOverlay
+            event.target === profileModal
         ) {
 
-            aboutOverlay
-                .classList
-                .remove("show");
+            profileModal.hidden = true;
 
-            document.body.style.overflow =
-                "";
         }
+
     }
 );
 
-referenceButton.addEventListener(
+
+document
+    .querySelectorAll(".sphere-person[data-user]")
+    .forEach(function (button) {
+
+        button.addEventListener(
+            "click",
+            function (event) {
+
+                event.stopPropagation();
+
+                const userName =
+                    button.dataset.user;
+
+                const user =
+                    findUser(userName);
+
+
+                if (user) {
+
+                    openUserProfile(user);
+
+                }
+
+            }
+        );
+
+    });
+
+
+connectButton.addEventListener(
     "click",
     function () {
 
-        referenceList.hidden =
-            !referenceList.hidden;
+        const selectedUser =
+            profileModal.dataset.currentUser;
 
-        if (
-            referenceList.hidden
-        ) {
-
-            referenceButton.textContent =
-                "View APA 7 Reference List";
-
-        } else {
-
-            referenceButton.textContent =
-                "Hide APA 7 Reference List";
+        if (!selectedUser) {
+            return;
         }
+
+        connectButton.textContent =
+            "Connected";
+
+        connectButton.disabled =
+            true;
+
+        setTimeout(function () {
+
+            connectButton.textContent =
+                "Connect";
+
+            connectButton.disabled =
+                false;
+
+        }, 2000);
+
     }
 );
+
+
+aboutInfoButton.addEventListener(
+    "click",
+    function () {
+
+        aboutPopup.hidden = false;
+
+    }
+);
+
+
+closeAboutPopup.addEventListener(
+    "click",
+    function () {
+
+        aboutPopup.hidden = true;
+
+    }
+);
+
+
+aboutPopup.addEventListener(
+    "click",
+    function (event) {
+
+        if (
+            event.target === aboutPopup
+        ) {
+
+            aboutPopup.hidden = true;
+
+        }
+
+    }
+);
+
 
 document.addEventListener(
     "keydown",
     function (event) {
 
-        if (
-            event.key === "Escape"
-        ) {
+        if (event.key === "Escape") {
 
-            aboutOverlay
-                .classList
-                .remove("show");
+            profileModal.hidden = true;
 
-            profilePanel
-                .classList
-                .remove("show");
+            aboutPopup.hidden = true;
 
-            document.body.style.overflow =
-                "";
+            hideSuggestions();
+
         }
+
     }
 );
 
-window.addEventListener(
-    "resize",
-    function () {
 
-        resizeCanvas();
-    }
-);
+let rotationX = 0;
+let rotationY = 0;
 
-function animateSphere(
-    currentTime
-) {
+let scale = 1;
 
-    const deltaTime =
+let dragging = false;
+
+let previousX = 0;
+let previousY = 0;
+
+let autoRotate = true;
+
+let lastFrameTime =
+    performance.now();
+
+
+function updateSphereTransform() {
+
+    sphere.style.transform =
+        "rotateX(" +
+        rotationX +
+        "deg) rotateY(" +
+        rotationY +
+        "deg) scale(" +
+        scale +
+        ")";
+
+}
+
+
+function animateSphere(currentTime) {
+
+    const delta =
         currentTime -
-        lastAnimationTime;
+        lastFrameTime;
 
-    lastAnimationTime =
+    lastFrameTime =
         currentTime;
 
+
     if (
-        !dragging &&
-        !profilePanel.classList.contains(
-            "show"
-        )
+        autoRotate &&
+        !dragging
     ) {
 
         rotationY +=
-            AUTO_ROTATE_SPEED *
-            deltaTime;
+            delta * 0.006;
+
+        updateSphereTransform();
+
     }
 
-    drawSphere();
 
     requestAnimationFrame(
         animateSphere
     );
+
 }
 
-resizeCanvas();
 
 requestAnimationFrame(
     animateSphere
 );
+
+
+sphere.addEventListener(
+    "pointerdown",
+    function (event) {
+
+        if (
+            event.target.closest(
+                ".sphere-person"
+            )
+        ) {
+            return;
+        }
+
+
+        dragging = true;
+
+        autoRotate = false;
+
+        previousX =
+            event.clientX;
+
+        previousY =
+            event.clientY;
+
+        sphere.classList.add(
+            "dragging"
+        );
+
+        sphere.setPointerCapture(
+            event.pointerId
+        );
+
+    }
+);
+
+
+sphere.addEventListener(
+    "pointermove",
+    function (event) {
+
+        if (!dragging) {
+            return;
+        }
+
+
+        const differenceX =
+            event.clientX -
+            previousX;
+
+        const differenceY =
+            event.clientY -
+            previousY;
+
+
+        rotationY +=
+            differenceX * 0.35;
+
+        rotationX -=
+            differenceY * 0.35;
+
+
+        previousX =
+            event.clientX;
+
+        previousY =
+            event.clientY;
+
+
+        updateSphereTransform();
+
+    }
+);
+
+
+function stopDragging(event) {
+
+    if (!dragging) {
+        return;
+    }
+
+
+    dragging = false;
+
+    sphere.classList.remove(
+        "dragging"
+    );
+
+
+    if (
+        sphere.hasPointerCapture(
+            event.pointerId
+        )
+    ) {
+
+        sphere.releasePointerCapture(
+            event.pointerId
+        );
+
+    }
+
+
+    setTimeout(function () {
+
+        autoRotate = true;
+
+    }, 1500);
+
+}
+
+
+sphere.addEventListener(
+    "pointerup",
+    stopDragging
+);
+
+
+sphere.addEventListener(
+    "pointercancel",
+    stopDragging
+);
+
+
+sphere.addEventListener(
+    "wheel",
+    function () {
+
+        return;
+
+    },
+    {
+        passive: true
+    }
+);
+
+
+let initialPinchDistance = null;
+let initialPinchScale = 1;
+
+
+sphereContainer.addEventListener(
+    "touchstart",
+    function (event) {
+
+        if (
+            event.touches.length === 2
+        ) {
+
+            const touchOne =
+                event.touches[0];
+
+            const touchTwo =
+                event.touches[1];
+
+
+            initialPinchDistance =
+                Math.hypot(
+                    touchTwo.clientX -
+                    touchOne.clientX,
+
+                    touchTwo.clientY -
+                    touchOne.clientY
+                );
+
+
+            initialPinchScale =
+                scale;
+
+        }
+
+    },
+    {
+        passive: true
+    }
+);
+
+
+sphereContainer.addEventListener(
+    "touchmove",
+    function (event) {
+
+        if (
+            event.touches.length !== 2 ||
+            initialPinchDistance === null
+        ) {
+            return;
+        }
+
+
+        const touchOne =
+            event.touches[0];
+
+        const touchTwo =
+            event.touches[1];
+
+
+        const currentDistance =
+            Math.hypot(
+                touchTwo.clientX -
+                touchOne.clientX,
+
+                touchTwo.clientY -
+                touchOne.clientY
+            );
+
+
+        const pinchAmount =
+            currentDistance /
+            initialPinchDistance;
+
+
+        scale =
+            initialPinchScale *
+            pinchAmount;
+
+
+        scale =
+            Math.min(
+                1.35,
+                Math.max(
+                    0.75,
+                    scale
+                )
+            );
+
+
+        updateSphereTransform();
+
+    },
+    {
+        passive: true
+    }
+);
+
+
+sphereContainer.addEventListener(
+    "touchend",
+    function (event) {
+
+        if (
+            event.touches.length < 2
+        ) {
+
+            initialPinchDistance =
+                null;
+
+        }
+
+    },
+    {
+        passive: true
+    }
+);
+
+
+loadPersonas();

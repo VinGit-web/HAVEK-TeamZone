@@ -1,64 +1,70 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>INTROSPHEER | Home</title>
+
+    <title>Home | INTROSPHEER</title>
+
     <link rel="stylesheet" href="css/main.css">
 </head>
 
-<body>
+<body class="home-page">
 
-    <nav class="main-nav">
+    <nav class="home-nav">
 
-        <a href="index.html" class="nav-logo">
-            <span class="logo-icon">✦</span>
-            <span>INTROSPHEER</span>
+        <a href="index.html" class="home-logo">
+            INTROSPHEER
         </a>
 
-        <div class="nav-links">
+        <div class="home-nav-links">
             <a href="index.html" class="active">Home</a>
             <a href="events.html">Events</a>
             <a href="strings.html">Strings</a>
             <a href="chat.html">Chat</a>
             <a href="account.html">Account</a>
+            <a href="about.html">About</a>
         </div>
 
     </nav>
 
-    <main class="home-page">
 
-        <section class="home-controls">
+    <main class="sphere-page">
 
-            <button
-                class="account-button"
-                type="button"
-                onclick="window.location.href='account.html'"
-            >
-                <span class="account-avatar">SS</span>
-                <span>Samuel</span>
-            </button>
+        <section class="sphere-top">
 
-            <div class="search-container">
+            <div class="sphere-left">
 
-                <input
-                    id="homeSearch"
-                    type="search"
-                    placeholder="Search people, events or interests..."
-                    autocomplete="off"
-                >
+                <button class="current-user" type="button">
+                    <span class="current-user-avatar">SS</span>
+                    <span id="currentUserName">Samuel</span>
+                </button>
 
-                <div
-                    id="searchSuggestions"
-                    class="search-suggestions"
-                ></div>
+                <div class="home-search-container">
+
+                    <input
+                        type="text"
+                        id="homeSearchInput"
+                        class="home-search"
+                        placeholder="Search People, Events or interests..."
+                        autocomplete="off"
+                    >
+
+                    <div
+                        id="searchSuggestions"
+                        class="search-suggestions"
+                        hidden
+                    ></div>
+
+                    <p
+                        id="searchMessage"
+                        class="search-message"
+                    ></p>
+
+                </div>
 
             </div>
 
-        </section>
-
-        <section class="sphere-section">
 
             <div class="sphere-heading">
 
@@ -73,36 +79,123 @@
 
             </div>
 
-            <div class="canvas-container">
+        </section>
 
-                <canvas id="canvas"></canvas>
+
+        <section class="sphere-section">
+
+            <div
+                id="sphereContainer"
+                class="sphere-container"
+            >
 
                 <div
-                    id="tooltip"
-                    class="tooltip"
-                ></div>
+                    id="sphere"
+                    class="sphere"
+                >
+
+                    <div class="sphere-grid sphere-grid-one"></div>
+                    <div class="sphere-grid sphere-grid-two"></div>
+                    <div class="sphere-grid sphere-grid-three"></div>
+
+                    <div class="connection-line line-zach"></div>
+                    <div class="connection-line line-mike"></div>
+                    <div class="connection-line line-sally"></div>
+                    <div class="connection-line line-holly"></div>
+                    <div class="connection-line line-priya"></div>
+
+
+                    <button
+                        class="sphere-person zach"
+                        type="button"
+                        data-user="Zach T"
+                    >
+                        <span class="person-circle">ZT</span>
+                        <span class="person-name">Zach</span>
+                    </button>
+
+
+                    <button
+                        class="sphere-person mike"
+                        type="button"
+                        data-user="Mike S"
+                    >
+                        <span class="person-circle">MS</span>
+                        <span class="person-name">Mike</span>
+                    </button>
+
+
+                    <button
+                        class="sphere-person sally"
+                        type="button"
+                        data-user="Sally S"
+                    >
+                        <span class="person-circle">SA</span>
+                        <span class="person-name">Sally</span>
+                    </button>
+
+
+                    <button
+                        class="sphere-person holly"
+                        type="button"
+                        data-user="Holly M"
+                    >
+                        <span class="person-circle">HM</span>
+                        <span class="person-name">Holly</span>
+                    </button>
+
+
+                    <button
+                        class="sphere-person priya"
+                        type="button"
+                        data-user="Priya K"
+                    >
+                        <span class="person-circle">PK</span>
+                        <span class="person-name">Priya</span>
+                    </button>
+
+
+                    <div class="sphere-person current-sphere-user">
+                        <span class="person-circle current-circle">SS</span>
+                        <span class="person-name">You</span>
+                    </div>
+
+
+                    <div class="locked-profile lock-one">
+                        🔒
+                    </div>
+
+                    <div class="locked-profile lock-two">
+                        🔒
+                    </div>
+
+                    <div class="locked-profile lock-three">
+                        🔒
+                    </div>
+
+                    <div class="locked-profile lock-four">
+                        🔒
+                    </div>
+
+                </div>
 
             </div>
 
+
             <div class="sphere-controls">
-
                 <span>Drag to rotate</span>
-
                 <span class="control-dot">•</span>
-
                 <span>Pinch to zoom</span>
-
                 <span class="control-dot">•</span>
-
                 <span>Click a profile</span>
-
             </div>
 
         </section>
 
+
         <button
-            id="infoButton"
-            class="info-button"
+            id="aboutInfoButton"
+            class="about-info-button"
             type="button"
             aria-label="About INTROSPHEER"
         >
@@ -111,271 +204,118 @@
 
     </main>
 
-    <aside
-        id="profilePanel"
-        class="profile-panel"
-    >
-
-        <button
-            id="closeProfile"
-            class="close-profile"
-            type="button"
-            aria-label="Close profile"
-        >
-            ×
-        </button>
-
-        <div class="profile-header">
-
-            <div
-                id="profileAvatar"
-                class="profile-avatar"
-            >
-                ?
-            </div>
-
-            <div>
-                <h2 id="profileName">Profile</h2>
-                <p id="profileLocation"></p>
-            </div>
-
-        </div>
-
-        <div class="profile-information">
-
-            <div>
-                <span>Age</span>
-                <strong id="profileAge">-</strong>
-            </div>
-
-            <div>
-                <span>Gender</span>
-                <strong id="profileGender">-</strong>
-            </div>
-
-            <div>
-                <span>MBTI</span>
-                <strong id="profileMbti">-</strong>
-            </div>
-
-        </div>
-
-        <div class="profile-actions">
-
-            <button
-                id="messageProfile"
-                type="button"
-            >
-                Message
-            </button>
-
-            <button
-                id="viewProfileSphere"
-                type="button"
-            >
-                View in Sphere
-            </button>
-
-        </div>
-
-        <section class="profile-section">
-
-            <h3>Interests</h3>
-
-            <div
-                id="profileInterests"
-                class="interest-list"
-            ></div>
-
-        </section>
-
-        <section class="profile-section">
-
-            <h3>About</h3>
-
-            <p id="profileAbout"></p>
-
-        </section>
-
-        <section class="profile-section">
-
-            <h3>Upcoming Events</h3>
-
-            <div id="profileEvents"></div>
-
-        </section>
-
-        <section class="profile-section">
-
-            <h3>Your Connection</h3>
-
-            <p id="profileConnection"></p>
-
-        </section>
-
-    </aside>
 
     <div
-        id="aboutOverlay"
-        class="about-overlay"
+        id="profileModal"
+        class="profile-modal"
+        hidden
     >
 
-        <div class="about-modal">
+        <div class="profile-modal-content">
 
             <button
-                id="closeAbout"
-                class="about-close"
+                id="closeProfileModal"
+                class="profile-close"
                 type="button"
-                aria-label="Close about"
+                aria-label="Close profile"
             >
-                ×
+                &times;
             </button>
 
-            <div class="about-content">
 
-                <section class="about-intro">
+            <div
+                id="profileInitials"
+                class="profile-large-avatar"
+            >
+                SS
+            </div>
 
-                    <p class="about-label">
-                        ABOUT US
-                    </p>
 
-                    <h1>
-                        Meet the team behind INTROSPHEER
-                    </h1>
+            <h2 id="profileName">
+                User
+            </h2>
 
-                    <p>
-                        INTROSPHEER is made to help people create meaningful
-                        social bonds through shared interests, events and
-                        conversation. We aim to build a welcoming environment
-                        where users can find things to do, meet others and feel
-                        more willing to get involved.
-                    </p>
 
-                </section>
+            <div class="profile-information">
 
-                <section class="team-section">
+                <div class="profile-row">
+                    <strong>Age</strong>
+                    <span id="profileAge">-</span>
+                </div>
 
-                    <div class="team-image">
+                <div class="profile-row">
+                    <strong>Gender</strong>
+                    <span id="profileGender">-</span>
+                </div>
 
-                        <img
-                            src="images/team-photo.jpeg"
-                            alt="The INTROSPHEER project team"
-                        >
+                <div class="profile-row">
+                    <strong>MBTI</strong>
+                    <span id="profileMBTI">-</span>
+                </div>
 
-                    </div>
+                <div class="profile-row">
+                    <strong>Suburb</strong>
+                    <span id="profileSuburb">-</span>
+                </div>
 
-                    <div class="team-description">
-
-                        <p class="about-label">
-                            OUR TEAM
-                        </p>
-
-                        <h2>
-                            Built together.
-                        </h2>
-
-                        <p>
-                            INTROSPHEER was developed as a collaborative
-                            university project focused on making social
-                            interaction easier and more approachable.
-                        </p>
-
-                        <p>
-                            Our team worked across research, design,
-                            prototyping, testing and development to create
-                            the final experience.
-                        </p>
-
-                        <p>
-                            Every team member contributed different ideas,
-                            perspectives and skills throughout the design
-                            process.
-                        </p>
-
-                    </div>
-
-                </section>
-
-                <section class="references-section">
-
-                    <p class="about-label">
-                        SOURCES
-                    </p>
-
-                    <h2>References</h2>
-
-                    <p>
-                        View the sources and resources used throughout
-                        the development of INTROSPHEER.
-                    </p>
-
-                    <button
-                        id="referenceButton"
-                        class="reference-button"
-                        type="button"
-                    >
-                        View APA 7 Reference List
-                    </button>
-
-                    <div
-                        id="referenceList"
-                        class="reference-list"
-                        hidden
-                    >
-
-                        <p>
-                            Brisbane City Council. (n.d.).
-                            <i>Creative events</i>.
-                            Brisbane City Council Open Data.
-                        </p>
-
-                        <p>
-                            Brisbane City Council. (n.d.).
-                            <i>Classes and workshops events</i>.
-                            Brisbane City Council Open Data.
-                        </p>
-
-                        <p>
-                            Brisbane City Council. (n.d.).
-                            <i>Library events</i>.
-                            Brisbane City Council Open Data.
-                        </p>
-
-                        <p>
-                            Brisbane City Council. (n.d.).
-                            <i>Museum of Brisbane events</i>.
-                            Brisbane City Council Open Data.
-                        </p>
-
-                        <p>
-                            Brisbane City Council. (n.d.).
-                            <i>Brisbane Botanic Gardens events</i>.
-                            Brisbane City Council Open Data.
-                        </p>
-
-                        <p>
-                            Dembling, S. (2015, February 15).
-                            <i>Why even introverts need community</i>.
-                            Psychology Today.
-                        </p>
-
-                        <p>
-                            PeoplePsych. (n.d.).
-                            <i>Building meaningful relationships as an introvert</i>.
-                        </p>
-
-                    </div>
-
-                </section>
+                <div class="profile-row">
+                    <strong>Interests</strong>
+                    <span id="profileInterests">-</span>
+                </div>
 
             </div>
+
+
+            <button
+                id="connectButton"
+                class="connect-button"
+                type="button"
+            >
+                Connect
+            </button>
 
         </div>
 
     </div>
 
+
+    <div
+        id="aboutPopup"
+        class="about-popup"
+        hidden
+    >
+
+        <div class="about-popup-content">
+
+            <button
+                id="closeAboutPopup"
+                class="profile-close"
+                type="button"
+            >
+                &times;
+            </button>
+
+            <h2>About INTROSPHEER</h2>
+
+            <p>
+                INTROSPHEER helps people discover events,
+                build connections and meet people through
+                shared interests.
+            </p>
+
+            <a
+                href="about.html"
+                class="about-page-link"
+            >
+                View About Page
+            </a>
+
+        </div>
+
+    </div>
+
+
     <script src="js/main.js"></script>
 
 </body>
-
 </html>
