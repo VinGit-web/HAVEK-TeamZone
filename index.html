@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,15 +10,15 @@
     <link rel="stylesheet" href="css/main.css">
 </head>
 
-<body class="home-page">
+<body>
 
-    <nav class="home-nav">
+    <nav class="navbar">
 
-        <a href="index.html" class="home-logo">
+        <a href="index.html" class="nav-logo">
             INTROSPHEER
         </a>
 
-        <div class="home-nav-links">
+        <div class="nav-links">
             <a href="index.html" class="active">Home</a>
             <a href="events.html">Events</a>
             <a href="strings.html">Strings</a>
@@ -29,24 +30,38 @@
     </nav>
 
 
-    <main class="sphere-page">
+    <main class="home-page">
 
-        <section class="sphere-top">
+        <section class="home-header">
 
-            <div class="sphere-left">
+            <div class="user-area">
 
-                <button class="current-user" type="button">
-                    <span class="current-user-avatar">SS</span>
-                    <span id="currentUserName">Samuel</span>
+                <button
+                    class="current-user"
+                    type="button"
+                    onclick="window.location.href='account.html'"
+                >
+
+                    <div
+                        class="current-avatar"
+                        id="currentAvatar"
+                    >
+                        SS
+                    </div>
+
+                    <span id="currentUserName">
+                        Samuel
+                    </span>
+
                 </button>
 
-                <div class="home-search-container">
+
+                <div class="search-wrapper">
 
                     <input
-                        type="text"
-                        id="homeSearchInput"
-                        class="home-search"
-                        placeholder="Search People, Events or interests..."
+                        type="search"
+                        id="userSearch"
+                        placeholder="Search people..."
                         autocomplete="off"
                     >
 
@@ -66,11 +81,11 @@
             </div>
 
 
-            <div class="sphere-heading">
+            <div class="sphere-title">
 
                 <h1>My Sphere</h1>
 
-                <div class="heading-line"></div>
+                <div class="title-line"></div>
 
                 <p>
                     People you've met, people you'll meet,
@@ -82,7 +97,7 @@
         </section>
 
 
-        <section class="sphere-section">
+        <section class="sphere-area">
 
             <div
                 id="sphereContainer"
@@ -94,108 +109,193 @@
                     class="sphere"
                 >
 
-                    <div class="sphere-grid sphere-grid-one"></div>
-                    <div class="sphere-grid sphere-grid-two"></div>
-                    <div class="sphere-grid sphere-grid-three"></div>
+                    <div class="sphere-latitude latitude-one"></div>
+                    <div class="sphere-latitude latitude-two"></div>
+                    <div class="sphere-latitude latitude-three"></div>
 
-                    <div class="connection-line line-zach"></div>
-                    <div class="connection-line line-mike"></div>
-                    <div class="connection-line line-sally"></div>
-                    <div class="connection-line line-holly"></div>
-                    <div class="connection-line line-priya"></div>
+                    <div class="sphere-longitude longitude-one"></div>
+                    <div class="sphere-longitude longitude-two"></div>
+
+
+                    <div
+                        class="connection-line connection-zach"
+                    ></div>
+
+                    <div
+                        class="connection-line connection-mike"
+                    ></div>
+
+                    <div
+                        class="connection-line connection-sally"
+                    ></div>
+
+                    <div
+                        class="connection-line connection-holly"
+                    ></div>
+
+                    <div
+                        class="connection-line connection-priya"
+                    ></div>
 
 
                     <button
-                        class="sphere-person zach"
+                        class="person-node zach-node"
                         type="button"
                         data-user="Zach T"
                     >
-                        <span class="person-circle">ZT</span>
-                        <span class="person-name">Zach</span>
+
+                        <span class="node-avatar green">
+                            ZT
+                        </span>
+
+                        <span class="node-name">
+                            Zach
+                        </span>
+
                     </button>
 
 
                     <button
-                        class="sphere-person mike"
+                        class="person-node mike-node"
                         type="button"
                         data-user="Mike S"
                     >
-                        <span class="person-circle">MS</span>
-                        <span class="person-name">Mike</span>
+
+                        <span class="node-avatar purple">
+                            MS
+                        </span>
+
+                        <span class="node-name">
+                            Mike
+                        </span>
+
                     </button>
 
 
                     <button
-                        class="sphere-person sally"
+                        class="person-node sally-node"
                         type="button"
                         data-user="Sally S"
                     >
-                        <span class="person-circle">SA</span>
-                        <span class="person-name">Sally</span>
+
+                        <span class="node-avatar blue">
+                            SS
+                        </span>
+
+                        <span class="node-name">
+                            Sally
+                        </span>
+
                     </button>
 
 
                     <button
-                        class="sphere-person holly"
+                        class="person-node holly-node"
                         type="button"
                         data-user="Holly M"
                     >
-                        <span class="person-circle">HM</span>
-                        <span class="person-name">Holly</span>
+
+                        <span class="node-avatar cyan">
+                            HM
+                        </span>
+
+                        <span class="node-name">
+                            Holly
+                        </span>
+
                     </button>
 
 
                     <button
-                        class="sphere-person priya"
+                        class="person-node priya-node"
                         type="button"
                         data-user="Priya K"
                     >
-                        <span class="person-circle">PK</span>
-                        <span class="person-name">Priya</span>
+
+                        <span class="node-avatar pink">
+                            PK
+                        </span>
+
+                        <span class="node-name">
+                            Priya
+                        </span>
+
                     </button>
 
 
-                    <div class="sphere-person current-sphere-user">
-                        <span class="person-circle current-circle">SS</span>
-                        <span class="person-name">You</span>
+                    <div class="person-node centre-node">
+
+                        <span
+                            class="node-avatar centre-avatar"
+                            id="sphereCurrentAvatar"
+                        >
+                            SS
+                        </span>
+
+                        <span class="node-name">
+                            You
+                        </span>
+
                     </div>
 
 
-                    <div class="locked-profile lock-one">
-                        🔒
-                    </div>
+                    <button
+                        class="locked-node locked-one"
+                        type="button"
+                    >
+                        <span>?</span>
+                    </button>
 
-                    <div class="locked-profile lock-two">
-                        🔒
-                    </div>
+                    <button
+                        class="locked-node locked-two"
+                        type="button"
+                    >
+                        <span>?</span>
+                    </button>
 
-                    <div class="locked-profile lock-three">
-                        🔒
-                    </div>
+                    <button
+                        class="locked-node locked-three"
+                        type="button"
+                    >
+                        <span>?</span>
+                    </button>
 
-                    <div class="locked-profile lock-four">
-                        🔒
-                    </div>
+                    <button
+                        class="locked-node locked-four"
+                        type="button"
+                    >
+                        <span>?</span>
+                    </button>
 
                 </div>
 
             </div>
 
 
-            <div class="sphere-controls">
+            <div class="sphere-instructions">
+
                 <span>Drag to rotate</span>
-                <span class="control-dot">•</span>
+
+                <span class="instruction-dot">
+                    •
+                </span>
+
                 <span>Pinch to zoom</span>
-                <span class="control-dot">•</span>
+
+                <span class="instruction-dot">
+                    •
+                </span>
+
                 <span>Click a profile</span>
+
             </div>
 
         </section>
 
 
         <button
-            id="aboutInfoButton"
-            class="about-info-button"
+            id="infoButton"
+            class="info-button"
             type="button"
             aria-label="About INTROSPHEER"
         >
@@ -205,70 +305,55 @@
     </main>
 
 
-    <div
-        id="profileModal"
-        class="profile-modal"
-        hidden
+    <aside
+        id="profilePanel"
+        class="profile-panel"
     >
 
-        <div class="profile-modal-content">
+        <button
+            id="closeProfile"
+            class="close-profile"
+            type="button"
+        >
+            ×
+        </button>
 
-            <button
-                id="closeProfileModal"
-                class="profile-close"
-                type="button"
-                aria-label="Close profile"
-            >
-                &times;
-            </button>
 
+        <div class="profile-top">
 
             <div
-                id="profileInitials"
-                class="profile-large-avatar"
+                id="profileAvatar"
+                class="profile-avatar"
             >
-                SS
+                ?
             </div>
 
+            <div>
 
-            <h2 id="profileName">
-                User
-            </h2>
+                <h2 id="profileName">
+                    Profile
+                </h2>
 
-
-            <div class="profile-information">
-
-                <div class="profile-row">
-                    <strong>Age</strong>
-                    <span id="profileAge">-</span>
-                </div>
-
-                <div class="profile-row">
-                    <strong>Gender</strong>
-                    <span id="profileGender">-</span>
-                </div>
-
-                <div class="profile-row">
-                    <strong>MBTI</strong>
-                    <span id="profileMBTI">-</span>
-                </div>
-
-                <div class="profile-row">
-                    <strong>Suburb</strong>
-                    <span id="profileSuburb">-</span>
-                </div>
-
-                <div class="profile-row">
-                    <strong>Interests</strong>
-                    <span id="profileInterests">-</span>
-                </div>
+                <p id="profileLocation"></p>
 
             </div>
 
+        </div>
+
+
+        <div class="profile-actions">
+
+            <button
+                id="messageButton"
+                class="primary-button"
+                type="button"
+            >
+                Message
+            </button>
 
             <button
                 id="connectButton"
-                class="connect-button"
+                class="secondary-button"
                 type="button"
             >
                 Connect
@@ -276,38 +361,109 @@
 
         </div>
 
-    </div>
+
+        <section class="profile-section">
+
+            <h3>About</h3>
+
+            <p id="profileAbout">
+                Profile information will appear here.
+            </p>
+
+        </section>
+
+
+        <section class="profile-section">
+
+            <h3>Details</h3>
+
+            <div class="detail-row">
+                <strong>Age</strong>
+                <span id="profileAge">—</span>
+            </div>
+
+            <div class="detail-row">
+                <strong>Gender</strong>
+                <span id="profileGender">—</span>
+            </div>
+
+            <div class="detail-row">
+                <strong>MBTI</strong>
+                <span id="profileMBTI">—</span>
+            </div>
+
+        </section>
+
+
+        <section class="profile-section">
+
+            <h3>Interests</h3>
+
+            <div
+                id="profileInterests"
+                class="interest-list"
+            ></div>
+
+        </section>
+
+
+        <section class="profile-section">
+
+            <h3>Upcoming Events</h3>
+
+            <div id="profileEvents">
+
+                <p class="empty-text">
+                    No upcoming events.
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <section class="profile-section">
+
+            <h3>Your Connection</h3>
+
+            <p id="profileConnection">
+                View your connection with this person.
+            </p>
+
+        </section>
+
+    </aside>
 
 
     <div
-        id="aboutPopup"
-        class="about-popup"
+        id="infoPopup"
+        class="info-popup"
         hidden
     >
 
-        <div class="about-popup-content">
+        <div class="info-popup-card">
 
             <button
-                id="closeAboutPopup"
-                class="profile-close"
+                id="closeInfo"
+                class="close-info"
                 type="button"
             >
-                &times;
+                ×
             </button>
 
             <h2>About INTROSPHEER</h2>
 
             <p>
-                INTROSPHEER helps people discover events,
-                build connections and meet people through
-                shared interests.
+                INTROSPHEER helps people build meaningful
+                connections through shared interests,
+                conversations and local events.
             </p>
 
             <a
                 href="about.html"
-                class="about-page-link"
+                class="about-link"
             >
-                View About Page
+                Learn more
             </a>
 
         </div>
@@ -318,4 +474,5 @@
     <script src="js/main.js"></script>
 
 </body>
+
 </html>
