@@ -16,6 +16,7 @@ const backupUsers = [
         about:
             "An introvert who wants to build meaningful connections through shared interests and local events."
     },
+
     {
         id: "zach",
         name: "Zach T",
@@ -31,6 +32,7 @@ const backupUsers = [
         about:
             "Interested in meeting people through reading, sport and outdoor activities."
     },
+
     {
         id: "mike",
         name: "Mike S",
@@ -46,6 +48,7 @@ const backupUsers = [
         about:
             "Enjoys boxing, reading and discovering new places to eat."
     },
+
     {
         id: "sally",
         name: "Sally S",
@@ -61,6 +64,7 @@ const backupUsers = [
         about:
             "Interested in creative activities, ballet and sport."
     },
+
     {
         id: "holly",
         name: "Holly M",
@@ -76,6 +80,7 @@ const backupUsers = [
         about:
             "Enjoys swimming, visiting museums and gaming."
     },
+
     {
         id: "priya",
         name: "Priya K",
@@ -96,6 +101,7 @@ const backupUsers = [
 
 
 let users = [...backupUsers];
+
 let selectedUser = null;
 
 
@@ -110,6 +116,15 @@ const searchMessage =
 
 const currentUserButton =
     document.getElementById("currentUserButton");
+
+const currentAvatar =
+    document.getElementById("currentAvatar");
+
+const currentUserName =
+    document.getElementById("currentUserName");
+
+const sphereCurrentAvatar =
+    document.getElementById("sphereCurrentAvatar");
 
 const profilePanel =
     document.getElementById("profilePanel");
@@ -184,11 +199,45 @@ function getUserName(user) {
         return "";
     }
 
+    if (user.name) {
+        return user.name;
+    }
+
+    if (user.fullName) {
+        return user.fullName;
+    }
+
+    if (user.full_name) {
+        return user.full_name;
+    }
+
+    const firstName =
+        user.firstName ||
+        user.first_name ||
+        "";
+
+    const lastName =
+        user.lastName ||
+        user.last_name ||
+        "";
+
     return (
-        user.name ||
-        user.fullName ||
-        user.full_name ||
-        ""
+        firstName +
+        " " +
+        lastName
+    ).trim();
+
+}
+
+
+function getFirstName(user) {
+
+    const name =
+        getUserName(user);
+
+    return (
+        name.split(" ")[0] ||
+        "User"
     );
 
 }
@@ -200,7 +249,9 @@ function getInitials(name) {
         .split(" ")
         .filter(Boolean)
         .map(function (word) {
+
             return word.charAt(0);
+
         })
         .join("")
         .substring(0, 2)
@@ -209,40 +260,77 @@ function getInitials(name) {
 }
 
 
-function findUser(value) {
-
-    const searchValue =
-        value.trim().toLowerCase();
-
-    if (!searchValue) {
-        return null;
-    }
-
-    const exact =
-        users.find(function (user) {
-
-            return (
-                getUserName(user)
-                    .toLowerCase() ===
-                searchValue
-            );
-
-        });
-
-    if (exact) {
-        return exact;
-    }
+function getUserId(user) {
 
     return (
-        users.find(function (user) {
-
-            return getUserName(user)
-                .toLowerCase()
-                .includes(searchValue);
-
-        }) ||
-        null
+        user.id ||
+        user.userId ||
+        user.user_id ||
+        getUserName(user)
     );
+
+}
+
+
+function normaliseUsers(data) {
+
+    if (Array.isArray(data)) {
+        return data;
+    }
+
+    if (
+        data &&
+        Array.isArray(data.users)
+    ) {
+        return data.users;
+    }
+
+    if (
+        data &&
+        Array.isArray(data.personas)
+    ) {
+        return data.personas;
+    }
+
+    return [];
+
+}
+
+
+function mergeUsersWithBackup(loadedUsers) {
+
+    const combined =
+        [...loadedUsers];
+
+    backupUsers.forEach(
+        function (backupUser) {
+
+            const alreadyExists =
+                combined.some(
+                    function (user) {
+
+                        return (
+                            getUserName(user)
+                                .toLowerCase() ===
+                            getUserName(backupUser)
+                                .toLowerCase()
+                        );
+
+                    }
+                );
+
+            if (!alreadyExists) {
+
+                combined.push(
+                    backupUser
+                );
+
+            }
+
+        }
+    );
+
+    return combined;
 
 }
 
@@ -257,88 +345,151 @@ async function loadUsers() {
             );
 
         if (!response.ok) {
+
             throw new Error(
-                "Persona dataset unavailable"
+                "Could not load userpersona.json"
             );
+
         }
 
         const data =
             await response.json();
 
-        let loadedUsers = [];
-
-        if (Array.isArray(data)) {
-            loadedUsers = data;
-        }
+        const loadedUsers =
+            normaliseUsers(data);
 
         if (
-            data &&
-            Array.isArray(data.users)
+            loadedUsers.length > 0
         ) {
-            loadedUsers = data.users;
-        }
 
-        if (
-            data &&
-            Array.isArray(data.personas)
-        ) {
-            loadedUsers = data.personas;
-        }
-
-        if (loadedUsers.length > 0) {
-
-            backupUsers.forEach(
-                function (backup) {
-
-                    const exists =
-                        loadedUsers.some(
-                            function (user) {
-
-                                return (
-                                    getUserName(user)
-                                        .toLowerCase() ===
-                                    backup.name
-                                        .toLowerCase()
-                                );
-
-                            }
-                        );
-
-                    if (!exists) {
-                        loadedUsers.push(
-                            backup
-                        );
-                    }
-
-                }
-            );
-
-            users = loadedUsers;
+            users =
+                mergeUsersWithBackup(
+                    loadedUsers
+                );
 
         }
+
+        console.log(
+            "Personas loaded:",
+            users
+        );
 
     } catch (error) {
+
+        console.warn(
+            "Using backup personas because the JSON file could not be loaded.",
+            error
+        );
 
         users =
             [...backupUsers];
 
-        console.warn(
-            "Using backup persona data.",
-            error
-        );
-
     }
+
+    setupCurrentUser();
 
 }
 
 
-function openProfile(user) {
+function setupCurrentUser() {
+
+    const samuel =
+        findUserExact(
+            "Samuel Smith"
+        ) ||
+        backupUsers[0];
+
+    const name =
+        getUserName(samuel);
+
+    const initials =
+        getInitials(name);
+
+    currentAvatar.textContent =
+        initials;
+
+    sphereCurrentAvatar.textContent =
+        initials;
+
+    currentUserName.textContent =
+        getFirstName(samuel);
+
+}
+
+
+function findUserExact(value) {
+
+    const searchValue =
+        value
+            .trim()
+            .toLowerCase();
+
+    return (
+        users.find(
+            function (user) {
+
+                return (
+                    getUserName(user)
+                        .toLowerCase() ===
+                    searchValue
+                );
+
+            }
+        ) ||
+        null
+    );
+
+}
+
+
+function findUser(value) {
+
+    const searchValue =
+        value
+            .trim()
+            .toLowerCase();
+
+    if (!searchValue) {
+        return null;
+    }
+
+    const exactMatch =
+        findUserExact(
+            searchValue
+        );
+
+    if (exactMatch) {
+        return exactMatch;
+    }
+
+    return (
+        users.find(
+            function (user) {
+
+                return (
+                    getUserName(user)
+                        .toLowerCase()
+                        .includes(
+                            searchValue
+                        )
+                );
+
+            }
+        ) ||
+        null
+    );
+
+}
+
+
+function openUserProfile(user) {
 
     if (!user) {
         return;
     }
 
-    selectedUser = user;
+    selectedUser =
+        user;
 
     const name =
         getUserName(user);
@@ -347,7 +498,8 @@ function openProfile(user) {
         getInitials(name);
 
     profileName.textContent =
-        name;
+        name ||
+        "User";
 
     profileLocation.textContent =
         user.suburb ||
@@ -369,13 +521,19 @@ function openProfile(user) {
 
     profileAbout.textContent =
         user.about ||
-        "Connect through shared interests and local events.";
+        "Connect through shared interests and local experiences.";
 
-    displayInterests(user);
+    displayInterests(
+        user
+    );
 
-    displayEvents(user);
+    displayEvents(
+        user
+    );
 
-    updateConnection(user);
+    updateConnectionStatus(
+        user
+    );
 
     profilePanel.classList.add(
         "open"
@@ -388,7 +546,7 @@ function openProfile(user) {
 }
 
 
-function closeProfilePanel() {
+function closeUserProfile() {
 
     profilePanel.classList.remove(
         "open"
@@ -407,7 +565,8 @@ function displayInterests(user) {
         "";
 
     let interests =
-        user.interests || [];
+        user.interests ||
+        [];
 
     if (
         typeof interests ===
@@ -415,12 +574,22 @@ function displayInterests(user) {
     ) {
 
         interests =
-            interests.split(",");
+            interests
+                .split(",")
+                .map(
+                    function (interest) {
+
+                        return interest.trim();
+
+                    }
+                );
 
     }
 
     if (
-        !Array.isArray(interests) ||
+        !Array.isArray(
+            interests
+        ) ||
         interests.length === 0
     ) {
 
@@ -443,7 +612,7 @@ function displayInterests(user) {
                 "interest-chip";
 
             chip.textContent =
-                interest.trim();
+                interest;
 
             profileInterests.appendChild(
                 chip
@@ -461,11 +630,15 @@ function displayEvents(user) {
         "";
 
     const events =
-        Array.isArray(user.events)
+        Array.isArray(
+            user.events
+        )
             ? user.events
             : [];
 
-    if (events.length === 0) {
+    if (
+        events.length === 0
+    ) {
 
         profileEvents.innerHTML =
             '<p class="empty-text">No upcoming events.</p>';
@@ -482,12 +655,22 @@ function displayEvents(user) {
                     "p"
                 );
 
-            item.textContent =
-                typeof event === "string"
-                    ? event
-                    : event.name ||
-                      event.title ||
-                      "Upcoming event";
+            if (
+                typeof event ===
+                "string"
+            ) {
+
+                item.textContent =
+                    event;
+
+            } else {
+
+                item.textContent =
+                    event.name ||
+                    event.title ||
+                    "Upcoming event";
+
+            }
 
             profileEvents.appendChild(
                 item
@@ -499,13 +682,20 @@ function displayEvents(user) {
 }
 
 
+function getConnectionKey() {
+
+    return "introspheerConnections";
+
+}
+
+
 function getConnections() {
 
     try {
 
         const saved =
             localStorage.getItem(
-                "introspheerConnections"
+                getConnectionKey()
             );
 
         if (!saved) {
@@ -520,39 +710,62 @@ function getConnections() {
 
         }
 
-        return JSON.parse(saved);
+        return (
+            JSON.parse(saved) ||
+            []
+        );
 
-    } catch {
+    } catch (error) {
 
-        return [];
+        return [
+            "zach",
+            "mike",
+            "sally",
+            "holly",
+            "priya"
+        ];
 
     }
 
 }
 
 
-function updateConnection(user) {
+function isConnected(user) {
 
     const connections =
         getConnections();
 
     const userId =
-        user.id ||
+        getUserId(user);
+
+    const userName =
         getUserName(user);
 
-    const connected =
-        connections.some(
-            function (item) {
+    return connections.some(
+        function (connection) {
 
-                return (
-                    String(item)
-                        .toLowerCase() ===
+            return (
+                String(connection)
+                    .toLowerCase() ===
                     String(userId)
-                        .toLowerCase()
-                );
+                        .toLowerCase() ||
 
-            }
-        );
+                String(connection)
+                    .toLowerCase() ===
+                    userName
+                        .toLowerCase()
+            );
+
+        }
+    );
+
+}
+
+
+function updateConnectionStatus(user) {
+
+    const connected =
+        isConnected(user);
 
     if (connected) {
 
@@ -593,17 +806,22 @@ connectButton.addEventListener(
             getConnections();
 
         const userId =
-            selectedUser.id ||
-            getUserName(selectedUser);
+            getUserId(
+                selectedUser
+            );
 
         if (
-            !connections.includes(userId)
+            !isConnected(
+                selectedUser
+            )
         ) {
 
-            connections.push(userId);
+            connections.push(
+                userId
+            );
 
             localStorage.setItem(
-                "introspheerConnections",
+                getConnectionKey(),
                 JSON.stringify(
                     connections
                 )
@@ -611,7 +829,7 @@ connectButton.addEventListener(
 
         }
 
-        updateConnection(
+        updateConnectionStatus(
             selectedUser
         );
 
@@ -641,6 +859,18 @@ messageButton.addEventListener(
 );
 
 
+closeProfile.addEventListener(
+    "click",
+    closeUserProfile
+);
+
+
+profileOverlay.addEventListener(
+    "click",
+    closeUserProfile
+);
+
+
 document
     .querySelectorAll(
         ".person-node[data-user]"
@@ -652,15 +882,44 @@ document
                 "click",
                 function (event) {
 
+                    event.preventDefault();
+
                     event.stopPropagation();
 
-                    const user =
-                        findUser(
-                            node.dataset.user
+                    const name =
+                        node.dataset.user;
+
+                    let user =
+                        findUserExact(
+                            name
                         );
 
+                    if (!user) {
+
+                        user =
+                            backupUsers.find(
+                                function (
+                                    backupUser
+                                ) {
+
+                                    return (
+                                        getUserName(
+                                            backupUser
+                                        ).toLowerCase() ===
+                                        name.toLowerCase()
+                                    );
+
+                                }
+                            );
+
+                    }
+
                     if (user) {
-                        openProfile(user);
+
+                        openUserProfile(
+                            user
+                        );
+
                     }
 
                 }
@@ -670,25 +929,13 @@ document
     );
 
 
-closeProfile.addEventListener(
-    "click",
-    closeProfilePanel
-);
-
-
-profileOverlay.addEventListener(
-    "click",
-    closeProfilePanel
-);
-
-
 function hideSuggestions() {
-
-    searchSuggestions.innerHTML =
-        "";
 
     searchSuggestions.hidden =
         true;
+
+    searchSuggestions.innerHTML =
+        "";
 
 }
 
@@ -698,7 +945,9 @@ function showSuggestions(matches) {
     searchSuggestions.innerHTML =
         "";
 
-    if (matches.length === 0) {
+    if (
+        matches.length === 0
+    ) {
 
         hideSuggestions();
 
@@ -720,6 +969,14 @@ function showSuggestions(matches) {
             button.className =
                 "search-suggestion";
 
+            const name =
+                getUserName(user);
+
+            const suburb =
+                user.suburb ||
+                user.location ||
+                "";
+
             const avatar =
                 document.createElement(
                     "span"
@@ -729,9 +986,7 @@ function showSuggestions(matches) {
                 "suggestion-avatar";
 
             avatar.textContent =
-                getInitials(
-                    getUserName(user)
-                );
+                getInitials(name);
 
             const info =
                 document.createElement(
@@ -741,40 +996,53 @@ function showSuggestions(matches) {
             info.className =
                 "suggestion-info";
 
-            const name =
+            const strong =
                 document.createElement(
                     "strong"
                 );
 
-            name.textContent =
-                getUserName(user);
+            strong.textContent =
+                name;
 
-            const suburb =
+            const small =
                 document.createElement(
                     "small"
                 );
 
-            suburb.textContent =
-                user.suburb ||
-                user.location ||
-                "";
+            small.textContent =
+                suburb;
 
-            info.appendChild(name);
-            info.appendChild(suburb);
+            info.appendChild(
+                strong
+            );
 
-            button.appendChild(avatar);
-            button.appendChild(info);
+            info.appendChild(
+                small
+            );
+
+            button.appendChild(
+                avatar
+            );
+
+            button.appendChild(
+                info
+            );
 
             button.addEventListener(
                 "click",
                 function () {
 
                     userSearch.value =
-                        getUserName(user);
+                        name;
+
+                    searchMessage.textContent =
+                        "";
 
                     hideSuggestions();
 
-                    openProfile(user);
+                    openUserProfile(
+                        user
+                    );
 
                 }
             );
@@ -804,7 +1072,9 @@ userSearch.addEventListener(
         searchMessage.textContent =
             "";
 
-        if (value.length < 2) {
+        if (
+            value.length < 2
+        ) {
 
             hideSuggestions();
 
@@ -817,17 +1087,26 @@ userSearch.addEventListener(
                 .filter(
                     function (user) {
 
-                        return getUserName(
-                            user
-                        )
-                            .toLowerCase()
-                            .includes(value);
+                        return (
+                            getUserName(
+                                user
+                            )
+                                .toLowerCase()
+                                .includes(
+                                    value
+                                )
+                        );
 
                     }
                 )
-                .slice(0, 6);
+                .slice(
+                    0,
+                    6
+                );
 
-        showSuggestions(matches);
+        showSuggestions(
+            matches
+        );
 
     }
 );
@@ -838,37 +1117,63 @@ userSearch.addEventListener(
     function (event) {
 
         if (
-            event.key !==
+            event.key ===
             "Enter"
         ) {
-            return;
-        }
 
-        event.preventDefault();
+            event.preventDefault();
 
-        const user =
-            findUser(
+            const value =
                 userSearch.value
-            );
+                    .trim();
 
-        hideSuggestions();
+            hideSuggestions();
 
-        if (!user) {
+            if (!value) {
+
+                searchMessage.textContent =
+                    "Enter a person's name.";
+
+                return;
+
+            }
+
+            const user =
+                findUser(
+                    value
+                );
+
+            if (!user) {
+
+                searchMessage.textContent =
+                    "User not found.";
+
+                return;
+
+            }
 
             searchMessage.textContent =
-                "User not found.";
+                "";
 
-            return;
+            userSearch.value =
+                getUserName(
+                    user
+                );
+
+            openUserProfile(
+                user
+            );
 
         }
 
-        searchMessage.textContent =
-            "";
+        if (
+            event.key ===
+            "Escape"
+        ) {
 
-        userSearch.value =
-            getUserName(user);
+            hideSuggestions();
 
-        openProfile(user);
+        }
 
     }
 );
@@ -956,16 +1261,23 @@ showReferences.addEventListener(
     "click",
     function () {
 
-        const isHidden =
+        const currentlyHidden =
             referenceList.hidden;
 
         referenceList.hidden =
-            !isHidden;
+            !currentlyHidden;
 
-        showReferences.textContent =
-            isHidden
-                ? "Hide Reference List"
-                : "View APA 7 Reference List";
+        if (currentlyHidden) {
+
+            showReferences.textContent =
+                "Hide Reference List";
+
+        } else {
+
+            showReferences.textContent =
+                "View APA 7 Reference List";
+
+        }
 
     }
 );
@@ -982,7 +1294,7 @@ document.addEventListener(
 
             hideSuggestions();
 
-            closeProfilePanel();
+            closeUserProfile();
 
             aboutModal.hidden =
                 true;
@@ -996,26 +1308,36 @@ document.addEventListener(
 );
 
 
-let rotationX = -8;
+let rotationX = 0;
+
 let rotationY = 0;
 
-let scale = 1;
+let sphereScale = 1;
 
-let dragging = false;
+let isDragging = false;
 
 let previousX = 0;
+
 let previousY = 0;
 
-let lastTime =
+let lastAnimationTime =
     performance.now();
 
 
-function updateSphere() {
+function updateSphereTransform() {
 
     sphere.style.transform =
-        `rotateX(${rotationX}deg)
-         rotateY(${rotationY}deg)
-         scale3d(${scale}, ${scale}, ${scale})`;
+        "rotateX(" +
+        rotationX +
+        "deg) " +
+
+        "rotateY(" +
+        rotationY +
+        "deg) " +
+
+        "scale(" +
+        sphereScale +
+        ")";
 
 }
 
@@ -1023,18 +1345,22 @@ function updateSphere() {
 function animateSphere(time) {
 
     const delta =
-        time - lastTime;
+        time -
+        lastAnimationTime;
 
-    lastTime = time;
+    lastAnimationTime =
+        time;
 
-    if (!dragging) {
+    if (
+        !isDragging
+    ) {
 
         rotationY +=
-            delta * 0.01;
+            delta * 0.005;
 
     }
 
-    updateSphere();
+    updateSphereTransform();
 
     requestAnimationFrame(
         animateSphere
@@ -1057,10 +1383,13 @@ sphere.addEventListener(
                 ".person-node"
             )
         ) {
+
             return;
+
         }
 
-        dragging = true;
+        isDragging =
+            true;
 
         previousX =
             event.clientX;
@@ -1072,9 +1401,13 @@ sphere.addEventListener(
             "dragging"
         );
 
-        sphere.setPointerCapture(
-            event.pointerId
-        );
+        try {
+
+            sphere.setPointerCapture(
+                event.pointerId
+            );
+
+        } catch (error) {}
 
     }
 );
@@ -1084,32 +1417,27 @@ sphere.addEventListener(
     "pointermove",
     function (event) {
 
-        if (!dragging) {
+        if (
+            !isDragging
+        ) {
             return;
         }
 
-        const deltaX =
+        const differenceX =
             event.clientX -
             previousX;
 
-        const deltaY =
+        const differenceY =
             event.clientY -
             previousY;
 
         rotationY +=
-            deltaX * 0.4;
+            differenceX *
+            0.35;
 
         rotationX -=
-            deltaY * 0.4;
-
-        rotationX =
-            Math.max(
-                -80,
-                Math.min(
-                    80,
-                    rotationX
-                )
-            );
+            differenceY *
+            0.35;
 
         previousX =
             event.clientX;
@@ -1117,45 +1445,49 @@ sphere.addEventListener(
         previousY =
             event.clientY;
 
-        updateSphere();
+        updateSphereTransform();
 
     }
 );
 
 
-sphere.addEventListener(
-    "pointerup",
-    function (event) {
+function finishDragging(event) {
 
-        dragging = false;
+    isDragging =
+        false;
 
-        sphere.classList.remove(
-            "dragging"
-        );
+    sphere.classList.remove(
+        "dragging"
+    );
 
-        try {
+    try {
+
+        if (
+            sphere.hasPointerCapture(
+                event.pointerId
+            )
+        ) {
 
             sphere.releasePointerCapture(
                 event.pointerId
             );
 
-        } catch {}
+        }
 
-    }
+    } catch (error) {}
+
+}
+
+
+sphere.addEventListener(
+    "pointerup",
+    finishDragging
 );
 
 
 sphere.addEventListener(
     "pointercancel",
-    function () {
-
-        dragging = false;
-
-        sphere.classList.remove(
-            "dragging"
-        );
-
-    }
+    finishDragging
 );
 
 
@@ -1163,7 +1495,9 @@ sphereContainer.addEventListener(
     "wheel",
     function (event) {
 
-        if (!event.ctrlKey) {
+        if (
+            !event.ctrlKey
+        ) {
 
             return;
 
@@ -1175,28 +1509,151 @@ sphereContainer.addEventListener(
             event.deltaY < 0
         ) {
 
-            scale += 0.05;
+            sphereScale +=
+                0.05;
 
         } else {
 
-            scale -= 0.05;
+            sphereScale -=
+                0.05;
 
         }
 
-        scale =
+        sphereScale =
             Math.max(
-                0.7,
+                0.75,
                 Math.min(
-                    1.4,
-                    scale
+                    1.35,
+                    sphereScale
                 )
             );
 
-        updateSphere();
+        updateSphereTransform();
 
     },
     {
         passive: false
+    }
+);
+
+
+let pinchStartDistance =
+    null;
+
+let pinchStartScale =
+    1;
+
+
+sphereContainer.addEventListener(
+    "touchstart",
+    function (event) {
+
+        if (
+            event.touches.length !==
+            2
+        ) {
+
+            return;
+
+        }
+
+        const first =
+            event.touches[0];
+
+        const second =
+            event.touches[1];
+
+        pinchStartDistance =
+            Math.hypot(
+                second.clientX -
+                first.clientX,
+
+                second.clientY -
+                first.clientY
+            );
+
+        pinchStartScale =
+            sphereScale;
+
+    },
+    {
+        passive: true
+    }
+);
+
+
+sphereContainer.addEventListener(
+    "touchmove",
+    function (event) {
+
+        if (
+            event.touches.length !==
+            2 ||
+            pinchStartDistance ===
+            null
+        ) {
+
+            return;
+
+        }
+
+        const first =
+            event.touches[0];
+
+        const second =
+            event.touches[1];
+
+        const currentDistance =
+            Math.hypot(
+                second.clientX -
+                first.clientX,
+
+                second.clientY -
+                first.clientY
+            );
+
+        sphereScale =
+            pinchStartScale *
+            (
+                currentDistance /
+                pinchStartDistance
+            );
+
+        sphereScale =
+            Math.max(
+                0.75,
+                Math.min(
+                    1.35,
+                    sphereScale
+                )
+            );
+
+        updateSphereTransform();
+
+    },
+    {
+        passive: true
+    }
+);
+
+
+sphereContainer.addEventListener(
+    "touchend",
+    function (event) {
+
+        if (
+            event.touches.length <
+            2
+        ) {
+
+            pinchStartDistance =
+                null;
+
+        }
+
+    },
+    {
+        passive: true
     }
 );
 

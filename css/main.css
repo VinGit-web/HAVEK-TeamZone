@@ -10,7 +10,12 @@ body {
     min-height: 100%;
 }
 
+html {
+    scroll-behavior: smooth;
+}
+
 body {
+    min-height: 100vh;
     font-family: Arial, Helvetica, sans-serif;
     background: #071126;
     color: white;
@@ -39,12 +44,13 @@ input {
     text-decoration: none;
     font-size: 25px;
     font-weight: 800;
+    letter-spacing: 0.5px;
 }
 
 .nav-links {
     display: flex;
-    gap: 12px;
     align-items: center;
+    gap: 12px;
 }
 
 .nav-links a {
@@ -56,6 +62,7 @@ input {
     text-decoration: none;
     text-align: center;
     font-size: 15px;
+    transition: 0.2s ease;
 }
 
 .nav-links a:hover {
@@ -80,15 +87,31 @@ input {
         #071126;
 }
 
+.home-page::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.55;
+    background-image:
+        radial-gradient(
+            circle,
+            rgba(157, 95, 255, 0.7) 1.3px,
+            transparent 1.5px
+        );
+    background-size: 170px 150px;
+}
+
 .home-header {
     position: relative;
-    z-index: 50;
+    z-index: 20;
     width: 90%;
     max-width: 1450px;
-    margin: auto;
+    margin: 0 auto;
     padding-top: 35px;
     display: grid;
     grid-template-columns: 340px 1fr 340px;
+    align-items: start;
 }
 
 .user-area {
@@ -101,12 +124,13 @@ input {
     gap: 12px;
     padding: 6px 18px 6px 6px;
     border: 2px solid #9b4dff;
-    border-radius: 25px;
+    border-radius: 22px;
     background: white;
     color: #171026;
     font-size: 17px;
     font-weight: 700;
     cursor: pointer;
+    box-shadow: 0 0 14px rgba(155, 77, 255, 0.4);
 }
 
 .current-avatar {
@@ -118,11 +142,14 @@ input {
     border-radius: 50%;
     background: #482568;
     color: white;
+    font-size: 14px;
 }
 
 .search-wrapper {
     position: relative;
+    width: 100%;
     margin-top: 22px;
+    z-index: 300;
 }
 
 #userSearch {
@@ -134,10 +161,16 @@ input {
     outline: none;
     background: rgba(7, 17, 38, 0.95);
     color: white;
+    font-size: 14px;
+}
+
+#userSearch::placeholder {
+    color: rgba(255, 255, 255, 0.6);
 }
 
 #userSearch:focus {
     border-color: #9b4dff;
+    box-shadow: 0 0 0 2px rgba(155, 77, 255, 0.18);
 }
 
 .search-suggestions {
@@ -145,7 +178,7 @@ input {
     top: 54px;
     left: 0;
     right: 0;
-    z-index: 600;
+    z-index: 500;
     overflow: hidden;
     border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 9px;
@@ -158,11 +191,11 @@ input {
 }
 
 .search-suggestion {
-    width: 100%;
-    padding: 12px 15px;
     display: flex;
     align-items: center;
     gap: 12px;
+    width: 100%;
+    padding: 12px 15px;
     border: 0;
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     background: transparent;
@@ -176,8 +209,8 @@ input {
 }
 
 .suggestion-avatar {
-    width: 35px;
-    height: 35px;
+    width: 34px;
+    height: 34px;
     flex-shrink: 0;
     display: flex;
     align-items: center;
@@ -185,19 +218,28 @@ input {
     border-radius: 50%;
     background: #4d286d;
     font-size: 11px;
+    font-weight: 700;
 }
 
 .suggestion-info {
     display: flex;
     flex-direction: column;
+    gap: 2px;
+}
+
+.suggestion-info strong {
+    color: white;
+    font-size: 14px;
 }
 
 .suggestion-info small {
     color: #aaa8c5;
+    font-size: 12px;
 }
 
 .search-message {
     min-height: 18px;
+    margin: 7px 0 0;
     color: #d4c2ff;
     font-size: 12px;
 }
@@ -210,6 +252,7 @@ input {
 .sphere-title h1 {
     margin: 0;
     font-size: 44px;
+    line-height: 1.1;
     font-weight: 800;
 }
 
@@ -234,21 +277,18 @@ input {
 .sphere-area {
     position: relative;
     z-index: 5;
-    padding: 20px 0 250px;
+    padding: 20px 0 230px;
 }
 
 .sphere-container {
     position: relative;
-    width: 700px;
-    height: 680px;
-    margin: auto;
+    width: 650px;
+    height: 650px;
+    margin: 0 auto;
     display: flex;
-    justify-content: center;
     align-items: center;
-
-    perspective: 1100px;
-    perspective-origin: center center;
-
+    justify-content: center;
+    perspective: 1200px;
     touch-action: pan-y;
 }
 
@@ -256,7 +296,19 @@ input {
     position: relative;
     width: 500px;
     height: 500px;
-
+    flex-shrink: 0;
+    border: 3px solid #864be5;
+    border-radius: 50%;
+    background:
+        radial-gradient(
+            circle at 50% 50%,
+            rgba(103, 53, 167, 0.42),
+            rgba(38, 35, 93, 0.68) 58%,
+            rgba(12, 20, 50, 0.72) 100%
+        );
+    box-shadow:
+        0 0 20px rgba(134, 75, 229, 0.55),
+        inset 0 0 40px rgba(134, 75, 229, 0.25);
     transform-style: preserve-3d;
     cursor: grab;
     user-select: none;
@@ -267,118 +319,94 @@ input {
     cursor: grabbing;
 }
 
-.globe-shell {
+.sphere-latitude,
+.sphere-longitude {
     position: absolute;
-    inset: 0;
-
-    border: 3px solid rgba(147, 82, 235, 0.9);
-    border-radius: 50%;
-
-    background:
-        radial-gradient(
-            circle at 35% 30%,
-            rgba(172, 114, 255, 0.18),
-            rgba(74, 42, 132, 0.15) 35%,
-            rgba(20, 22, 59, 0.2) 70%,
-            rgba(8, 15, 36, 0.4)
-        );
-
-    box-shadow:
-        0 0 30px rgba(143, 76, 234, 0.7),
-        inset 0 0 55px rgba(145, 78, 230, 0.25);
-
-    transform: translateZ(0);
     pointer-events: none;
+    border: 1px solid rgba(151, 103, 231, 0.28);
+    border-radius: 50%;
 }
 
-.globe-ring {
-    position: absolute;
-    top: 0;
+.latitude-one {
+    left: 12px;
+    right: 12px;
+    top: 90px;
+    height: 95px;
+}
+
+.latitude-two {
     left: 0;
-    width: 500px;
-    height: 500px;
-
-    border: 1px solid rgba(165, 105, 245, 0.48);
-    border-radius: 50%;
-
-    pointer-events: none;
+    right: 0;
+    top: 220px;
+    height: 65px;
 }
 
-.ring-v1 {
-    transform: rotateY(60deg);
+.latitude-three {
+    left: 15px;
+    right: 15px;
+    bottom: 85px;
+    height: 100px;
 }
 
-.ring-v2 {
-    transform: rotateY(-60deg);
+.longitude-one {
+    top: 5px;
+    bottom: 5px;
+    left: 170px;
+    width: 160px;
 }
 
-.ring-v3 {
-    transform: rotateY(90deg);
-}
-
-.ring-h1 {
-    transform: rotateX(60deg);
-}
-
-.ring-h2 {
-    transform: rotateX(-60deg);
-}
-
-.ring-h3 {
-    transform: rotateX(90deg);
+.longitude-two {
+    top: 5px;
+    bottom: 5px;
+    left: 215px;
+    width: 70px;
 }
 
 .person-node {
     position: absolute;
-    z-index: 40;
-
+    z-index: 30;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 6px;
-
     padding: 0;
     border: 0;
     background: transparent;
     color: white;
-
     cursor: pointer;
+}
 
-    transform-style: preserve-3d;
+.person-node:hover .node-avatar {
+    transform: scale(1.08);
 }
 
 .node-avatar {
     width: 64px;
     height: 64px;
-
     display: flex;
     align-items: center;
     justify-content: center;
-
     border: 3px solid #9b4dff;
     border-radius: 50%;
-
     background: #37285e;
     color: white;
-
     font-size: 15px;
     font-weight: 700;
-
     box-shadow: 0 0 15px rgba(155, 77, 255, 0.65);
+    transition: transform 0.2s ease;
 }
 
 .node-name {
     padding: 3px 8px;
     border-radius: 10px;
-
-    background: rgba(7, 17, 38, 0.85);
-
+    background: rgba(7, 17, 38, 0.78);
     font-size: 13px;
     white-space: nowrap;
 }
 
 .green {
     border-color: #38dcb8;
+    box-shadow: 0 0 15px rgba(56, 220, 184, 0.6);
 }
 
 .purple {
@@ -387,157 +415,145 @@ input {
 
 .blue {
     border-color: #36b8e8;
+    box-shadow: 0 0 15px rgba(54, 184, 232, 0.6);
 }
 
 .cyan {
     border-color: #45c7de;
+    box-shadow: 0 0 15px rgba(69, 199, 222, 0.6);
 }
 
 .pink {
     border-color: #f06baa;
+    box-shadow: 0 0 15px rgba(240, 107, 170, 0.6);
 }
 
 .zach-node {
     top: 120px;
-    left: 15px;
-    transform: translateZ(55px);
+    left: 20px;
 }
 
 .mike-node {
-    top: 100px;
+    top: 105px;
     right: 15px;
-    transform: translateZ(80px);
 }
 
 .sally-node {
-    top: 255px;
+    top: 260px;
     right: -25px;
-    transform: translateZ(-45px);
 }
 
 .holly-node {
     bottom: 55px;
     left: 35px;
-    transform: translateZ(-70px);
 }
 
 .priya-node {
     bottom: 15px;
     right: 80px;
-    transform: translateZ(60px);
 }
 
 .centre-node {
     top: 205px;
     left: 205px;
-    transform: translateZ(115px);
     cursor: default;
 }
 
 .centre-avatar {
     width: 90px;
     height: 90px;
+    border-color: #a44dff;
     background: #4b276c;
     font-size: 22px;
 }
 
 .locked-node {
     position: absolute;
-    z-index: 20;
-
+    z-index: 15;
     width: 44px;
     height: 44px;
-
     display: flex;
     align-items: center;
     justify-content: center;
-
     border: 2px solid rgba(255, 255, 255, 0.22);
     border-radius: 50%;
-
-    background: #35374b;
+    background: rgba(66, 67, 87, 0.9);
     color: #c9c9d3;
-
-    transform-style: preserve-3d;
+    font-size: 18px;
+    pointer-events: none;
+    box-shadow: 0 0 12px rgba(255, 255, 255, 0.1);
 }
 
 .locked-one {
     top: -12px;
     left: 225px;
-    transform: translateZ(-100px);
 }
 
 .locked-two {
     top: 55px;
     right: 105px;
-    transform: translateZ(-65px);
 }
 
 .locked-three {
     top: 245px;
     left: 55px;
-    transform: translateZ(-80px);
 }
 
 .locked-four {
     bottom: 5px;
     left: 220px;
-    transform: translateZ(-90px);
 }
 
 .connection-line {
     position: absolute;
     z-index: 5;
-
     top: 250px;
     left: 250px;
-
     height: 2px;
-
     transform-origin: left center;
-
-    background: rgba(155, 77, 255, 0.65);
-
     pointer-events: none;
+    background: rgba(155, 77, 255, 0.65);
 }
 
 .connection-zach {
     width: 190px;
-    transform: translateZ(25px) rotate(208deg);
+    transform: rotate(208deg);
+    background: rgba(56, 220, 184, 0.7);
 }
 
 .connection-mike {
     width: 195px;
-    transform: translateZ(40px) rotate(-38deg);
+    transform: rotate(-38deg);
 }
 
 .connection-sally {
     width: 225px;
-    transform: translateZ(-20px) rotate(4deg);
+    transform: rotate(4deg);
+    background: rgba(54, 184, 232, 0.7);
 }
 
 .connection-holly {
     width: 200px;
-    transform: translateZ(-35px) rotate(140deg);
+    transform: rotate(140deg);
+    background: rgba(69, 199, 222, 0.7);
 }
 
 .connection-priya {
     width: 190px;
-    transform: translateZ(30px) rotate(55deg);
+    transform: rotate(55deg);
+    background: rgba(240, 107, 170, 0.7);
 }
 
 .sphere-instructions {
     width: max-content;
     max-width: 90%;
-
-    margin: 0 auto;
+    margin: 8px auto 0;
     padding: 9px 20px;
-
     border: 1px solid rgba(255, 255, 255, 0.75);
     border-radius: 25px;
-
     color: #cac9d9;
     font-size: 13px;
+    text-align: center;
 }
 
 .instruction-dot {
@@ -549,39 +565,32 @@ input {
     position: absolute;
     left: 35px;
     bottom: 35px;
-    z-index: 100;
-
+    z-index: 80;
     width: 54px;
     height: 54px;
-
     border: 2px solid white;
     border-radius: 50%;
-
     background: transparent;
     color: white;
-
     font-family: Georgia, serif;
     font-size: 31px;
-
     cursor: pointer;
+    transition: 0.2s ease;
 }
 
 .about-button:hover {
-    background: white;
-    color: #071126;
+    background: rgba(255, 255, 255, 0.1);
+    transform: scale(1.05);
 }
 
 .profile-overlay {
     position: fixed;
     inset: 0;
     z-index: 390;
-
     visibility: hidden;
     opacity: 0;
-
-    background: rgba(0, 0, 0, 0.4);
-
-    transition: 0.3s;
+    background: rgba(0, 0, 0, 0.35);
+    transition: 0.3s ease;
     pointer-events: none;
 }
 
@@ -596,23 +605,16 @@ input {
     top: 0;
     right: -460px;
     z-index: 400;
-
     width: 420px;
     max-width: 92vw;
     height: 100vh;
-
     overflow-y: auto;
-
     padding: 35px 28px 50px;
-
     background: #10182e;
     color: white;
-
     border-left: 1px solid rgba(255, 255, 255, 0.15);
-
     box-shadow: -10px 0 40px rgba(0, 0, 0, 0.4);
-
-    transition: right 0.3s;
+    transition: right 0.3s ease;
 }
 
 .profile-panel.open {
@@ -623,11 +625,9 @@ input {
     position: absolute;
     top: 15px;
     right: 20px;
-
     border: 0;
     background: transparent;
     color: white;
-
     font-size: 30px;
     cursor: pointer;
 }
@@ -642,22 +642,20 @@ input {
 .profile-avatar {
     width: 80px;
     height: 80px;
-
+    flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-
     border: 3px solid #9b4dff;
     border-radius: 50%;
-
     background: #4b276c;
-
     font-size: 21px;
     font-weight: 700;
 }
 
 .profile-heading h2 {
     margin: 0 0 6px;
+    font-size: 25px;
 }
 
 .profile-heading p {
@@ -669,19 +667,15 @@ input {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 10px;
-
     margin-top: 25px;
 }
 
 .primary-button,
 .secondary-button {
     padding: 11px 15px;
-
     border-radius: 8px;
-
-    font-size: 14px;
-
     cursor: pointer;
+    font-size: 14px;
 }
 
 .primary-button {
@@ -697,19 +691,20 @@ input {
 }
 
 .secondary-button:disabled {
-    color: #50cba9;
     border-color: #50cba9;
+    color: #50cba9;
+    cursor: default;
 }
 
 .profile-section {
     margin-top: 30px;
     padding-top: 20px;
-
     border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .profile-section h3 {
     margin: 0 0 14px;
+    font-size: 16px;
 }
 
 .profile-section p {
@@ -720,9 +715,8 @@ input {
 .detail-row {
     display: flex;
     justify-content: space-between;
-
+    gap: 20px;
     padding: 7px 0;
-
     color: #c5c5d2;
 }
 
@@ -734,32 +728,26 @@ input {
 
 .interest-chip {
     padding: 7px 11px;
-
     border: 1px solid rgba(155, 77, 255, 0.5);
     border-radius: 20px;
-
     background: rgba(155, 77, 255, 0.12);
-
     color: #ddd4ed;
-
     font-size: 12px;
 }
 
 .empty-text {
     color: #8f90a5 !important;
+    font-size: 13px;
 }
 
 .about-modal {
     position: fixed;
     inset: 0;
     z-index: 1000;
-
     display: flex;
     align-items: center;
     justify-content: center;
-
     padding: 35px;
-
     background: rgba(3, 7, 20, 0.9);
     backdrop-filter: blur(8px);
 }
@@ -770,19 +758,13 @@ input {
 
 .about-modal-card {
     position: relative;
-
     width: min(950px, 95vw);
     max-height: 88vh;
-
     overflow-y: auto;
-
     padding: 50px;
-
     border: 1px solid rgba(255, 255, 255, 0.16);
     border-radius: 20px;
-
     background: #10182e;
-
     box-shadow: 0 25px 80px rgba(0, 0, 0, 0.6);
 }
 
@@ -790,22 +772,16 @@ input {
     position: absolute;
     top: 15px;
     right: 20px;
-
     border: 0;
-
     background: transparent;
     color: white;
-
     font-size: 34px;
-
     cursor: pointer;
 }
 
 .about-label {
     margin: 0 0 10px;
-
     color: #a86cff;
-
     font-size: 12px;
     font-weight: 700;
     letter-spacing: 2px;
@@ -817,7 +793,6 @@ input {
 
 .about-intro h2 {
     margin: 0 0 18px;
-
     font-size: 38px;
 }
 
@@ -825,7 +800,6 @@ input {
 .team-content p,
 .about-references p {
     color: #c5c5d2;
-
     line-height: 1.7;
 }
 
@@ -833,67 +807,49 @@ input {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 35px;
-
     align-items: center;
-
     margin-top: 45px;
     padding-top: 40px;
-
     border-top: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.team-photo-container {
-    width: 100%;
 }
 
 .team-photo {
     display: block;
-
     width: 100%;
     height: 300px;
-
     object-fit: cover;
-
     border-radius: 15px;
 }
 
 .team-content h3 {
     margin: 0 0 15px;
-
     font-size: 29px;
 }
 
 .about-references {
     margin-top: 45px;
     padding-top: 35px;
-
     border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .about-references h3 {
     margin-top: 0;
-
     font-size: 27px;
 }
 
 .reference-button {
     padding: 12px 20px;
-
     border: 1px solid #9b4dff;
     border-radius: 8px;
-
     background: #9147e8;
     color: white;
-
     cursor: pointer;
 }
 
 .reference-list {
     margin-top: 25px;
     padding: 20px;
-
     border-radius: 12px;
-
     background: rgba(255, 255, 255, 0.04);
 }
 
@@ -903,15 +859,12 @@ input {
 
 .reference-list p {
     margin: 0 0 20px;
-
     padding-left: 30px;
-
     text-indent: -30px;
-
     font-size: 14px;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 1050px) {
 
     .navbar {
         flex-direction: column;
@@ -938,17 +891,33 @@ input {
         width: min(400px, 100%);
     }
 
-    .about-team {
-        grid-template-columns: 1fr;
-    }
-
 }
 
 @media (max-width: 700px) {
 
+    .navbar {
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+
+    .nav-links a {
+        min-width: auto;
+        padding: 9px 14px;
+        font-size: 13px;
+    }
+
+    .sphere-title h1 {
+        font-size: 36px;
+    }
+
     .sphere-container {
         width: 100%;
-        transform: scale(0.8);
+        height: 550px;
+    }
+
+    .sphere {
+        width: 500px;
+        height: 500px;
     }
 
     .about-modal {
@@ -959,8 +928,8 @@ input {
         padding: 35px 25px;
     }
 
-    .about-intro h2 {
-        font-size: 30px;
+    .about-team {
+        grid-template-columns: 1fr;
     }
 
     .profile-panel {
