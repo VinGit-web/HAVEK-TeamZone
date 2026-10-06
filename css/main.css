@@ -286,9 +286,10 @@ input {
     height: 650px;
     margin: 0 auto;
     display: flex;
-    align-items: center;
     justify-content: center;
-    perspective: 1200px;
+    align-items: center;
+    perspective: 1000px;
+    perspective-origin: center;
     touch-action: pan-y;
 }
 
@@ -297,69 +298,87 @@ input {
     width: 500px;
     height: 500px;
     flex-shrink: 0;
-    border: 3px solid #864be5;
     border-radius: 50%;
-    background:
-        radial-gradient(
-            circle at 50% 50%,
-            rgba(103, 53, 167, 0.42),
-            rgba(38, 35, 93, 0.68) 58%,
-            rgba(12, 20, 50, 0.72) 100%
-        );
-    box-shadow:
-        0 0 20px rgba(134, 75, 229, 0.55),
-        inset 0 0 40px rgba(134, 75, 229, 0.25);
     transform-style: preserve-3d;
+    will-change: transform;
     cursor: grab;
     user-select: none;
-    will-change: transform;
+    background:
+        radial-gradient(
+            circle at 40% 35%,
+            rgba(133, 78, 204, 0.30),
+            rgba(60, 42, 112, 0.18) 45%,
+            rgba(15, 20, 54, 0.12) 70%
+        );
+    box-shadow:
+        0 0 45px rgba(132, 73, 220, 0.28),
+        inset 0 0 45px rgba(132, 73, 220, 0.18);
 }
 
 .sphere.dragging {
     cursor: grabbing;
 }
 
-.sphere-latitude,
-.sphere-longitude {
+.sphere::after {
+    content: "";
     position: absolute;
-    pointer-events: none;
-    border: 1px solid rgba(151, 103, 231, 0.28);
+    inset: 0;
+    border: 2px solid rgba(150, 92, 232, 0.75);
     border-radius: 50%;
+    pointer-events: none;
+    box-shadow:
+        0 0 15px rgba(142, 76, 224, 0.45),
+        inset 0 0 20px rgba(142, 76, 224, 0.15);
 }
 
-.latitude-one {
-    left: 12px;
-    right: 12px;
-    top: 90px;
-    height: 95px;
+.globe-ring {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 500px;
+    height: 500px;
+    margin-left: -250px;
+    margin-top: -250px;
+    border: 1.5px solid rgba(151, 96, 226, 0.42);
+    border-radius: 50%;
+    pointer-events: none;
+    transform-style: preserve-3d;
+    box-shadow: 0 0 7px rgba(140, 76, 220, 0.12);
 }
 
-.latitude-two {
-    left: 0;
-    right: 0;
-    top: 220px;
-    height: 65px;
+.ring-v1 {
+    transform: rotateY(0deg);
 }
 
-.latitude-three {
-    left: 15px;
-    right: 15px;
-    bottom: 85px;
-    height: 100px;
+.ring-v2 {
+    transform: rotateY(45deg);
 }
 
-.longitude-one {
-    top: 5px;
-    bottom: 5px;
-    left: 170px;
-    width: 160px;
+.ring-v3 {
+    transform: rotateY(90deg);
 }
 
-.longitude-two {
-    top: 5px;
-    bottom: 5px;
-    left: 215px;
-    width: 70px;
+.ring-v4 {
+    transform: rotateY(135deg);
+}
+
+.ring-h1 {
+    transform:
+        translateY(-115px)
+        rotateX(90deg)
+        scale(0.82);
+}
+
+.ring-h2 {
+    transform:
+        rotateX(90deg);
+}
+
+.ring-h3 {
+    transform:
+        translateY(115px)
+        rotateX(90deg)
+        scale(0.82);
 }
 
 .person-node {
@@ -374,6 +393,7 @@ input {
     background: transparent;
     color: white;
     cursor: pointer;
+    transform-style: preserve-3d;
 }
 
 .person-node:hover .node-avatar {
@@ -431,32 +451,38 @@ input {
 .zach-node {
     top: 120px;
     left: 20px;
+    transform: translateZ(55px);
 }
 
 .mike-node {
     top: 105px;
     right: 15px;
+    transform: translateZ(35px);
 }
 
 .sally-node {
     top: 260px;
     right: -25px;
+    transform: translateZ(60px);
 }
 
 .holly-node {
     bottom: 55px;
     left: 35px;
+    transform: translateZ(45px);
 }
 
 .priya-node {
     bottom: 15px;
     right: 80px;
+    transform: translateZ(55px);
 }
 
 .centre-node {
     top: 205px;
     left: 205px;
     cursor: default;
+    transform: translateZ(100px);
 }
 
 .centre-avatar {
@@ -487,21 +513,25 @@ input {
 .locked-one {
     top: -12px;
     left: 225px;
+    transform: translateZ(-30px);
 }
 
 .locked-two {
     top: 55px;
     right: 105px;
+    transform: translateZ(25px);
 }
 
 .locked-three {
     top: 245px;
     left: 55px;
+    transform: translateZ(-45px);
 }
 
 .locked-four {
     bottom: 5px;
     left: 220px;
+    transform: translateZ(30px);
 }
 
 .connection-line {
@@ -517,30 +547,30 @@ input {
 
 .connection-zach {
     width: 190px;
-    transform: rotate(208deg);
+    transform: translateZ(20px) rotate(208deg);
     background: rgba(56, 220, 184, 0.7);
 }
 
 .connection-mike {
     width: 195px;
-    transform: rotate(-38deg);
+    transform: translateZ(15px) rotate(-38deg);
 }
 
 .connection-sally {
     width: 225px;
-    transform: rotate(4deg);
+    transform: translateZ(25px) rotate(4deg);
     background: rgba(54, 184, 232, 0.7);
 }
 
 .connection-holly {
     width: 200px;
-    transform: rotate(140deg);
+    transform: translateZ(15px) rotate(140deg);
     background: rgba(69, 199, 222, 0.7);
 }
 
 .connection-priya {
     width: 190px;
-    transform: rotate(55deg);
+    transform: translateZ(20px) rotate(55deg);
     background: rgba(240, 107, 170, 0.7);
 }
 
@@ -865,7 +895,6 @@ input {
 }
 
 @media (max-width: 1050px) {
-
     .navbar {
         flex-direction: column;
         gap: 20px;
@@ -890,11 +919,9 @@ input {
     .user-area {
         width: min(400px, 100%);
     }
-
 }
 
 @media (max-width: 700px) {
-
     .navbar {
         padding-left: 20px;
         padding-right: 20px;
@@ -913,11 +940,7 @@ input {
     .sphere-container {
         width: 100%;
         height: 550px;
-    }
-
-    .sphere {
-        width: 500px;
-        height: 500px;
+        transform: scale(0.82);
     }
 
     .about-modal {
@@ -937,5 +960,4 @@ input {
         max-width: 100%;
         right: -100%;
     }
-
 }
