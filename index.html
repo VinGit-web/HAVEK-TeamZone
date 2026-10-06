@@ -40,7 +40,6 @@
                     class="current-user"
                     type="button"
                 >
-
                     <span
                         id="currentAvatar"
                         class="current-avatar"
@@ -51,7 +50,6 @@
                     <span id="currentUserName">
                         Samuel
                     </span>
-
                 </button>
 
 
@@ -83,9 +81,7 @@
 
             <div class="sphere-title">
 
-                <h1>
-                    Your Sphere
-                </h1>
+                <h1>My Sphere</h1>
 
                 <div class="title-line"></div>
 
@@ -104,182 +100,10 @@
                 id="sphereContainer"
                 class="sphere-container"
             >
-
-                <div
-                    id="sphere"
-                    class="sphere"
-                >
-
-                    <div
-                        class="globe-ring ring-horizontal ring-h1"
-                    ></div>
-
-                    <div
-                        class="globe-ring ring-horizontal ring-h2"
-                    ></div>
-
-                    <div
-                        class="globe-ring ring-horizontal ring-h3"
-                    ></div>
-
-
-                    <div
-                        class="globe-ring ring-vertical ring-v1"
-                    ></div>
-
-                    <div
-                        class="globe-ring ring-vertical ring-v2"
-                    ></div>
-
-                    <div
-                        class="globe-ring ring-vertical ring-v3"
-                    ></div>
-
-                    <div
-                        class="globe-ring ring-vertical ring-v4"
-                    ></div>
-
-
-                    <div
-                        class="connection-line connection-zach"
-                    ></div>
-
-                    <div
-                        class="connection-line connection-mike"
-                    ></div>
-
-                    <div
-                        class="connection-line connection-sally"
-                    ></div>
-
-                    <div
-                        class="connection-line connection-holly"
-                    ></div>
-
-                    <div
-                        class="connection-line connection-priya"
-                    ></div>
-
-
-                    <button
-                        class="person-node zach-node"
-                        type="button"
-                        data-user="Zach T"
-                    >
-
-                        <span class="node-avatar green">
-                            ZT
-                        </span>
-
-                        <span class="node-name">
-                            Zach
-                        </span>
-
-                    </button>
-
-
-                    <button
-                        class="person-node mike-node"
-                        type="button"
-                        data-user="Mike S"
-                    >
-
-                        <span class="node-avatar purple">
-                            MS
-                        </span>
-
-                        <span class="node-name">
-                            Mike
-                        </span>
-
-                    </button>
-
-
-                    <button
-                        class="person-node sally-node"
-                        type="button"
-                        data-user="Sally S"
-                    >
-
-                        <span class="node-avatar blue">
-                            SS
-                        </span>
-
-                        <span class="node-name">
-                            Sally
-                        </span>
-
-                    </button>
-
-
-                    <button
-                        class="person-node holly-node"
-                        type="button"
-                        data-user="Holly M"
-                    >
-
-                        <span class="node-avatar cyan">
-                            HM
-                        </span>
-
-                        <span class="node-name">
-                            Holly
-                        </span>
-
-                    </button>
-
-
-                    <button
-                        class="person-node priya-node"
-                        type="button"
-                        data-user="Priya K"
-                    >
-
-                        <span class="node-avatar pink">
-                            PK
-                        </span>
-
-                        <span class="node-name">
-                            Priya
-                        </span>
-
-                    </button>
-
-
-                    <div class="person-node centre-node">
-
-                        <span
-                            id="sphereCurrentAvatar"
-                            class="node-avatar centre-avatar"
-                        >
-                            SS
-                        </span>
-
-                        <span class="node-name">
-                            You
-                        </span>
-
-                    </div>
-
-
-                    <div class="locked-node locked-one">
-                        ?
-                    </div>
-
-                    <div class="locked-node locked-two">
-                        ?
-                    </div>
-
-                    <div class="locked-node locked-three">
-                        ?
-                    </div>
-
-                    <div class="locked-node locked-four">
-                        ?
-                    </div>
-
-                </div>
-
+                <canvas
+                    id="sphereCanvas"
+                    aria-label="Interactive 3D connection sphere"
+                ></canvas>
             </div>
 
 
@@ -287,15 +111,11 @@
 
                 Drag to explore
 
-                <span class="instruction-dot">
-                    •
-                </span>
+                <span class="instruction-dot">•</span>
 
-                Pinch to zoom
+                Scroll or pinch to zoom
 
-                <span class="instruction-dot">
-                    •
-                </span>
+                <span class="instruction-dot">•</span>
 
                 Select a connection to view their profile
 
@@ -385,46 +205,21 @@
 
         <section class="profile-section">
 
-            <h3>
-                Profile
-            </h3>
+            <h3>Profile</h3>
 
             <div class="detail-row">
-
-                <span>
-                    Age
-                </span>
-
-                <strong id="profileAge">
-                    23
-                </strong>
-
+                <span>Age</span>
+                <strong id="profileAge">23</strong>
             </div>
 
-
             <div class="detail-row">
-
-                <span>
-                    Gender
-                </span>
-
-                <strong id="profileGender">
-                    Male
-                </strong>
-
+                <span>Gender</span>
+                <strong id="profileGender">Male</strong>
             </div>
 
-
             <div class="detail-row">
-
-                <span>
-                    MBTI
-                </span>
-
-                <strong id="profileMBTI">
-                    INFJ
-                </strong>
-
+                <span>MBTI</span>
+                <strong id="profileMBTI">INFJ</strong>
             </div>
 
         </section>
@@ -432,9 +227,7 @@
 
         <section class="profile-section">
 
-            <h3>
-                Interests
-            </h3>
+            <h3>Interests</h3>
 
             <div
                 id="profileInterests"
@@ -446,9 +239,7 @@
 
         <section class="profile-section">
 
-            <h3>
-                About
-            </h3>
+            <h3>About</h3>
 
             <p id="profileAbout">
                 Interested in meeting people through shared interests and local events.
@@ -459,16 +250,12 @@
 
         <section class="profile-section">
 
-            <h3>
-                Upcoming Events
-            </h3>
+            <h3>Upcoming Events</h3>
 
             <div id="profileEvents">
-
                 <p class="empty-text">
                     No upcoming events.
                 </p>
-
             </div>
 
         </section>
@@ -476,9 +263,7 @@
 
         <section class="profile-section">
 
-            <h3>
-                Connection
-            </h3>
+            <h3>Connection</h3>
 
             <p id="profileConnection">
                 This person is part of your Sphere.
@@ -518,11 +303,11 @@
                 </h2>
 
                 <p>
-                    INTROSPHEER is made to help people create meaningful
-                    social bonds through shared interests, events and
-                    conversation. We aim to build a welcoming environment
-                    where users can find things to do, meet others and feel
-                    more willing to get involved.
+                    INTROSPHEER is designed to help people create meaningful
+                    social connections through shared interests, local events
+                    and conversation. The platform provides a space where users
+                    can discover activities, build connections and become more
+                    involved in their local community.
                 </p>
 
             </section>
@@ -531,13 +316,11 @@
             <section class="about-team">
 
                 <div>
-
                     <img
                         src="images/team-photo.jpeg"
-                        alt="The INTROSPHEER project team"
+                        alt="INTROSPHEER project team"
                         class="team-photo"
                     >
-
                 </div>
 
 
@@ -552,17 +335,15 @@
                     </h3>
 
                     <p>
-                        INTROSPHEER was developed as a collaborative effort
-                        by our team for our university project. We worked
-                        together to create an experience that makes social
-                        interaction easier and more approachable through
-                        research, design, prototyping, testing and
-                        development.
+                        INTROSPHEER was developed collaboratively as part of
+                        our university project. Our team worked across research,
+                        design, prototyping, user testing and development to
+                        create an approachable social experience.
                     </p>
 
                     <p>
-                        Every team member brought different ideas,
-                        perspectives and skills to the design and
+                        Each team member contributed different ideas,
+                        perspectives and technical skills throughout the
                         development process.
                     </p>
 
@@ -577,9 +358,7 @@
                     SOURCES
                 </p>
 
-                <h3>
-                    References
-                </h3>
+                <h3>References</h3>
 
                 <p>
                     View the sources and resources used throughout the
@@ -632,28 +411,6 @@
                         Brisbane City Council Open Data.
                     </p>
 
-                    <p>
-                        Dembling, S. (2015, February 15).
-                        <i>Why even introverts need community</i>.
-                        Psychology Today.
-                    </p>
-
-                    <p>
-                        Odintsova, K. (2026, August 14).
-                        <i>Colours that represent introversion, calm and reflection</i>.
-                        KSENIA ODINTSOVA.
-                    </p>
-
-                    <p>
-                        Reddit. (2026).
-                        <i>Reddit search</i>.
-                    </p>
-
-                    <p>
-                        PeoplePsych. (n.d.).
-                        <i>Building meaningful relationships as an introvert</i>.
-                    </p>
-
                 </div>
 
             </section>
@@ -663,6 +420,7 @@
     </div>
 
 
+    <script src="https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.min.js"></script>
     <script src="js/main.js"></script>
 
 </body>

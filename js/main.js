@@ -16,6 +16,7 @@ const backupUsers = [
         about:
             "An introvert who wants to build meaningful connections through shared interests and local events."
     },
+
     {
         id: "zach",
         name: "Zach T",
@@ -31,6 +32,7 @@ const backupUsers = [
         about:
             "Interested in meeting people through reading, sport and outdoor activities."
     },
+
     {
         id: "mike",
         name: "Mike S",
@@ -46,6 +48,7 @@ const backupUsers = [
         about:
             "Enjoys boxing, reading and discovering new places to eat."
     },
+
     {
         id: "sally",
         name: "Sally S",
@@ -61,6 +64,7 @@ const backupUsers = [
         about:
             "Interested in creative activities, ballet and sport."
     },
+
     {
         id: "holly",
         name: "Holly M",
@@ -76,6 +80,7 @@ const backupUsers = [
         about:
             "Enjoys swimming, visiting museums and gaming."
     },
+
     {
         id: "priya",
         name: "Priya K",
@@ -94,8 +99,11 @@ const backupUsers = [
     }
 ];
 
+
 let users = [...backupUsers];
+
 let selectedUser = null;
+
 
 const userSearch =
     document.getElementById("userSearch");
@@ -114,9 +122,6 @@ const currentAvatar =
 
 const currentUserName =
     document.getElementById("currentUserName");
-
-const sphereCurrentAvatar =
-    document.getElementById("sphereCurrentAvatar");
 
 const profilePanel =
     document.getElementById("profilePanel");
@@ -163,12 +168,6 @@ const connectButton =
 const messageButton =
     document.getElementById("messageButton");
 
-const sphere =
-    document.getElementById("sphere");
-
-const sphereContainer =
-    document.getElementById("sphereContainer");
-
 const aboutButton =
     document.getElementById("aboutButton");
 
@@ -186,6 +185,7 @@ const referenceList =
 
 
 function getUserName(user) {
+
     if (!user) {
         return "";
     }
@@ -221,6 +221,7 @@ function getUserName(user) {
 
 
 function getFirstName(user) {
+
     const name =
         getUserName(user);
 
@@ -232,6 +233,7 @@ function getFirstName(user) {
 
 
 function getInitials(name) {
+
     return name
         .split(" ")
         .filter(Boolean)
@@ -245,6 +247,7 @@ function getInitials(name) {
 
 
 function getUserId(user) {
+
     return (
         user.id ||
         user.userId ||
@@ -255,6 +258,7 @@ function getUserId(user) {
 
 
 function normaliseUsers(data) {
+
     if (Array.isArray(data)) {
         return data;
     }
@@ -278,14 +282,17 @@ function normaliseUsers(data) {
 
 
 function mergeUsersWithBackup(loadedUsers) {
+
     const combined =
         [...loadedUsers];
 
     backupUsers.forEach(
         function (backupUser) {
+
             const alreadyExists =
                 combined.some(
                     function (user) {
+
                         return (
                             getUserName(user)
                                 .toLowerCase() ===
@@ -308,7 +315,9 @@ function mergeUsersWithBackup(loadedUsers) {
 
 
 async function loadUsers() {
+
     try {
+
         const response =
             await fetch(
                 "data/userpersona.json"
@@ -335,16 +344,7 @@ async function loadUsers() {
                 );
         }
 
-        console.log(
-            "Personas loaded:",
-            users
-        );
-
     } catch (error) {
-        console.warn(
-            "Using backup personas because the JSON file could not be loaded.",
-            error
-        );
 
         users =
             [...backupUsers];
@@ -355,6 +355,7 @@ async function loadUsers() {
 
 
 function setupCurrentUser() {
+
     const samuel =
         findUserExact(
             "Samuel Smith"
@@ -364,14 +365,8 @@ function setupCurrentUser() {
     const name =
         getUserName(samuel);
 
-    const initials =
-        getInitials(name);
-
     currentAvatar.textContent =
-        initials;
-
-    sphereCurrentAvatar.textContent =
-        initials;
+        getInitials(name);
 
     currentUserName.textContent =
         getFirstName(samuel);
@@ -379,6 +374,7 @@ function setupCurrentUser() {
 
 
 function findUserExact(value) {
+
     const searchValue =
         value
             .trim()
@@ -387,6 +383,7 @@ function findUserExact(value) {
     return (
         users.find(
             function (user) {
+
                 return (
                     getUserName(user)
                         .toLowerCase() ===
@@ -400,6 +397,7 @@ function findUserExact(value) {
 
 
 function findUser(value) {
+
     const searchValue =
         value
             .trim()
@@ -421,6 +419,7 @@ function findUser(value) {
     return (
         users.find(
             function (user) {
+
                 return (
                     getUserName(user)
                         .toLowerCase()
@@ -436,6 +435,7 @@ function findUser(value) {
 
 
 function openUserProfile(user) {
+
     if (!user) {
         return;
     }
@@ -450,8 +450,7 @@ function openUserProfile(user) {
         getInitials(name);
 
     profileName.textContent =
-        name ||
-        "User";
+        name;
 
     profileLocation.textContent =
         user.suburb ||
@@ -475,17 +474,11 @@ function openUserProfile(user) {
         user.about ||
         "Connect through shared interests and local experiences.";
 
-    displayInterests(
-        user
-    );
+    displayInterests(user);
 
-    displayEvents(
-        user
-    );
+    displayEvents(user);
 
-    updateConnectionStatus(
-        user
-    );
+    updateConnectionStatus(user);
 
     profilePanel.classList.add(
         "open"
@@ -498,6 +491,7 @@ function openUserProfile(user) {
 
 
 function closeUserProfile() {
+
     profilePanel.classList.remove(
         "open"
     );
@@ -509,6 +503,7 @@ function closeUserProfile() {
 
 
 function displayInterests(user) {
+
     profileInterests.innerHTML =
         "";
 
@@ -531,11 +526,10 @@ function displayInterests(user) {
     }
 
     if (
-        !Array.isArray(
-            interests
-        ) ||
+        !Array.isArray(interests) ||
         interests.length === 0
     ) {
+
         profileInterests.innerHTML =
             '<span class="empty-text">No interests available.</span>';
 
@@ -544,6 +538,7 @@ function displayInterests(user) {
 
     interests.forEach(
         function (interest) {
+
             const chip =
                 document.createElement(
                     "span"
@@ -564,19 +559,19 @@ function displayInterests(user) {
 
 
 function displayEvents(user) {
+
     profileEvents.innerHTML =
         "";
 
     const events =
-        Array.isArray(
-            user.events
-        )
+        Array.isArray(user.events)
             ? user.events
             : [];
 
     if (
         events.length === 0
     ) {
+
         profileEvents.innerHTML =
             '<p class="empty-text">No upcoming events.</p>';
 
@@ -585,6 +580,7 @@ function displayEvents(user) {
 
     events.forEach(
         function (event) {
+
             const item =
                 document.createElement(
                     "p"
@@ -611,19 +607,17 @@ function displayEvents(user) {
 }
 
 
-function getConnectionKey() {
-    return "introspheerConnections";
-}
-
-
 function getConnections() {
+
     try {
+
         const saved =
             localStorage.getItem(
-                getConnectionKey()
+                "introspheerConnections"
             );
 
         if (!saved) {
+
             return [
                 "zach",
                 "mike",
@@ -639,6 +633,7 @@ function getConnections() {
         );
 
     } catch (error) {
+
         return [
             "zach",
             "mike",
@@ -651,6 +646,7 @@ function getConnections() {
 
 
 function isConnected(user) {
+
     const connections =
         getConnections();
 
@@ -662,6 +658,7 @@ function isConnected(user) {
 
     return connections.some(
         function (connection) {
+
             return (
                 String(connection)
                     .toLowerCase() ===
@@ -679,10 +676,12 @@ function isConnected(user) {
 
 
 function updateConnectionStatus(user) {
+
     const connected =
         isConnected(user);
 
     if (connected) {
+
         profileConnection.textContent =
             "This person is part of your Sphere.";
 
@@ -691,7 +690,9 @@ function updateConnectionStatus(user) {
 
         connectButton.disabled =
             true;
+
     } else {
+
         profileConnection.textContent =
             "You have not connected with this person yet.";
 
@@ -707,6 +708,7 @@ function updateConnectionStatus(user) {
 connectButton.addEventListener(
     "click",
     function () {
+
         if (!selectedUser) {
             return;
         }
@@ -724,12 +726,13 @@ connectButton.addEventListener(
                 selectedUser
             )
         ) {
+
             connections.push(
                 userId
             );
 
             localStorage.setItem(
-                getConnectionKey(),
+                "introspheerConnections",
                 JSON.stringify(
                     connections
                 )
@@ -746,6 +749,7 @@ connectButton.addEventListener(
 messageButton.addEventListener(
     "click",
     function () {
+
         if (!selectedUser) {
             return;
         }
@@ -775,52 +779,10 @@ profileOverlay.addEventListener(
 );
 
 
-document
-    .querySelectorAll(
-        ".person-node[data-user]"
-    )
-    .forEach(
-        function (node) {
-            node.addEventListener(
-                "click",
-                function (event) {
-                    event.preventDefault();
-                    event.stopPropagation();
-
-                    const name =
-                        node.dataset.user;
-
-                    let user =
-                        findUserExact(
-                            name
-                        );
-
-                    if (!user) {
-                        user =
-                            backupUsers.find(
-                                function (backupUser) {
-                                    return (
-                                        getUserName(
-                                            backupUser
-                                        ).toLowerCase() ===
-                                        name.toLowerCase()
-                                    );
-                                }
-                            );
-                    }
-
-                    if (user) {
-                        openUserProfile(
-                            user
-                        );
-                    }
-                }
-            );
-        }
-    );
-
+/* SEARCH */
 
 function hideSuggestions() {
+
     searchSuggestions.hidden =
         true;
 
@@ -830,18 +792,22 @@ function hideSuggestions() {
 
 
 function showSuggestions(matches) {
+
     searchSuggestions.innerHTML =
         "";
 
     if (
         matches.length === 0
     ) {
+
         hideSuggestions();
+
         return;
     }
 
     matches.forEach(
         function (user) {
+
             const button =
                 document.createElement(
                     "button"
@@ -915,6 +881,7 @@ function showSuggestions(matches) {
             button.addEventListener(
                 "click",
                 function () {
+
                     userSearch.value =
                         name;
 
@@ -943,6 +910,7 @@ function showSuggestions(matches) {
 userSearch.addEventListener(
     "input",
     function () {
+
         const value =
             userSearch.value
                 .trim()
@@ -954,7 +922,9 @@ userSearch.addEventListener(
         if (
             value.length < 2
         ) {
+
             hideSuggestions();
+
             return;
         }
 
@@ -962,10 +932,9 @@ userSearch.addEventListener(
             users
                 .filter(
                     function (user) {
+
                         return (
-                            getUserName(
-                                user
-                            )
+                            getUserName(user)
                                 .toLowerCase()
                                 .includes(
                                     value
@@ -988,10 +957,12 @@ userSearch.addEventListener(
 userSearch.addEventListener(
     "keydown",
     function (event) {
+
         if (
             event.key ===
             "Enter"
         ) {
+
             event.preventDefault();
 
             const value =
@@ -1001,6 +972,7 @@ userSearch.addEventListener(
             hideSuggestions();
 
             if (!value) {
+
                 searchMessage.textContent =
                     "Enter a person's name.";
 
@@ -1008,11 +980,10 @@ userSearch.addEventListener(
             }
 
             const user =
-                findUser(
-                    value
-                );
+                findUser(value);
 
             if (!user) {
+
                 searchMessage.textContent =
                     "User not found.";
 
@@ -1023,20 +994,11 @@ userSearch.addEventListener(
                 "";
 
             userSearch.value =
-                getUserName(
-                    user
-                );
+                getUserName(user);
 
             openUserProfile(
                 user
             );
-        }
-
-        if (
-            event.key ===
-            "Escape"
-        ) {
-            hideSuggestions();
         }
     }
 );
@@ -1045,6 +1007,7 @@ userSearch.addEventListener(
 document.addEventListener(
     "click",
     function (event) {
+
         if (
             !event.target.closest(
                 ".search-wrapper"
@@ -1059,15 +1022,19 @@ document.addEventListener(
 currentUserButton.addEventListener(
     "click",
     function () {
+
         window.location.href =
             "account.html";
     }
 );
 
 
+/* ABOUT */
+
 aboutButton.addEventListener(
     "click",
     function () {
+
         aboutModal.hidden =
             false;
 
@@ -1080,6 +1047,7 @@ aboutButton.addEventListener(
 closeAbout.addEventListener(
     "click",
     function () {
+
         aboutModal.hidden =
             true;
 
@@ -1092,10 +1060,12 @@ closeAbout.addEventListener(
 aboutModal.addEventListener(
     "click",
     function (event) {
+
         if (
             event.target ===
             aboutModal
         ) {
+
             aboutModal.hidden =
                 true;
 
@@ -1109,19 +1079,17 @@ aboutModal.addEventListener(
 showReferences.addEventListener(
     "click",
     function () {
+
         const currentlyHidden =
             referenceList.hidden;
 
         referenceList.hidden =
             !currentlyHidden;
 
-        if (currentlyHidden) {
-            showReferences.textContent =
-                "Hide Reference List";
-        } else {
-            showReferences.textContent =
-                "View APA 7 Reference List";
-        }
+        showReferences.textContent =
+            currentlyHidden
+                ? "Hide Reference List"
+                : "View APA 7 Reference List";
     }
 );
 
@@ -1129,11 +1097,14 @@ showReferences.addEventListener(
 document.addEventListener(
     "keydown",
     function (event) {
+
         if (
             event.key ===
             "Escape"
         ) {
+
             hideSuggestions();
+
             closeUserProfile();
 
             aboutModal.hidden =
@@ -1146,191 +1117,1375 @@ document.addEventListener(
 );
 
 
-let rotationX = -8;
-let rotationY = 0;
-let sphereScale = 1;
+/* THREE.JS SPHERE */
 
-let isDragging = false;
+const sphereContainer =
+    document.getElementById(
+        "sphereContainer"
+    );
 
-let previousX = 0;
-let previousY = 0;
-
-let lastAnimationTime =
-    performance.now();
-
-
-function updateSphereTransform() {
-    sphere.style.transform =
-        "rotateX(" +
-        rotationX +
-        "deg) " +
-        "rotateY(" +
-        rotationY +
-        "deg) " +
-        "scale(" +
-        sphereScale +
-        ")";
-}
+const sphereCanvas =
+    document.getElementById(
+        "sphereCanvas"
+    );
 
 
-function animateSphere(time) {
-    const delta =
-        time -
-        lastAnimationTime;
+const scene =
+    new THREE.Scene();
 
-    lastAnimationTime =
-        time;
 
-    if (!isDragging) {
-        rotationY +=
-            delta * 0.005;
+const camera =
+    new THREE.PerspectiveCamera(
+        42,
+        sphereContainer.clientWidth /
+            sphereContainer.clientHeight,
+        0.1,
+        100
+    );
+
+
+camera.position.set(
+    0,
+    0,
+    15
+);
+
+
+const renderer =
+    new THREE.WebGLRenderer({
+        canvas: sphereCanvas,
+        antialias: true,
+        alpha: true
+    });
+
+
+renderer.setPixelRatio(
+    Math.min(
+        window.devicePixelRatio,
+        2
+    )
+);
+
+
+renderer.setSize(
+    sphereContainer.clientWidth,
+    sphereContainer.clientHeight,
+    false
+);
+
+
+renderer.outputColorSpace =
+    THREE.SRGBColorSpace;
+
+
+const networkGroup =
+    new THREE.Group();
+
+
+scene.add(
+    networkGroup
+);
+
+
+const sphereRadius =
+    5;
+
+
+/* OUTER SPHERE */
+
+const globeGeometry =
+    new THREE.SphereGeometry(
+        sphereRadius,
+        24,
+        16
+    );
+
+
+const globeMaterial =
+    new THREE.MeshBasicMaterial({
+        color: 0x914fe8,
+        wireframe: true,
+        transparent: true,
+        opacity: 0.11,
+        depthWrite: false
+    });
+
+
+const globe =
+    new THREE.Mesh(
+        globeGeometry,
+        globeMaterial
+    );
+
+
+networkGroup.add(
+    globe
+);
+
+
+/* EQUATOR */
+
+function createCircleLine(
+    radius,
+    axis,
+    offset
+) {
+
+    const points =
+        [];
+
+    const segments =
+        100;
+
+    for (
+        let i = 0;
+        i <= segments;
+        i++
+    ) {
+
+        const angle =
+            (
+                i /
+                segments
+            ) *
+            Math.PI *
+            2;
+
+        if (
+            axis ===
+            "horizontal"
+        ) {
+
+            points.push(
+                new THREE.Vector3(
+                    Math.cos(angle) *
+                        radius,
+
+                    offset,
+
+                    Math.sin(angle) *
+                        radius
+                )
+            );
+
+        } else {
+
+            points.push(
+                new THREE.Vector3(
+                    Math.cos(angle) *
+                        radius,
+
+                    Math.sin(angle) *
+                        radius,
+
+                    offset
+                )
+            );
+        }
     }
 
-    updateSphereTransform();
 
-    requestAnimationFrame(
-        animateSphere
+    const geometry =
+        new THREE.BufferGeometry()
+            .setFromPoints(
+                points
+            );
+
+
+    const material =
+        new THREE.LineBasicMaterial({
+            color: 0xa05cff,
+            transparent: true,
+            opacity: 0.28
+        });
+
+
+    const circle =
+        new THREE.Line(
+            geometry,
+            material
+        );
+
+
+    networkGroup.add(
+        circle
     );
 }
 
 
-requestAnimationFrame(
-    animateSphere
+createCircleLine(
+    5.05,
+    "horizontal",
+    0
+);
+
+createCircleLine(
+    4.6,
+    "horizontal",
+    1.8
+);
+
+createCircleLine(
+    4.6,
+    "horizontal",
+    -1.8
 );
 
 
-sphere.addEventListener(
-    "pointerdown",
-    function (event) {
-        if (
-            event.target.closest(
-                ".person-node"
-            )
-        ) {
-            return;
-        }
+/* PARTICLES */
 
-        isDragging =
-            true;
+const particlePositions =
+    [];
 
-        previousX =
-            event.clientX;
 
-        previousY =
-            event.clientY;
+for (
+    let i = 0;
+    i < 120;
+    i++
+) {
 
-        sphere.classList.add(
-            "dragging"
+    const radius =
+        Math.pow(
+            Math.random(),
+            1 / 3
+        ) *
+        4.7;
+
+    const theta =
+        Math.random() *
+        Math.PI *
+        2;
+
+    const phi =
+        Math.acos(
+            2 *
+            Math.random() -
+            1
         );
 
-        try {
-            sphere.setPointerCapture(
-                event.pointerId
+    particlePositions.push(
+
+        radius *
+        Math.sin(phi) *
+        Math.cos(theta),
+
+        radius *
+        Math.cos(phi),
+
+        radius *
+        Math.sin(phi) *
+        Math.sin(theta)
+
+    );
+}
+
+
+const particleGeometry =
+    new THREE.BufferGeometry();
+
+
+particleGeometry.setAttribute(
+    "position",
+    new THREE.Float32BufferAttribute(
+        particlePositions,
+        3
+    )
+);
+
+
+const particleMaterial =
+    new THREE.PointsMaterial({
+        color: 0x9f5cff,
+        size: 0.055,
+        transparent: true,
+        opacity: 0.7,
+        depthWrite: false
+    });
+
+
+const particles =
+    new THREE.Points(
+        particleGeometry,
+        particleMaterial
+    );
+
+
+networkGroup.add(
+    particles
+);
+
+
+/* NODE TEXTURE */
+
+function createNodeTexture(
+    initials,
+    name,
+    colour,
+    locked
+) {
+
+    const canvas =
+        document.createElement(
+            "canvas"
+        );
+
+    canvas.width =
+        512;
+
+    canvas.height =
+        512;
+
+
+    const context =
+        canvas.getContext(
+            "2d"
+        );
+
+
+    context.clearRect(
+        0,
+        0,
+        512,
+        512
+    );
+
+
+    const glow =
+        context.createRadialGradient(
+            256,
+            205,
+            20,
+            256,
+            205,
+            150
+        );
+
+
+    if (locked) {
+
+        glow.addColorStop(
+            0,
+            "rgba(160,160,180,0.35)"
+        );
+
+        glow.addColorStop(
+            1,
+            "rgba(160,160,180,0)"
+        );
+
+    } else {
+
+        glow.addColorStop(
+            0,
+            colour + "80"
+        );
+
+        glow.addColorStop(
+            1,
+            colour + "00"
+        );
+    }
+
+
+    context.fillStyle =
+        glow;
+
+
+    context.fillRect(
+        50,
+        0,
+        412,
+        410
+    );
+
+
+    context.beginPath();
+
+
+    context.arc(
+        256,
+        205,
+        100,
+        0,
+        Math.PI * 2
+    );
+
+
+    context.fillStyle =
+        locked
+            ? "rgba(55,58,78,0.96)"
+            : "rgba(19,24,59,0.97)";
+
+
+    context.fill();
+
+
+    context.lineWidth =
+        10;
+
+
+    context.strokeStyle =
+        locked
+            ? "rgba(150,150,170,0.8)"
+            : colour;
+
+
+    context.stroke();
+
+
+    context.fillStyle =
+        "#ffffff";
+
+
+    context.textAlign =
+        "center";
+
+
+    context.textBaseline =
+        "middle";
+
+
+    context.font =
+        locked
+            ? "70px Arial"
+            : "bold 58px Arial";
+
+
+    context.fillText(
+        locked
+            ? "?"
+            : initials,
+        256,
+        205
+    );
+
+
+    if (!locked) {
+
+        context.font =
+            "bold 35px Arial";
+
+
+        const measured =
+            context.measureText(
+                name
+            ).width;
+
+
+        const labelWidth =
+            Math.min(
+                measured + 50,
+                350
             );
+
+
+        context.fillStyle =
+            "rgba(4,9,28,0.92)";
+
+
+        if (
+            typeof context.roundRect ===
+            "function"
+        ) {
+
+            context.beginPath();
+
+            context.roundRect(
+                256 -
+                labelWidth / 2,
+                335,
+                labelWidth,
+                65,
+                18
+            );
+
+            context.fill();
+
+        } else {
+
+            context.fillRect(
+                256 -
+                labelWidth / 2,
+                335,
+                labelWidth,
+                65
+            );
+        }
+
+
+        context.fillStyle =
+            "#ffffff";
+
+
+        context.fillText(
+            name,
+            256,
+            368
+        );
+    }
+
+
+    const texture =
+        new THREE.CanvasTexture(
+            canvas
+        );
+
+
+    texture.colorSpace =
+        THREE.SRGBColorSpace;
+
+
+    return texture;
+}
+
+
+/* PEOPLE */
+
+const nodeData = [
+
+    {
+        id: "samuel",
+        user: "Samuel Smith",
+        name: "You",
+        initials: "SS",
+        colour: "#a64dff",
+        position: [
+            0,
+            0,
+            0
+        ],
+        size: 1.9,
+        centre: true
+    },
+
+    {
+        id: "zach",
+        user: "Zach T",
+        name: "Zach",
+        initials: "ZT",
+        colour: "#2ce6c2",
+        position: [
+            -3.3,
+            1.6,
+            2.4
+        ],
+        size: 1.35
+    },
+
+    {
+        id: "mike",
+        user: "Mike S",
+        name: "Mike",
+        initials: "MS",
+        colour: "#a34fff",
+        position: [
+            3.0,
+            2.1,
+            1.7
+        ],
+        size: 1.35
+    },
+
+    {
+        id: "sally",
+        user: "Sally S",
+        name: "Sally",
+        initials: "SS",
+        colour: "#31bfff",
+        position: [
+            3.5,
+            -0.8,
+            2.4
+        ],
+        size: 1.35
+    },
+
+    {
+        id: "holly",
+        user: "Holly M",
+        name: "Holly",
+        initials: "HM",
+        colour: "#42d7ef",
+        position: [
+            -3.2,
+            -1.7,
+            1.6
+        ],
+        size: 1.35
+    },
+
+    {
+        id: "priya",
+        user: "Priya K",
+        name: "Priya",
+        initials: "PK",
+        colour: "#ff65ae",
+        position: [
+            1.5,
+            -3.4,
+            1.9
+        ],
+        size: 1.35
+    },
+
+    {
+        id: "locked1",
+        locked: true,
+        position: [
+            -1.5,
+            3.7,
+            -1.8
+        ],
+        size: 0.85
+    },
+
+    {
+        id: "locked2",
+        locked: true,
+        position: [
+            2.4,
+            3.0,
+            -2.1
+        ],
+        size: 0.85
+    },
+
+    {
+        id: "locked3",
+        locked: true,
+        position: [
+            -3.7,
+            -0.2,
+            -1.9
+        ],
+        size: 0.85
+    },
+
+    {
+        id: "locked4",
+        locked: true,
+        position: [
+            -1.0,
+            -3.7,
+            -2.0
+        ],
+        size: 0.85
+    },
+
+    {
+        id: "locked5",
+        locked: true,
+        position: [
+            3.5,
+            0.3,
+            -2.4
+        ],
+        size: 0.85
+    },
+
+    {
+        id: "locked6",
+        locked: true,
+        position: [
+            0.5,
+            1.0,
+            -4.0
+        ],
+        size: 0.8
+    }
+
+];
+
+
+const nodeObjects =
+    new Map();
+
+
+const clickableNodes =
+    [];
+
+
+function createNode(data) {
+
+    const texture =
+        createNodeTexture(
+            data.initials || "",
+            data.name || "",
+            data.colour ||
+                "#888899",
+            Boolean(
+                data.locked
+            )
+        );
+
+
+    const material =
+        new THREE.SpriteMaterial({
+            map: texture,
+            transparent: true,
+            depthTest: true,
+            depthWrite: false
+        });
+
+
+    const sprite =
+        new THREE.Sprite(
+            material
+        );
+
+
+    sprite.position.set(
+        data.position[0],
+        data.position[1],
+        data.position[2]
+    );
+
+
+    sprite.scale.set(
+        data.size,
+        data.size,
+        1
+    );
+
+
+    sprite.userData =
+        data;
+
+
+    networkGroup.add(
+        sprite
+    );
+
+
+    nodeObjects.set(
+        data.id,
+        sprite
+    );
+
+
+    if (
+        !data.locked &&
+        !data.centre
+    ) {
+
+        clickableNodes.push(
+            sprite
+        );
+    }
+
+
+    return sprite;
+}
+
+
+nodeData.forEach(
+    createNode
+);
+
+
+/* NETWORK CONNECTIONS */
+
+function createConnection(
+    fromId,
+    toId,
+    colour,
+    opacity
+) {
+
+    const from =
+        nodeObjects.get(
+            fromId
+        );
+
+    const to =
+        nodeObjects.get(
+            toId
+        );
+
+
+    if (
+        !from ||
+        !to
+    ) {
+        return;
+    }
+
+
+    const start =
+        from.position.clone();
+
+
+    const end =
+        to.position.clone();
+
+
+    const middle =
+        start
+            .clone()
+            .add(end)
+            .multiplyScalar(
+                0.5
+            );
+
+
+    if (
+        fromId !== "samuel" &&
+        toId !== "samuel"
+    ) {
+
+        middle
+            .normalize()
+            .multiplyScalar(
+                middle.length() +
+                0.5
+            );
+    }
+
+
+    const curve =
+        new THREE.QuadraticBezierCurve3(
+            start,
+            middle,
+            end
+        );
+
+
+    const points =
+        curve.getPoints(
+            30
+        );
+
+
+    const geometry =
+        new THREE.BufferGeometry()
+            .setFromPoints(
+                points
+            );
+
+
+    const material =
+        new THREE.LineBasicMaterial({
+            color: colour,
+            transparent: true,
+            opacity: opacity,
+            depthWrite: false
+        });
+
+
+    const line =
+        new THREE.Line(
+            geometry,
+            material
+        );
+
+
+    networkGroup.add(
+        line
+    );
+}
+
+
+createConnection(
+    "samuel",
+    "zach",
+    0x2ce6c2,
+    0.9
+);
+
+createConnection(
+    "samuel",
+    "mike",
+    0xa34fff,
+    0.9
+);
+
+createConnection(
+    "samuel",
+    "sally",
+    0x31bfff,
+    0.9
+);
+
+createConnection(
+    "samuel",
+    "holly",
+    0x42d7ef,
+    0.9
+);
+
+createConnection(
+    "samuel",
+    "priya",
+    0xff65ae,
+    0.9
+);
+
+
+createConnection(
+    "zach",
+    "mike",
+    0x9660e8,
+    0.6
+);
+
+createConnection(
+    "priya",
+    "mike",
+    0x9660e8,
+    0.6
+);
+
+
+createConnection(
+    "locked1",
+    "zach",
+    0x7445aa,
+    0.24
+);
+
+createConnection(
+    "locked1",
+    "mike",
+    0x7445aa,
+    0.20
+);
+
+createConnection(
+    "locked2",
+    "mike",
+    0x7445aa,
+    0.22
+);
+
+createConnection(
+    "locked3",
+    "holly",
+    0x7445aa,
+    0.20
+);
+
+createConnection(
+    "locked4",
+    "priya",
+    0x7445aa,
+    0.20
+);
+
+createConnection(
+    "locked5",
+    "sally",
+    0x7445aa,
+    0.20
+);
+
+createConnection(
+    "locked6",
+    "zach",
+    0x7445aa,
+    0.17
+);
+
+
+/* INTERNAL 3D NETWORK */
+
+const internalPoints =
+    [];
+
+
+for (
+    let i = 0;
+    i < 42;
+    i++
+) {
+
+    const radius =
+        1.4 +
+        Math.random() *
+        3.0;
+
+
+    const theta =
+        Math.random() *
+        Math.PI *
+        2;
+
+
+    const phi =
+        Math.acos(
+            2 *
+            Math.random() -
+            1
+        );
+
+
+    internalPoints.push(
+
+        new THREE.Vector3(
+
+            radius *
+            Math.sin(phi) *
+            Math.cos(theta),
+
+            radius *
+            Math.cos(phi),
+
+            radius *
+            Math.sin(phi) *
+            Math.sin(theta)
+
+        )
+    );
+}
+
+
+const internalPositions =
+    [];
+
+
+for (
+    let i = 0;
+    i < internalPoints.length;
+    i++
+) {
+
+    for (
+        let j = i + 1;
+        j < internalPoints.length;
+        j++
+    ) {
+
+        const distance =
+            internalPoints[i]
+                .distanceTo(
+                    internalPoints[j]
+                );
+
+
+        if (
+            distance < 2.05 &&
+            Math.random() > 0.4
+        ) {
+
+            internalPositions.push(
+
+                internalPoints[i].x,
+                internalPoints[i].y,
+                internalPoints[i].z,
+
+                internalPoints[j].x,
+                internalPoints[j].y,
+                internalPoints[j].z
+
+            );
+        }
+    }
+}
+
+
+const internalGeometry =
+    new THREE.BufferGeometry();
+
+
+internalGeometry.setAttribute(
+    "position",
+    new THREE.Float32BufferAttribute(
+        internalPositions,
+        3
+    )
+);
+
+
+const internalMaterial =
+    new THREE.LineBasicMaterial({
+        color: 0x7543ba,
+        transparent: true,
+        opacity: 0.16,
+        depthWrite: false
+    });
+
+
+const internalLines =
+    new THREE.LineSegments(
+        internalGeometry,
+        internalMaterial
+    );
+
+
+networkGroup.add(
+    internalLines
+);
+
+
+/* INTERACTION */
+
+const raycaster =
+    new THREE.Raycaster();
+
+
+const pointer =
+    new THREE.Vector2();
+
+
+let dragging =
+    false;
+
+
+let movedWhileDragging =
+    false;
+
+
+let previousPointerX =
+    0;
+
+
+let previousPointerY =
+    0;
+
+
+let targetRotationX =
+    -0.12;
+
+
+let targetRotationY =
+    0;
+
+
+let currentRotationX =
+    targetRotationX;
+
+
+let currentRotationY =
+    targetRotationY;
+
+
+let cameraDistance =
+    15;
+
+
+let targetCameraDistance =
+    15;
+
+
+sphereCanvas.addEventListener(
+    "pointerdown",
+    function (event) {
+
+        dragging =
+            true;
+
+        movedWhileDragging =
+            false;
+
+        previousPointerX =
+            event.clientX;
+
+        previousPointerY =
+            event.clientY;
+
+        try {
+
+            sphereCanvas
+                .setPointerCapture(
+                    event.pointerId
+                );
+
         } catch (error) {
         }
     }
 );
 
 
-sphere.addEventListener(
+sphereCanvas.addEventListener(
     "pointermove",
     function (event) {
-        if (!isDragging) {
+
+        if (!dragging) {
             return;
         }
 
-        const differenceX =
+
+        const deltaX =
             event.clientX -
-            previousX;
+            previousPointerX;
 
-        const differenceY =
+
+        const deltaY =
             event.clientY -
-            previousY;
+            previousPointerY;
 
-        rotationY +=
-            differenceX *
-            0.35;
 
-        rotationX -=
-            differenceY *
-            0.35;
+        if (
+            Math.abs(deltaX) +
+            Math.abs(deltaY) >
+            2
+        ) {
 
-        previousX =
+            movedWhileDragging =
+                true;
+        }
+
+
+        targetRotationY +=
+            deltaX *
+            0.006;
+
+
+        targetRotationX +=
+            deltaY *
+            0.006;
+
+
+        targetRotationX =
+            Math.max(
+                -1.35,
+                Math.min(
+                    1.35,
+                    targetRotationX
+                )
+            );
+
+
+        previousPointerX =
             event.clientX;
 
-        previousY =
-            event.clientY;
 
-        updateSphereTransform();
+        previousPointerY =
+            event.clientY;
     }
 );
 
 
-function finishDragging(event) {
-    isDragging =
+function stopSphereDrag(event) {
+
+    dragging =
         false;
 
-    sphere.classList.remove(
-        "dragging"
-    );
 
     try {
-        if (
-            sphere.hasPointerCapture(
-                event.pointerId
-            )
-        ) {
-            sphere.releasePointerCapture(
+
+        sphereCanvas
+            .releasePointerCapture(
                 event.pointerId
             );
-        }
+
     } catch (error) {
     }
 }
 
 
-sphere.addEventListener(
+sphereCanvas.addEventListener(
     "pointerup",
-    finishDragging
-);
-
-
-sphere.addEventListener(
-    "pointercancel",
-    finishDragging
-);
-
-
-sphereContainer.addEventListener(
-    "wheel",
     function (event) {
-        if (!event.ctrlKey) {
+
+        stopSphereDrag(
+            event
+        );
+
+
+        if (
+            movedWhileDragging
+        ) {
             return;
         }
 
-        event.preventDefault();
 
-        if (
-            event.deltaY < 0
-        ) {
-            sphereScale +=
-                0.05;
-        } else {
-            sphereScale -=
-                0.05;
-        }
+        const rect =
+            sphereCanvas
+                .getBoundingClientRect();
 
-        sphereScale =
-            Math.max(
-                0.75,
-                Math.min(
-                    1.35,
-                    sphereScale
-                )
+
+        pointer.x =
+            (
+                (
+                    event.clientX -
+                    rect.left
+                ) /
+                rect.width
+            ) *
+            2 -
+            1;
+
+
+        pointer.y =
+            -(
+                (
+                    event.clientY -
+                    rect.top
+                ) /
+                rect.height
+            ) *
+            2 +
+            1;
+
+
+        raycaster.setFromCamera(
+            pointer,
+            camera
+        );
+
+
+        const intersections =
+            raycaster.intersectObjects(
+                clickableNodes,
+                false
             );
 
-        updateSphereTransform();
+
+        if (
+            intersections.length ===
+            0
+        ) {
+            return;
+        }
+
+
+        const selected =
+            intersections[0]
+                .object;
+
+
+        const user =
+            findUserExact(
+                selected.userData.user
+            );
+
+
+        if (user) {
+
+            openUserProfile(
+                user
+            );
+        }
+    }
+);
+
+
+sphereCanvas.addEventListener(
+    "pointercancel",
+    stopSphereDrag
+);
+
+
+sphereCanvas.addEventListener(
+    "wheel",
+    function (event) {
+
+        event.preventDefault();
+
+
+        targetCameraDistance +=
+            event.deltaY *
+            0.008;
+
+
+        targetCameraDistance =
+            Math.max(
+                10,
+                Math.min(
+                    21,
+                    targetCameraDistance
+                )
+            );
     },
     {
         passive: false
@@ -1338,39 +2493,39 @@ sphereContainer.addEventListener(
 );
 
 
-let pinchStartDistance =
+/* TOUCH PINCH */
+
+let pinchDistance =
     null;
 
-let pinchStartScale =
-    1;
 
-
-sphereContainer.addEventListener(
+sphereCanvas.addEventListener(
     "touchstart",
     function (event) {
+
         if (
-            event.touches.length !==
+            event.touches.length ===
             2
         ) {
-            return;
+
+            const first =
+                event.touches[0];
+
+            const second =
+                event.touches[1];
+
+
+            pinchDistance =
+                Math.hypot(
+
+                    second.clientX -
+                    first.clientX,
+
+                    second.clientY -
+                    first.clientY
+
+                );
         }
-
-        const first =
-            event.touches[0];
-
-        const second =
-            event.touches[1];
-
-        pinchStartDistance =
-            Math.hypot(
-                second.clientX -
-                first.clientX,
-                second.clientY -
-                first.clientY
-            );
-
-        pinchStartScale =
-            sphereScale;
     },
     {
         passive: true
@@ -1378,17 +2533,17 @@ sphereContainer.addEventListener(
 );
 
 
-sphereContainer.addEventListener(
+sphereCanvas.addEventListener(
     "touchmove",
     function (event) {
+
         if (
-            event.touches.length !==
-            2 ||
-            pinchStartDistance ===
-            null
+            event.touches.length !== 2 ||
+            pinchDistance === null
         ) {
             return;
         }
+
 
         const first =
             event.touches[0];
@@ -1396,31 +2551,41 @@ sphereContainer.addEventListener(
         const second =
             event.touches[1];
 
-        const currentDistance =
+
+        const newDistance =
             Math.hypot(
+
                 second.clientX -
                 first.clientX,
+
                 second.clientY -
                 first.clientY
+
             );
 
-        sphereScale =
-            pinchStartScale *
-            (
-                currentDistance /
-                pinchStartDistance
-            );
 
-        sphereScale =
+        const difference =
+            newDistance -
+            pinchDistance;
+
+
+        targetCameraDistance -=
+            difference *
+            0.015;
+
+
+        targetCameraDistance =
             Math.max(
-                0.75,
+                10,
                 Math.min(
-                    1.35,
-                    sphereScale
+                    21,
+                    targetCameraDistance
                 )
             );
 
-        updateSphereTransform();
+
+        pinchDistance =
+            newDistance;
     },
     {
         passive: true
@@ -1428,20 +2593,227 @@ sphereContainer.addEventListener(
 );
 
 
-sphereContainer.addEventListener(
+sphereCanvas.addEventListener(
     "touchend",
-    function (event) {
-        if (
-            event.touches.length <
-            2
-        ) {
-            pinchStartDistance =
-                null;
-        }
+    function () {
+
+        pinchDistance =
+            null;
     },
     {
         passive: true
     }
+);
+
+
+/* DEPTH */
+
+function updateNodeDepth() {
+
+    nodeObjects.forEach(
+        function (sprite) {
+
+            const worldPosition =
+                new THREE.Vector3();
+
+
+            sprite.getWorldPosition(
+                worldPosition
+            );
+
+
+            const distance =
+                camera.position
+                    .distanceTo(
+                        worldPosition
+                    );
+
+
+            const depthFactor =
+                THREE.MathUtils.clamp(
+
+                    1.25 -
+                    (
+                        distance -
+                        9
+                    ) *
+                    0.035,
+
+                    0.58,
+
+                    1.12
+                );
+
+
+            const baseSize =
+                sprite.userData.size ||
+                1;
+
+
+            sprite.scale.set(
+
+                baseSize *
+                    depthFactor,
+
+                baseSize *
+                    depthFactor,
+
+                1
+            );
+
+
+            sprite.material.opacity =
+                THREE.MathUtils.clamp(
+
+                    1.25 -
+                    (
+                        distance -
+                        8
+                    ) *
+                    0.045,
+
+                    0.35,
+
+                    1
+                );
+        }
+    );
+}
+
+
+/* RESIZE */
+
+function resizeSphere() {
+
+    const width =
+        sphereContainer.clientWidth;
+
+
+    const height =
+        sphereContainer.clientHeight;
+
+
+    camera.aspect =
+        width /
+        height;
+
+
+    camera.updateProjectionMatrix();
+
+
+    renderer.setSize(
+        width,
+        height,
+        false
+    );
+}
+
+
+window.addEventListener(
+    "resize",
+    resizeSphere
+);
+
+
+/* ANIMATION */
+
+let previousTime =
+    performance.now();
+
+
+function animateSphere(time) {
+
+    requestAnimationFrame(
+        animateSphere
+    );
+
+
+    const delta =
+        Math.min(
+
+            (
+                time -
+                previousTime
+            ) /
+            1000,
+
+            0.05
+        );
+
+
+    previousTime =
+        time;
+
+
+    if (!dragging) {
+
+        targetRotationY +=
+            delta *
+            0.10;
+    }
+
+
+    currentRotationX +=
+
+        (
+            targetRotationX -
+            currentRotationX
+        ) *
+        0.08;
+
+
+    currentRotationY +=
+
+        (
+            targetRotationY -
+            currentRotationY
+        ) *
+        0.08;
+
+
+    networkGroup.rotation.x =
+        currentRotationX;
+
+
+    networkGroup.rotation.y =
+        currentRotationY;
+
+
+    cameraDistance +=
+
+        (
+            targetCameraDistance -
+            cameraDistance
+        ) *
+        0.09;
+
+
+    camera.position.z =
+        cameraDistance;
+
+
+    camera.lookAt(
+        0,
+        0,
+        0
+    );
+
+
+    updateNodeDepth();
+
+
+    renderer.render(
+        scene,
+        camera
+    );
+}
+
+
+resizeSphere();
+
+
+requestAnimationFrame(
+    animateSphere
 );
 
 
