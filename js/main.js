@@ -1,3 +1,6 @@
+import * as THREE from "three";
+
+
 const backupUsers = [
     {
         id: "samuel",
@@ -185,7 +188,6 @@ const referenceList =
 
 
 function getUserName(user) {
-
     if (!user) {
         return "";
     }
@@ -212,16 +214,11 @@ function getUserName(user) {
         user.last_name ||
         "";
 
-    return (
-        firstName +
-        " " +
-        lastName
-    ).trim();
+    return `${firstName} ${lastName}`.trim();
 }
 
 
 function getFirstName(user) {
-
     const name =
         getUserName(user);
 
@@ -233,7 +230,6 @@ function getFirstName(user) {
 
 
 function getInitials(name) {
-
     return name
         .split(" ")
         .filter(Boolean)
@@ -247,7 +243,6 @@ function getInitials(name) {
 
 
 function getUserId(user) {
-
     return (
         user.id ||
         user.userId ||
@@ -258,7 +253,6 @@ function getUserId(user) {
 
 
 function normaliseUsers(data) {
-
     if (Array.isArray(data)) {
         return data;
     }
@@ -282,17 +276,14 @@ function normaliseUsers(data) {
 
 
 function mergeUsersWithBackup(loadedUsers) {
-
     const combined =
         [...loadedUsers];
 
     backupUsers.forEach(
         function (backupUser) {
-
             const alreadyExists =
                 combined.some(
                     function (user) {
-
                         return (
                             getUserName(user)
                                 .toLowerCase() ===
@@ -315,9 +306,7 @@ function mergeUsersWithBackup(loadedUsers) {
 
 
 async function loadUsers() {
-
     try {
-
         const response =
             await fetch(
                 "data/userpersona.json"
@@ -345,7 +334,6 @@ async function loadUsers() {
         }
 
     } catch (error) {
-
         users =
             [...backupUsers];
     }
@@ -355,7 +343,6 @@ async function loadUsers() {
 
 
 function setupCurrentUser() {
-
     const samuel =
         findUserExact(
             "Samuel Smith"
@@ -374,16 +361,14 @@ function setupCurrentUser() {
 
 
 function findUserExact(value) {
-
     const searchValue =
-        value
+        String(value)
             .trim()
             .toLowerCase();
 
     return (
         users.find(
             function (user) {
-
                 return (
                     getUserName(user)
                         .toLowerCase() ===
@@ -397,9 +382,8 @@ function findUserExact(value) {
 
 
 function findUser(value) {
-
     const searchValue =
-        value
+        String(value)
             .trim()
             .toLowerCase();
 
@@ -419,7 +403,6 @@ function findUser(value) {
     return (
         users.find(
             function (user) {
-
                 return (
                     getUserName(user)
                         .toLowerCase()
@@ -434,8 +417,195 @@ function findUser(value) {
 }
 
 
-function openUserProfile(user) {
+function displayInterests(user) {
+    profileInterests.innerHTML =
+        "";
 
+    let interests =
+        user.interests ||
+        [];
+
+    if (
+        typeof interests ===
+        "string"
+    ) {
+        interests =
+            interests
+                .split(",")
+                .map(
+                    function (interest) {
+                        return interest.trim();
+                    }
+                );
+    }
+
+    if (
+        !Array.isArray(interests) ||
+        interests.length === 0
+    ) {
+        profileInterests.innerHTML =
+            '<span class="empty-text">No interests available.</span>';
+
+        return;
+    }
+
+    interests.forEach(
+        function (interest) {
+            const chip =
+                document.createElement(
+                    "span"
+                );
+
+            chip.className =
+                "interest-chip";
+
+            chip.textContent =
+                interest;
+
+            profileInterests.appendChild(
+                chip
+            );
+        }
+    );
+}
+
+
+function displayEvents(user) {
+    profileEvents.innerHTML =
+        "";
+
+    const events =
+        Array.isArray(user.events)
+            ? user.events
+            : [];
+
+    if (
+        events.length === 0
+    ) {
+        profileEvents.innerHTML =
+            '<p class="empty-text">No upcoming events.</p>';
+
+        return;
+    }
+
+    events.forEach(
+        function (event) {
+            const item =
+                document.createElement(
+                    "p"
+                );
+
+            if (
+                typeof event ===
+                "string"
+            ) {
+                item.textContent =
+                    event;
+            } else {
+                item.textContent =
+                    event.name ||
+                    event.title ||
+                    "Upcoming event";
+            }
+
+            profileEvents.appendChild(
+                item
+            );
+        }
+    );
+}
+
+
+function getConnections() {
+    try {
+        const saved =
+            localStorage.getItem(
+                "introspheerConnections"
+            );
+
+        if (!saved) {
+            return [
+                "zach",
+                "mike",
+                "sally",
+                "holly",
+                "priya"
+            ];
+        }
+
+        return (
+            JSON.parse(saved) ||
+            []
+        );
+
+    } catch (error) {
+        return [
+            "zach",
+            "mike",
+            "sally",
+            "holly",
+            "priya"
+        ];
+    }
+}
+
+
+function isConnected(user) {
+    const connections =
+        getConnections();
+
+    const userId =
+        getUserId(user);
+
+    const userName =
+        getUserName(user);
+
+    return connections.some(
+        function (connection) {
+            return (
+                String(connection)
+                    .toLowerCase() ===
+                    String(userId)
+                        .toLowerCase() ||
+
+                String(connection)
+                    .toLowerCase() ===
+                    userName
+                        .toLowerCase()
+            );
+        }
+    );
+}
+
+
+function updateConnectionStatus(user) {
+    const connected =
+        isConnected(user);
+
+    if (connected) {
+        profileConnection.textContent =
+            "This person is part of your Sphere.";
+
+        connectButton.textContent =
+            "Connected";
+
+        connectButton.disabled =
+            true;
+
+    } else {
+        profileConnection.textContent =
+            "You have not connected with this person yet.";
+
+        connectButton.textContent =
+            "Connect";
+
+        connectButton.disabled =
+            false;
+    }
+}
+
+
+function openUserProfile(user) {
     if (!user) {
         return;
     }
@@ -491,7 +661,6 @@ function openUserProfile(user) {
 
 
 function closeUserProfile() {
-
     profilePanel.classList.remove(
         "open"
     );
@@ -502,213 +671,9 @@ function closeUserProfile() {
 }
 
 
-function displayInterests(user) {
-
-    profileInterests.innerHTML =
-        "";
-
-    let interests =
-        user.interests ||
-        [];
-
-    if (
-        typeof interests ===
-        "string"
-    ) {
-        interests =
-            interests
-                .split(",")
-                .map(
-                    function (interest) {
-                        return interest.trim();
-                    }
-                );
-    }
-
-    if (
-        !Array.isArray(interests) ||
-        interests.length === 0
-    ) {
-
-        profileInterests.innerHTML =
-            '<span class="empty-text">No interests available.</span>';
-
-        return;
-    }
-
-    interests.forEach(
-        function (interest) {
-
-            const chip =
-                document.createElement(
-                    "span"
-                );
-
-            chip.className =
-                "interest-chip";
-
-            chip.textContent =
-                interest;
-
-            profileInterests.appendChild(
-                chip
-            );
-        }
-    );
-}
-
-
-function displayEvents(user) {
-
-    profileEvents.innerHTML =
-        "";
-
-    const events =
-        Array.isArray(user.events)
-            ? user.events
-            : [];
-
-    if (
-        events.length === 0
-    ) {
-
-        profileEvents.innerHTML =
-            '<p class="empty-text">No upcoming events.</p>';
-
-        return;
-    }
-
-    events.forEach(
-        function (event) {
-
-            const item =
-                document.createElement(
-                    "p"
-                );
-
-            if (
-                typeof event ===
-                "string"
-            ) {
-                item.textContent =
-                    event;
-            } else {
-                item.textContent =
-                    event.name ||
-                    event.title ||
-                    "Upcoming event";
-            }
-
-            profileEvents.appendChild(
-                item
-            );
-        }
-    );
-}
-
-
-function getConnections() {
-
-    try {
-
-        const saved =
-            localStorage.getItem(
-                "introspheerConnections"
-            );
-
-        if (!saved) {
-
-            return [
-                "zach",
-                "mike",
-                "sally",
-                "holly",
-                "priya"
-            ];
-        }
-
-        return (
-            JSON.parse(saved) ||
-            []
-        );
-
-    } catch (error) {
-
-        return [
-            "zach",
-            "mike",
-            "sally",
-            "holly",
-            "priya"
-        ];
-    }
-}
-
-
-function isConnected(user) {
-
-    const connections =
-        getConnections();
-
-    const userId =
-        getUserId(user);
-
-    const userName =
-        getUserName(user);
-
-    return connections.some(
-        function (connection) {
-
-            return (
-                String(connection)
-                    .toLowerCase() ===
-                    String(userId)
-                        .toLowerCase() ||
-
-                String(connection)
-                    .toLowerCase() ===
-                    userName
-                        .toLowerCase()
-            );
-        }
-    );
-}
-
-
-function updateConnectionStatus(user) {
-
-    const connected =
-        isConnected(user);
-
-    if (connected) {
-
-        profileConnection.textContent =
-            "This person is part of your Sphere.";
-
-        connectButton.textContent =
-            "Connected";
-
-        connectButton.disabled =
-            true;
-
-    } else {
-
-        profileConnection.textContent =
-            "You have not connected with this person yet.";
-
-        connectButton.textContent =
-            "Connect";
-
-        connectButton.disabled =
-            false;
-    }
-}
-
-
 connectButton.addEventListener(
     "click",
     function () {
-
         if (!selectedUser) {
             return;
         }
@@ -726,7 +691,6 @@ connectButton.addEventListener(
                 selectedUser
             )
         ) {
-
             connections.push(
                 userId
             );
@@ -749,7 +713,6 @@ connectButton.addEventListener(
 messageButton.addEventListener(
     "click",
     function () {
-
         if (!selectedUser) {
             return;
         }
@@ -779,10 +742,7 @@ profileOverlay.addEventListener(
 );
 
 
-/* SEARCH */
-
 function hideSuggestions() {
-
     searchSuggestions.hidden =
         true;
 
@@ -792,14 +752,12 @@ function hideSuggestions() {
 
 
 function showSuggestions(matches) {
-
     searchSuggestions.innerHTML =
         "";
 
     if (
         matches.length === 0
     ) {
-
         hideSuggestions();
 
         return;
@@ -807,7 +765,6 @@ function showSuggestions(matches) {
 
     matches.forEach(
         function (user) {
-
             const button =
                 document.createElement(
                     "button"
@@ -881,7 +838,6 @@ function showSuggestions(matches) {
             button.addEventListener(
                 "click",
                 function () {
-
                     userSearch.value =
                         name;
 
@@ -910,7 +866,6 @@ function showSuggestions(matches) {
 userSearch.addEventListener(
     "input",
     function () {
-
         const value =
             userSearch.value
                 .trim()
@@ -922,7 +877,6 @@ userSearch.addEventListener(
         if (
             value.length < 2
         ) {
-
             hideSuggestions();
 
             return;
@@ -932,7 +886,6 @@ userSearch.addEventListener(
             users
                 .filter(
                     function (user) {
-
                         return (
                             getUserName(user)
                                 .toLowerCase()
@@ -957,12 +910,10 @@ userSearch.addEventListener(
 userSearch.addEventListener(
     "keydown",
     function (event) {
-
         if (
             event.key ===
             "Enter"
         ) {
-
             event.preventDefault();
 
             const value =
@@ -972,7 +923,6 @@ userSearch.addEventListener(
             hideSuggestions();
 
             if (!value) {
-
                 searchMessage.textContent =
                     "Enter a person's name.";
 
@@ -983,7 +933,6 @@ userSearch.addEventListener(
                 findUser(value);
 
             if (!user) {
-
                 searchMessage.textContent =
                     "User not found.";
 
@@ -1007,7 +956,6 @@ userSearch.addEventListener(
 document.addEventListener(
     "click",
     function (event) {
-
         if (
             !event.target.closest(
                 ".search-wrapper"
@@ -1022,19 +970,15 @@ document.addEventListener(
 currentUserButton.addEventListener(
     "click",
     function () {
-
         window.location.href =
             "account.html";
     }
 );
 
 
-/* ABOUT */
-
 aboutButton.addEventListener(
     "click",
     function () {
-
         aboutModal.hidden =
             false;
 
@@ -1047,7 +991,6 @@ aboutButton.addEventListener(
 closeAbout.addEventListener(
     "click",
     function () {
-
         aboutModal.hidden =
             true;
 
@@ -1060,12 +1003,10 @@ closeAbout.addEventListener(
 aboutModal.addEventListener(
     "click",
     function (event) {
-
         if (
             event.target ===
             aboutModal
         ) {
-
             aboutModal.hidden =
                 true;
 
@@ -1079,7 +1020,6 @@ aboutModal.addEventListener(
 showReferences.addEventListener(
     "click",
     function () {
-
         const currentlyHidden =
             referenceList.hidden;
 
@@ -1097,12 +1037,10 @@ showReferences.addEventListener(
 document.addEventListener(
     "keydown",
     function (event) {
-
         if (
             event.key ===
             "Escape"
         ) {
-
             hideSuggestions();
 
             closeUserProfile();
@@ -1116,8 +1054,6 @@ document.addEventListener(
     }
 );
 
-
-/* THREE.JS SPHERE */
 
 const sphereContainer =
     document.getElementById(
@@ -1191,8 +1127,6 @@ const sphereRadius =
     5;
 
 
-/* OUTER SPHERE */
-
 const globeGeometry =
     new THREE.SphereGeometry(
         sphereRadius,
@@ -1206,7 +1140,7 @@ const globeMaterial =
         color: 0x914fe8,
         wireframe: true,
         transparent: true,
-        opacity: 0.11,
+        opacity: 0.10,
         depthWrite: false
     });
 
@@ -1223,116 +1157,110 @@ networkGroup.add(
 );
 
 
-/* EQUATOR */
-
-function createCircleLine(
-    radius,
-    axis,
-    offset
+function createOrbit(
+    radiusX,
+    radiusY,
+    rotationX,
+    rotationY,
+    rotationZ,
+    opacity = 0.25
 ) {
+    const curve =
+        new THREE.EllipseCurve(
+            0,
+            0,
+            radiusX,
+            radiusY,
+            0,
+            Math.PI * 2,
+            false,
+            0
+        );
 
-    const points =
-        [];
+    const points2D =
+        curve.getPoints(
+            120
+        );
 
-    const segments =
-        100;
-
-    for (
-        let i = 0;
-        i <= segments;
-        i++
-    ) {
-
-        const angle =
-            (
-                i /
-                segments
-            ) *
-            Math.PI *
-            2;
-
-        if (
-            axis ===
-            "horizontal"
-        ) {
-
-            points.push(
-                new THREE.Vector3(
-                    Math.cos(angle) *
-                        radius,
-
-                    offset,
-
-                    Math.sin(angle) *
-                        radius
-                )
-            );
-
-        } else {
-
-            points.push(
-                new THREE.Vector3(
-                    Math.cos(angle) *
-                        radius,
-
-                    Math.sin(angle) *
-                        radius,
-
-                    offset
-                )
-            );
-        }
-    }
-
+    const points3D =
+        points2D.map(
+            function (point) {
+                return new THREE.Vector3(
+                    point.x,
+                    point.y,
+                    0
+                );
+            }
+        );
 
     const geometry =
         new THREE.BufferGeometry()
             .setFromPoints(
-                points
+                points3D
             );
-
 
     const material =
         new THREE.LineBasicMaterial({
-            color: 0xa05cff,
+            color: 0xa260ff,
             transparent: true,
-            opacity: 0.28
+            opacity: opacity,
+            depthWrite: false
         });
 
-
-    const circle =
-        new THREE.Line(
+    const line =
+        new THREE.LineLoop(
             geometry,
             material
         );
 
+    line.rotation.set(
+        rotationX,
+        rotationY,
+        rotationZ
+    );
 
     networkGroup.add(
-        circle
+        line
     );
 }
 
 
-createCircleLine(
+createOrbit(
+    5.08,
+    5.08,
+    Math.PI / 2,
+    0,
+    0,
+    0.32
+);
+
+createOrbit(
+    5.08,
+    5.08,
+    0,
+    Math.PI / 2,
+    0,
+    0.22
+);
+
+createOrbit(
     5.05,
-    "horizontal",
-    0
+    3.7,
+    0.7,
+    0.3,
+    0.5,
+    0.22
 );
 
-createCircleLine(
-    4.6,
-    "horizontal",
-    1.8
+createOrbit(
+    4.7,
+    3.1,
+    -0.55,
+    0.7,
+    -0.35,
+    0.18
 );
 
-createCircleLine(
-    4.6,
-    "horizontal",
-    -1.8
-);
-
-
-/* PARTICLES */
 
 const particlePositions =
     [];
@@ -1340,16 +1268,15 @@ const particlePositions =
 
 for (
     let i = 0;
-    i < 120;
+    i < 140;
     i++
 ) {
-
     const radius =
         Math.pow(
             Math.random(),
             1 / 3
         ) *
-        4.7;
+        4.65;
 
     const theta =
         Math.random() *
@@ -1364,18 +1291,16 @@ for (
         );
 
     particlePositions.push(
+        radius *
+            Math.sin(phi) *
+            Math.cos(theta),
 
         radius *
-        Math.sin(phi) *
-        Math.cos(theta),
+            Math.cos(phi),
 
         radius *
-        Math.cos(phi),
-
-        radius *
-        Math.sin(phi) *
-        Math.sin(theta)
-
+            Math.sin(phi) *
+            Math.sin(theta)
     );
 }
 
@@ -1395,11 +1320,12 @@ particleGeometry.setAttribute(
 
 const particleMaterial =
     new THREE.PointsMaterial({
-        color: 0x9f5cff,
-        size: 0.055,
+        color: 0xa467ff,
+        size: 0.07,
         transparent: true,
-        opacity: 0.7,
-        depthWrite: false
+        opacity: 0.72,
+        depthWrite: false,
+        sizeAttenuation: true
     });
 
 
@@ -1415,15 +1341,12 @@ networkGroup.add(
 );
 
 
-/* NODE TEXTURE */
-
 function createNodeTexture(
     initials,
     name,
     colour,
-    locked
+    locked = false
 ) {
-
     const canvas =
         document.createElement(
             "canvas"
@@ -1435,12 +1358,10 @@ function createNodeTexture(
     canvas.height =
         512;
 
-
     const context =
         canvas.getContext(
             "2d"
         );
-
 
     context.clearRect(
         0,
@@ -1454,30 +1375,26 @@ function createNodeTexture(
         context.createRadialGradient(
             256,
             205,
-            20,
+            10,
             256,
             205,
-            150
+            155
         );
 
-
     if (locked) {
-
         glow.addColorStop(
             0,
-            "rgba(160,160,180,0.35)"
+            "rgba(170,170,195,0.45)"
         );
 
         glow.addColorStop(
             1,
-            "rgba(160,160,180,0)"
+            "rgba(170,170,195,0)"
         );
-
     } else {
-
         glow.addColorStop(
             0,
-            colour + "80"
+            colour + "aa"
         );
 
         glow.addColorStop(
@@ -1486,36 +1403,31 @@ function createNodeTexture(
         );
     }
 
-
     context.fillStyle =
         glow;
 
-
     context.fillRect(
-        50,
-        0,
-        412,
-        410
+        40,
+        -10,
+        432,
+        430
     );
 
 
     context.beginPath();
 
-
     context.arc(
         256,
         205,
-        100,
+        102,
         0,
         Math.PI * 2
     );
 
-
     context.fillStyle =
         locked
-            ? "rgba(55,58,78,0.96)"
-            : "rgba(19,24,59,0.97)";
-
+            ? "rgba(48,52,73,0.97)"
+            : "rgba(18,23,58,0.98)";
 
     context.fill();
 
@@ -1523,12 +1435,10 @@ function createNodeTexture(
     context.lineWidth =
         10;
 
-
     context.strokeStyle =
         locked
-            ? "rgba(150,150,170,0.8)"
+            ? "rgba(165,165,185,0.9)"
             : colour;
-
 
     context.stroke();
 
@@ -1536,20 +1446,16 @@ function createNodeTexture(
     context.fillStyle =
         "#ffffff";
 
-
     context.textAlign =
         "center";
-
 
     context.textBaseline =
         "middle";
 
-
     context.font =
         locked
-            ? "70px Arial"
+            ? "72px Arial"
             : "bold 58px Arial";
-
 
     context.fillText(
         locked
@@ -1561,61 +1467,51 @@ function createNodeTexture(
 
 
     if (!locked) {
-
         context.font =
             "bold 35px Arial";
-
 
         const measured =
             context.measureText(
                 name
             ).width;
 
-
         const labelWidth =
             Math.min(
-                measured + 50,
-                350
+                measured + 55,
+                360
             );
 
-
         context.fillStyle =
-            "rgba(4,9,28,0.92)";
-
+            "rgba(4,9,28,0.94)";
 
         if (
             typeof context.roundRect ===
             "function"
         ) {
-
             context.beginPath();
 
             context.roundRect(
                 256 -
-                labelWidth / 2,
+                    labelWidth / 2,
                 335,
                 labelWidth,
-                65,
+                66,
                 18
             );
 
             context.fill();
-
         } else {
-
             context.fillRect(
                 256 -
-                labelWidth / 2,
+                    labelWidth / 2,
                 335,
                 labelWidth,
-                65
+                66
             );
         }
 
-
         context.fillStyle =
             "#ffffff";
-
 
         context.fillText(
             name,
@@ -1630,19 +1526,14 @@ function createNodeTexture(
             canvas
         );
 
-
     texture.colorSpace =
         THREE.SRGBColorSpace;
-
 
     return texture;
 }
 
 
-/* PEOPLE */
-
 const nodeData = [
-
     {
         id: "samuel",
         user: "Samuel Smith",
@@ -1665,9 +1556,9 @@ const nodeData = [
         initials: "ZT",
         colour: "#2ce6c2",
         position: [
-            -3.3,
-            1.6,
-            2.4
+            -3.2,
+            1.7,
+            2.2
         ],
         size: 1.35
     },
@@ -1679,9 +1570,9 @@ const nodeData = [
         initials: "MS",
         colour: "#a34fff",
         position: [
-            3.0,
+            2.8,
             2.1,
-            1.7
+            -1.4
         ],
         size: 1.35
     },
@@ -1693,9 +1584,9 @@ const nodeData = [
         initials: "SS",
         colour: "#31bfff",
         position: [
-            3.5,
-            -0.8,
-            2.4
+            3.4,
+            -0.7,
+            2.0
         ],
         size: 1.35
     },
@@ -1707,9 +1598,9 @@ const nodeData = [
         initials: "HM",
         colour: "#42d7ef",
         position: [
-            -3.2,
-            -1.7,
-            1.6
+            -3.1,
+            -1.8,
+            -1.6
         ],
         size: 1.35
     },
@@ -1721,9 +1612,9 @@ const nodeData = [
         initials: "PK",
         colour: "#ff65ae",
         position: [
-            1.5,
+            1.4,
             -3.4,
-            1.9
+            1.5
         ],
         size: 1.35
     },
@@ -1732,9 +1623,9 @@ const nodeData = [
         id: "locked1",
         locked: true,
         position: [
-            -1.5,
+            -1.3,
             3.7,
-            -1.8
+            -1.7
         ],
         size: 0.85
     },
@@ -1743,9 +1634,9 @@ const nodeData = [
         id: "locked2",
         locked: true,
         position: [
-            2.4,
-            3.0,
-            -2.1
+            2.5,
+            2.8,
+            2.1
         ],
         size: 0.85
     },
@@ -1754,9 +1645,9 @@ const nodeData = [
         id: "locked3",
         locked: true,
         position: [
-            -3.7,
-            -0.2,
-            -1.9
+            -3.8,
+            -0.1,
+            1.0
         ],
         size: 0.85
     },
@@ -1765,8 +1656,8 @@ const nodeData = [
         id: "locked4",
         locked: true,
         position: [
-            -1.0,
-            -3.7,
+            -0.8,
+            -3.8,
             -2.0
         ],
         size: 0.85
@@ -1776,9 +1667,9 @@ const nodeData = [
         id: "locked5",
         locked: true,
         position: [
-            3.5,
+            3.6,
             0.3,
-            -2.4
+            -2.1
         ],
         size: 0.85
     },
@@ -1787,13 +1678,12 @@ const nodeData = [
         id: "locked6",
         locked: true,
         position: [
-            0.5,
-            1.0,
+            0.4,
+            1.1,
             -4.0
         ],
         size: 0.8
     }
-
 ];
 
 
@@ -1806,7 +1696,6 @@ const clickableNodes =
 
 
 function createNode(data) {
-
     const texture =
         createNodeTexture(
             data.initials || "",
@@ -1818,7 +1707,6 @@ function createNode(data) {
             )
         );
 
-
     const material =
         new THREE.SpriteMaterial({
             map: texture,
@@ -1827,12 +1715,10 @@ function createNode(data) {
             depthWrite: false
         });
 
-
     const sprite =
         new THREE.Sprite(
             material
         );
-
 
     sprite.position.set(
         data.position[0],
@@ -1840,39 +1726,32 @@ function createNode(data) {
         data.position[2]
     );
 
-
     sprite.scale.set(
         data.size,
         data.size,
         1
     );
 
-
     sprite.userData =
         data;
-
 
     networkGroup.add(
         sprite
     );
-
 
     nodeObjects.set(
         data.id,
         sprite
     );
 
-
     if (
         !data.locked &&
         !data.centre
     ) {
-
         clickableNodes.push(
             sprite
         );
     }
-
 
     return sprite;
 }
@@ -1883,15 +1762,12 @@ nodeData.forEach(
 );
 
 
-/* NETWORK CONNECTIONS */
-
 function createConnection(
     fromId,
     toId,
     colour,
-    opacity
+    opacity = 0.6
 ) {
-
     const from =
         nodeObjects.get(
             fromId
@@ -1901,7 +1777,6 @@ function createConnection(
         nodeObjects.get(
             toId
         );
-
 
     if (
         !from ||
@@ -1914,10 +1789,8 @@ function createConnection(
     const start =
         from.position.clone();
 
-
     const end =
         to.position.clone();
-
 
     const middle =
         start
@@ -1932,13 +1805,23 @@ function createConnection(
         fromId !== "samuel" &&
         toId !== "samuel"
     ) {
+        const curvePush =
+            middle.clone();
 
-        middle
-            .normalize()
-            .multiplyScalar(
-                middle.length() +
-                0.5
+        if (
+            curvePush.length() >
+            0
+        ) {
+            curvePush
+                .normalize()
+                .multiplyScalar(
+                    0.45
+                );
+
+            middle.add(
+                curvePush
             );
+        }
     }
 
 
@@ -1952,7 +1835,7 @@ function createConnection(
 
     const points =
         curve.getPoints(
-            30
+            32
         );
 
 
@@ -1989,50 +1872,49 @@ createConnection(
     "samuel",
     "zach",
     0x2ce6c2,
-    0.9
+    0.85
 );
 
 createConnection(
     "samuel",
     "mike",
     0xa34fff,
-    0.9
+    0.85
 );
 
 createConnection(
     "samuel",
     "sally",
     0x31bfff,
-    0.9
+    0.85
 );
 
 createConnection(
     "samuel",
     "holly",
     0x42d7ef,
-    0.9
+    0.85
 );
 
 createConnection(
     "samuel",
     "priya",
     0xff65ae,
-    0.9
+    0.85
 );
-
 
 createConnection(
     "zach",
     "mike",
-    0x9660e8,
-    0.6
+    0x9865e8,
+    0.55
 );
 
 createConnection(
     "priya",
     "mike",
-    0x9660e8,
-    0.6
+    0x9865e8,
+    0.55
 );
 
 
@@ -2040,53 +1922,51 @@ createConnection(
     "locked1",
     "zach",
     0x7445aa,
-    0.24
+    0.2
 );
 
 createConnection(
     "locked1",
     "mike",
     0x7445aa,
-    0.20
+    0.17
 );
 
 createConnection(
     "locked2",
     "mike",
     0x7445aa,
-    0.22
+    0.2
 );
 
 createConnection(
     "locked3",
     "holly",
     0x7445aa,
-    0.20
+    0.18
 );
 
 createConnection(
     "locked4",
     "priya",
     0x7445aa,
-    0.20
+    0.18
 );
 
 createConnection(
     "locked5",
     "sally",
     0x7445aa,
-    0.20
+    0.18
 );
 
 createConnection(
     "locked6",
     "zach",
     0x7445aa,
-    0.17
+    0.16
 );
 
-
-/* INTERNAL 3D NETWORK */
 
 const internalPoints =
     [];
@@ -2094,21 +1974,18 @@ const internalPoints =
 
 for (
     let i = 0;
-    i < 42;
+    i < 48;
     i++
 ) {
-
     const radius =
-        1.4 +
+        1.1 +
         Math.random() *
-        3.0;
-
+        3.3;
 
     const theta =
         Math.random() *
         Math.PI *
         2;
-
 
     const phi =
         Math.acos(
@@ -2117,22 +1994,18 @@ for (
             1
         );
 
-
     internalPoints.push(
-
         new THREE.Vector3(
+            radius *
+                Math.sin(phi) *
+                Math.cos(theta),
 
             radius *
-            Math.sin(phi) *
-            Math.cos(theta),
+                Math.cos(phi),
 
             radius *
-            Math.cos(phi),
-
-            radius *
-            Math.sin(phi) *
-            Math.sin(theta)
-
+                Math.sin(phi) *
+                Math.sin(theta)
         )
     );
 }
@@ -2147,27 +2020,22 @@ for (
     i < internalPoints.length;
     i++
 ) {
-
     for (
         let j = i + 1;
         j < internalPoints.length;
         j++
     ) {
-
         const distance =
             internalPoints[i]
                 .distanceTo(
                     internalPoints[j]
                 );
 
-
         if (
-            distance < 2.05 &&
-            Math.random() > 0.4
+            distance < 1.9 &&
+            Math.random() > 0.35
         ) {
-
             internalPositions.push(
-
                 internalPoints[i].x,
                 internalPoints[i].y,
                 internalPoints[i].z,
@@ -2175,7 +2043,6 @@ for (
                 internalPoints[j].x,
                 internalPoints[j].y,
                 internalPoints[j].z
-
             );
         }
     }
@@ -2197,7 +2064,7 @@ internalGeometry.setAttribute(
 
 const internalMaterial =
     new THREE.LineBasicMaterial({
-        color: 0x7543ba,
+        color: 0x7446b8,
         transparent: true,
         opacity: 0.16,
         depthWrite: false
@@ -2216,8 +2083,6 @@ networkGroup.add(
 );
 
 
-/* INTERACTION */
-
 const raycaster =
     new THREE.Raycaster();
 
@@ -2229,38 +2094,29 @@ const pointer =
 let dragging =
     false;
 
-
 let movedWhileDragging =
     false;
-
 
 let previousPointerX =
     0;
 
-
 let previousPointerY =
     0;
-
 
 let targetRotationX =
     -0.12;
 
-
 let targetRotationY =
     0;
-
 
 let currentRotationX =
     targetRotationX;
 
-
 let currentRotationY =
     targetRotationY;
 
-
 let cameraDistance =
     15;
-
 
 let targetCameraDistance =
     15;
@@ -2269,7 +2125,6 @@ let targetCameraDistance =
 sphereCanvas.addEventListener(
     "pointerdown",
     function (event) {
-
         dragging =
             true;
 
@@ -2283,12 +2138,10 @@ sphereCanvas.addEventListener(
             event.clientY;
 
         try {
-
             sphereCanvas
                 .setPointerCapture(
                     event.pointerId
                 );
-
         } catch (error) {
         }
     }
@@ -2298,42 +2151,34 @@ sphereCanvas.addEventListener(
 sphereCanvas.addEventListener(
     "pointermove",
     function (event) {
-
         if (!dragging) {
             return;
         }
-
 
         const deltaX =
             event.clientX -
             previousPointerX;
 
-
         const deltaY =
             event.clientY -
             previousPointerY;
-
 
         if (
             Math.abs(deltaX) +
             Math.abs(deltaY) >
             2
         ) {
-
             movedWhileDragging =
                 true;
         }
-
 
         targetRotationY +=
             deltaX *
             0.006;
 
-
         targetRotationX +=
             deltaY *
             0.006;
-
 
         targetRotationX =
             Math.max(
@@ -2344,10 +2189,8 @@ sphereCanvas.addEventListener(
                 )
             );
 
-
         previousPointerX =
             event.clientX;
-
 
         previousPointerY =
             event.clientY;
@@ -2355,19 +2198,17 @@ sphereCanvas.addEventListener(
 );
 
 
-function stopSphereDrag(event) {
-
+function stopSphereDrag(
+    event
+) {
     dragging =
         false;
 
-
     try {
-
         sphereCanvas
             .releasePointerCapture(
                 event.pointerId
             );
-
     } catch (error) {
     }
 }
@@ -2376,11 +2217,9 @@ function stopSphereDrag(event) {
 sphereCanvas.addEventListener(
     "pointerup",
     function (event) {
-
         stopSphereDrag(
             event
         );
-
 
         if (
             movedWhileDragging
@@ -2388,11 +2227,9 @@ sphereCanvas.addEventListener(
             return;
         }
 
-
         const rect =
             sphereCanvas
                 .getBoundingClientRect();
-
 
         pointer.x =
             (
@@ -2405,7 +2242,6 @@ sphereCanvas.addEventListener(
             2 -
             1;
 
-
         pointer.y =
             -(
                 (
@@ -2417,19 +2253,16 @@ sphereCanvas.addEventListener(
             2 +
             1;
 
-
         raycaster.setFromCamera(
             pointer,
             camera
         );
-
 
         const intersections =
             raycaster.intersectObjects(
                 clickableNodes,
                 false
             );
-
 
         if (
             intersections.length ===
@@ -2438,20 +2271,16 @@ sphereCanvas.addEventListener(
             return;
         }
 
-
         const selected =
             intersections[0]
                 .object;
-
 
         const user =
             findUserExact(
                 selected.userData.user
             );
 
-
         if (user) {
-
             openUserProfile(
                 user
             );
@@ -2469,14 +2298,11 @@ sphereCanvas.addEventListener(
 sphereCanvas.addEventListener(
     "wheel",
     function (event) {
-
         event.preventDefault();
-
 
         targetCameraDistance +=
             event.deltaY *
             0.008;
-
 
         targetCameraDistance =
             Math.max(
@@ -2493,8 +2319,6 @@ sphereCanvas.addEventListener(
 );
 
 
-/* TOUCH PINCH */
-
 let pinchDistance =
     null;
 
@@ -2502,28 +2326,23 @@ let pinchDistance =
 sphereCanvas.addEventListener(
     "touchstart",
     function (event) {
-
         if (
             event.touches.length ===
             2
         ) {
-
             const first =
                 event.touches[0];
 
             const second =
                 event.touches[1];
 
-
             pinchDistance =
                 Math.hypot(
-
                     second.clientX -
-                    first.clientX,
+                        first.clientX,
 
                     second.clientY -
-                    first.clientY
-
+                        first.clientY
                 );
         }
     },
@@ -2536,14 +2355,13 @@ sphereCanvas.addEventListener(
 sphereCanvas.addEventListener(
     "touchmove",
     function (event) {
-
         if (
-            event.touches.length !== 2 ||
+            event.touches.length !==
+                2 ||
             pinchDistance === null
         ) {
             return;
         }
-
 
         const first =
             event.touches[0];
@@ -2551,28 +2369,22 @@ sphereCanvas.addEventListener(
         const second =
             event.touches[1];
 
-
         const newDistance =
             Math.hypot(
-
                 second.clientX -
-                first.clientX,
+                    first.clientX,
 
                 second.clientY -
-                first.clientY
-
+                    first.clientY
             );
-
 
         const difference =
             newDistance -
             pinchDistance;
 
-
         targetCameraDistance -=
             difference *
             0.015;
-
 
         targetCameraDistance =
             Math.max(
@@ -2582,7 +2394,6 @@ sphereCanvas.addEventListener(
                     targetCameraDistance
                 )
             );
-
 
         pinchDistance =
             newDistance;
@@ -2596,7 +2407,6 @@ sphereCanvas.addEventListener(
 sphereCanvas.addEventListener(
     "touchend",
     function () {
-
         pinchDistance =
             null;
     },
@@ -2606,21 +2416,15 @@ sphereCanvas.addEventListener(
 );
 
 
-/* DEPTH */
-
 function updateNodeDepth() {
-
     nodeObjects.forEach(
         function (sprite) {
-
             const worldPosition =
                 new THREE.Vector3();
-
 
             sprite.getWorldPosition(
                 worldPosition
             );
-
 
             const distance =
                 camera.position
@@ -2628,30 +2432,23 @@ function updateNodeDepth() {
                         worldPosition
                     );
 
-
             const depthFactor =
                 THREE.MathUtils.clamp(
-
-                    1.25 -
+                    1.24 -
                     (
                         distance -
                         9
                     ) *
                     0.035,
-
                     0.58,
-
                     1.12
                 );
-
 
             const baseSize =
                 sprite.userData.size ||
                 1;
 
-
             sprite.scale.set(
-
                 baseSize *
                     depthFactor,
 
@@ -2661,19 +2458,15 @@ function updateNodeDepth() {
                 1
             );
 
-
             sprite.material.opacity =
                 THREE.MathUtils.clamp(
-
-                    1.25 -
+                    1.22 -
                     (
                         distance -
                         8
                     ) *
                     0.045,
-
-                    0.35,
-
+                    0.34,
                     1
                 );
         }
@@ -2681,25 +2474,25 @@ function updateNodeDepth() {
 }
 
 
-/* RESIZE */
-
 function resizeSphere() {
-
     const width =
         sphereContainer.clientWidth;
-
 
     const height =
         sphereContainer.clientHeight;
 
+    if (
+        width === 0 ||
+        height === 0
+    ) {
+        return;
+    }
 
     camera.aspect =
         width /
         height;
 
-
     camera.updateProjectionMatrix();
-
 
     renderer.setSize(
         width,
@@ -2715,82 +2508,77 @@ window.addEventListener(
 );
 
 
-/* ANIMATION */
+if (
+    "ResizeObserver" in window
+) {
+    const resizeObserver =
+        new ResizeObserver(
+            resizeSphere
+        );
+
+    resizeObserver.observe(
+        sphereContainer
+    );
+}
+
 
 let previousTime =
     performance.now();
 
 
 function animateSphere(time) {
-
     requestAnimationFrame(
         animateSphere
     );
 
-
     const delta =
         Math.min(
-
             (
                 time -
                 previousTime
             ) /
             1000,
-
             0.05
         );
-
 
     previousTime =
         time;
 
-
     if (!dragging) {
-
         targetRotationY +=
             delta *
             0.10;
     }
 
-
     currentRotationX +=
-
         (
             targetRotationX -
             currentRotationX
         ) *
         0.08;
 
-
     currentRotationY +=
-
         (
             targetRotationY -
             currentRotationY
         ) *
         0.08;
 
-
     networkGroup.rotation.x =
         currentRotationX;
-
 
     networkGroup.rotation.y =
         currentRotationY;
 
-
     cameraDistance +=
-
         (
             targetCameraDistance -
             cameraDistance
         ) *
         0.09;
 
-
     camera.position.z =
         cameraDistance;
-
 
     camera.lookAt(
         0,
@@ -2798,9 +2586,7 @@ function animateSphere(time) {
         0
     );
 
-
     updateNodeDepth();
-
 
     renderer.render(
         scene,
@@ -2811,10 +2597,8 @@ function animateSphere(time) {
 
 resizeSphere();
 
-
 requestAnimationFrame(
     animateSphere
 );
-
 
 loadUsers();
