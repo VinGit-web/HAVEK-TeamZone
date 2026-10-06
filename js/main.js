@@ -16,7 +16,6 @@ const backupUsers = [
         about:
             "An introvert who wants to build meaningful connections through shared interests and local events."
     },
-
     {
         id: "zach",
         name: "Zach T",
@@ -32,7 +31,6 @@ const backupUsers = [
         about:
             "Interested in meeting people through reading, sport and outdoor activities."
     },
-
     {
         id: "mike",
         name: "Mike S",
@@ -48,7 +46,6 @@ const backupUsers = [
         about:
             "Enjoys boxing, reading and discovering new places to eat."
     },
-
     {
         id: "sally",
         name: "Sally S",
@@ -64,7 +61,6 @@ const backupUsers = [
         about:
             "Interested in creative activities, ballet and sport."
     },
-
     {
         id: "holly",
         name: "Holly M",
@@ -80,7 +76,6 @@ const backupUsers = [
         about:
             "Enjoys swimming, visiting museums and gaming."
     },
-
     {
         id: "priya",
         name: "Priya K",
@@ -99,11 +94,8 @@ const backupUsers = [
     }
 ];
 
-
 let users = [...backupUsers];
-
 let selectedUser = null;
-
 
 const userSearch =
     document.getElementById("userSearch");
@@ -194,7 +186,6 @@ const referenceList =
 
 
 function getUserName(user) {
-
     if (!user) {
         return "";
     }
@@ -226,12 +217,10 @@ function getUserName(user) {
         " " +
         lastName
     ).trim();
-
 }
 
 
 function getFirstName(user) {
-
     const name =
         getUserName(user);
 
@@ -239,41 +228,33 @@ function getFirstName(user) {
         name.split(" ")[0] ||
         "User"
     );
-
 }
 
 
 function getInitials(name) {
-
     return name
         .split(" ")
         .filter(Boolean)
         .map(function (word) {
-
             return word.charAt(0);
-
         })
         .join("")
         .substring(0, 2)
         .toUpperCase();
-
 }
 
 
 function getUserId(user) {
-
     return (
         user.id ||
         user.userId ||
         user.user_id ||
         getUserName(user)
     );
-
 }
 
 
 function normaliseUsers(data) {
-
     if (Array.isArray(data)) {
         return data;
     }
@@ -293,63 +274,50 @@ function normaliseUsers(data) {
     }
 
     return [];
-
 }
 
 
 function mergeUsersWithBackup(loadedUsers) {
-
     const combined =
         [...loadedUsers];
 
     backupUsers.forEach(
         function (backupUser) {
-
             const alreadyExists =
                 combined.some(
                     function (user) {
-
                         return (
                             getUserName(user)
                                 .toLowerCase() ===
                             getUserName(backupUser)
                                 .toLowerCase()
                         );
-
                     }
                 );
 
             if (!alreadyExists) {
-
                 combined.push(
                     backupUser
                 );
-
             }
-
         }
     );
 
     return combined;
-
 }
 
 
 async function loadUsers() {
-
     try {
-
         const response =
             await fetch(
                 "data/userpersona.json"
             );
 
         if (!response.ok) {
-
             throw new Error(
                 "Could not load userpersona.json"
             );
-
         }
 
         const data =
@@ -361,12 +329,10 @@ async function loadUsers() {
         if (
             loadedUsers.length > 0
         ) {
-
             users =
                 mergeUsersWithBackup(
                     loadedUsers
                 );
-
         }
 
         console.log(
@@ -375,7 +341,6 @@ async function loadUsers() {
         );
 
     } catch (error) {
-
         console.warn(
             "Using backup personas because the JSON file could not be loaded.",
             error
@@ -383,16 +348,13 @@ async function loadUsers() {
 
         users =
             [...backupUsers];
-
     }
 
     setupCurrentUser();
-
 }
 
 
 function setupCurrentUser() {
-
     const samuel =
         findUserExact(
             "Samuel Smith"
@@ -413,12 +375,10 @@ function setupCurrentUser() {
 
     currentUserName.textContent =
         getFirstName(samuel);
-
 }
 
 
 function findUserExact(value) {
-
     const searchValue =
         value
             .trim()
@@ -427,23 +387,19 @@ function findUserExact(value) {
     return (
         users.find(
             function (user) {
-
                 return (
                     getUserName(user)
                         .toLowerCase() ===
                     searchValue
                 );
-
             }
         ) ||
         null
     );
-
 }
 
 
 function findUser(value) {
-
     const searchValue =
         value
             .trim()
@@ -465,7 +421,6 @@ function findUser(value) {
     return (
         users.find(
             function (user) {
-
                 return (
                     getUserName(user)
                         .toLowerCase()
@@ -473,17 +428,14 @@ function findUser(value) {
                             searchValue
                         )
                 );
-
             }
         ) ||
         null
     );
-
 }
 
 
 function openUserProfile(user) {
-
     if (!user) {
         return;
     }
@@ -542,12 +494,10 @@ function openUserProfile(user) {
     profileOverlay.classList.add(
         "open"
     );
-
 }
 
 
 function closeUserProfile() {
-
     profilePanel.classList.remove(
         "open"
     );
@@ -555,12 +505,10 @@ function closeUserProfile() {
     profileOverlay.classList.remove(
         "open"
     );
-
 }
 
 
 function displayInterests(user) {
-
     profileInterests.innerHTML =
         "";
 
@@ -572,18 +520,14 @@ function displayInterests(user) {
         typeof interests ===
         "string"
     ) {
-
         interests =
             interests
                 .split(",")
                 .map(
                     function (interest) {
-
                         return interest.trim();
-
                     }
                 );
-
     }
 
     if (
@@ -592,17 +536,14 @@ function displayInterests(user) {
         ) ||
         interests.length === 0
     ) {
-
         profileInterests.innerHTML =
             '<span class="empty-text">No interests available.</span>';
 
         return;
-
     }
 
     interests.forEach(
         function (interest) {
-
             const chip =
                 document.createElement(
                     "span"
@@ -617,15 +558,12 @@ function displayInterests(user) {
             profileInterests.appendChild(
                 chip
             );
-
         }
     );
-
 }
 
 
 function displayEvents(user) {
-
     profileEvents.innerHTML =
         "";
 
@@ -639,17 +577,14 @@ function displayEvents(user) {
     if (
         events.length === 0
     ) {
-
         profileEvents.innerHTML =
             '<p class="empty-text">No upcoming events.</p>';
 
         return;
-
     }
 
     events.forEach(
         function (event) {
-
             const item =
                 document.createElement(
                     "p"
@@ -659,47 +594,36 @@ function displayEvents(user) {
                 typeof event ===
                 "string"
             ) {
-
                 item.textContent =
                     event;
-
             } else {
-
                 item.textContent =
                     event.name ||
                     event.title ||
                     "Upcoming event";
-
             }
 
             profileEvents.appendChild(
                 item
             );
-
         }
     );
-
 }
 
 
 function getConnectionKey() {
-
     return "introspheerConnections";
-
 }
 
 
 function getConnections() {
-
     try {
-
         const saved =
             localStorage.getItem(
                 getConnectionKey()
             );
 
         if (!saved) {
-
             return [
                 "zach",
                 "mike",
@@ -707,7 +631,6 @@ function getConnections() {
                 "holly",
                 "priya"
             ];
-
         }
 
         return (
@@ -716,7 +639,6 @@ function getConnections() {
         );
 
     } catch (error) {
-
         return [
             "zach",
             "mike",
@@ -724,14 +646,11 @@ function getConnections() {
             "holly",
             "priya"
         ];
-
     }
-
 }
 
 
 function isConnected(user) {
-
     const connections =
         getConnections();
 
@@ -743,7 +662,6 @@ function isConnected(user) {
 
     return connections.some(
         function (connection) {
-
             return (
                 String(connection)
                     .toLowerCase() ===
@@ -755,20 +673,16 @@ function isConnected(user) {
                     userName
                         .toLowerCase()
             );
-
         }
     );
-
 }
 
 
 function updateConnectionStatus(user) {
-
     const connected =
         isConnected(user);
 
     if (connected) {
-
         profileConnection.textContent =
             "This person is part of your Sphere.";
 
@@ -777,9 +691,7 @@ function updateConnectionStatus(user) {
 
         connectButton.disabled =
             true;
-
     } else {
-
         profileConnection.textContent =
             "You have not connected with this person yet.";
 
@@ -788,16 +700,13 @@ function updateConnectionStatus(user) {
 
         connectButton.disabled =
             false;
-
     }
-
 }
 
 
 connectButton.addEventListener(
     "click",
     function () {
-
         if (!selectedUser) {
             return;
         }
@@ -815,7 +724,6 @@ connectButton.addEventListener(
                 selectedUser
             )
         ) {
-
             connections.push(
                 userId
             );
@@ -826,13 +734,11 @@ connectButton.addEventListener(
                     connections
                 )
             );
-
         }
 
         updateConnectionStatus(
             selectedUser
         );
-
     }
 );
 
@@ -840,7 +746,6 @@ connectButton.addEventListener(
 messageButton.addEventListener(
     "click",
     function () {
-
         if (!selectedUser) {
             return;
         }
@@ -854,7 +759,6 @@ messageButton.addEventListener(
 
         window.location.href =
             "chat.html";
-
     }
 );
 
@@ -877,13 +781,10 @@ document
     )
     .forEach(
         function (node) {
-
             node.addEventListener(
                 "click",
                 function (event) {
-
                     event.preventDefault();
-
                     event.stopPropagation();
 
                     const name =
@@ -895,69 +796,52 @@ document
                         );
 
                     if (!user) {
-
                         user =
                             backupUsers.find(
-                                function (
-                                    backupUser
-                                ) {
-
+                                function (backupUser) {
                                     return (
                                         getUserName(
                                             backupUser
                                         ).toLowerCase() ===
                                         name.toLowerCase()
                                     );
-
                                 }
                             );
-
                     }
 
                     if (user) {
-
                         openUserProfile(
                             user
                         );
-
                     }
-
                 }
             );
-
         }
     );
 
 
 function hideSuggestions() {
-
     searchSuggestions.hidden =
         true;
 
     searchSuggestions.innerHTML =
         "";
-
 }
 
 
 function showSuggestions(matches) {
-
     searchSuggestions.innerHTML =
         "";
 
     if (
         matches.length === 0
     ) {
-
         hideSuggestions();
-
         return;
-
     }
 
     matches.forEach(
         function (user) {
-
             const button =
                 document.createElement(
                     "button"
@@ -1031,7 +915,6 @@ function showSuggestions(matches) {
             button.addEventListener(
                 "click",
                 function () {
-
                     userSearch.value =
                         name;
 
@@ -1043,27 +926,23 @@ function showSuggestions(matches) {
                     openUserProfile(
                         user
                     );
-
                 }
             );
 
             searchSuggestions.appendChild(
                 button
             );
-
         }
     );
 
     searchSuggestions.hidden =
         false;
-
 }
 
 
 userSearch.addEventListener(
     "input",
     function () {
-
         const value =
             userSearch.value
                 .trim()
@@ -1075,18 +954,14 @@ userSearch.addEventListener(
         if (
             value.length < 2
         ) {
-
             hideSuggestions();
-
             return;
-
         }
 
         const matches =
             users
                 .filter(
                     function (user) {
-
                         return (
                             getUserName(
                                 user
@@ -1096,7 +971,6 @@ userSearch.addEventListener(
                                     value
                                 )
                         );
-
                     }
                 )
                 .slice(
@@ -1107,7 +981,6 @@ userSearch.addEventListener(
         showSuggestions(
             matches
         );
-
     }
 );
 
@@ -1115,12 +988,10 @@ userSearch.addEventListener(
 userSearch.addEventListener(
     "keydown",
     function (event) {
-
         if (
             event.key ===
             "Enter"
         ) {
-
             event.preventDefault();
 
             const value =
@@ -1130,12 +1001,10 @@ userSearch.addEventListener(
             hideSuggestions();
 
             if (!value) {
-
                 searchMessage.textContent =
                     "Enter a person's name.";
 
                 return;
-
             }
 
             const user =
@@ -1144,12 +1013,10 @@ userSearch.addEventListener(
                 );
 
             if (!user) {
-
                 searchMessage.textContent =
                     "User not found.";
 
                 return;
-
             }
 
             searchMessage.textContent =
@@ -1163,18 +1030,14 @@ userSearch.addEventListener(
             openUserProfile(
                 user
             );
-
         }
 
         if (
             event.key ===
             "Escape"
         ) {
-
             hideSuggestions();
-
         }
-
     }
 );
 
@@ -1182,17 +1045,13 @@ userSearch.addEventListener(
 document.addEventListener(
     "click",
     function (event) {
-
         if (
             !event.target.closest(
                 ".search-wrapper"
             )
         ) {
-
             hideSuggestions();
-
         }
-
     }
 );
 
@@ -1200,10 +1059,8 @@ document.addEventListener(
 currentUserButton.addEventListener(
     "click",
     function () {
-
         window.location.href =
             "account.html";
-
     }
 );
 
@@ -1211,13 +1068,11 @@ currentUserButton.addEventListener(
 aboutButton.addEventListener(
     "click",
     function () {
-
         aboutModal.hidden =
             false;
 
         document.body.style.overflow =
             "hidden";
-
     }
 );
 
@@ -1225,13 +1080,11 @@ aboutButton.addEventListener(
 closeAbout.addEventListener(
     "click",
     function () {
-
         aboutModal.hidden =
             true;
 
         document.body.style.overflow =
             "";
-
     }
 );
 
@@ -1239,20 +1092,16 @@ closeAbout.addEventListener(
 aboutModal.addEventListener(
     "click",
     function (event) {
-
         if (
             event.target ===
             aboutModal
         ) {
-
             aboutModal.hidden =
                 true;
 
             document.body.style.overflow =
                 "";
-
         }
-
     }
 );
 
@@ -1260,7 +1109,6 @@ aboutModal.addEventListener(
 showReferences.addEventListener(
     "click",
     function () {
-
         const currentlyHidden =
             referenceList.hidden;
 
@@ -1268,17 +1116,12 @@ showReferences.addEventListener(
             !currentlyHidden;
 
         if (currentlyHidden) {
-
             showReferences.textContent =
                 "Hide Reference List";
-
         } else {
-
             showReferences.textContent =
                 "View APA 7 Reference List";
-
         }
-
     }
 );
 
@@ -1286,14 +1129,11 @@ showReferences.addEventListener(
 document.addEventListener(
     "keydown",
     function (event) {
-
         if (
             event.key ===
             "Escape"
         ) {
-
             hideSuggestions();
-
             closeUserProfile();
 
             aboutModal.hidden =
@@ -1301,23 +1141,18 @@ document.addEventListener(
 
             document.body.style.overflow =
                 "";
-
         }
-
     }
 );
 
 
-let rotationX = 0;
-
+let rotationX = -8;
 let rotationY = 0;
-
 let sphereScale = 1;
 
 let isDragging = false;
 
 let previousX = 0;
-
 let previousY = 0;
 
 let lastAnimationTime =
@@ -1325,25 +1160,20 @@ let lastAnimationTime =
 
 
 function updateSphereTransform() {
-
     sphere.style.transform =
         "rotateX(" +
         rotationX +
         "deg) " +
-
         "rotateY(" +
         rotationY +
         "deg) " +
-
         "scale(" +
         sphereScale +
         ")";
-
 }
 
 
 function animateSphere(time) {
-
     const delta =
         time -
         lastAnimationTime;
@@ -1351,13 +1181,9 @@ function animateSphere(time) {
     lastAnimationTime =
         time;
 
-    if (
-        !isDragging
-    ) {
-
+    if (!isDragging) {
         rotationY +=
             delta * 0.005;
-
     }
 
     updateSphereTransform();
@@ -1365,7 +1191,6 @@ function animateSphere(time) {
     requestAnimationFrame(
         animateSphere
     );
-
 }
 
 
@@ -1377,15 +1202,12 @@ requestAnimationFrame(
 sphere.addEventListener(
     "pointerdown",
     function (event) {
-
         if (
             event.target.closest(
                 ".person-node"
             )
         ) {
-
             return;
-
         }
 
         isDragging =
@@ -1402,13 +1224,11 @@ sphere.addEventListener(
         );
 
         try {
-
             sphere.setPointerCapture(
                 event.pointerId
             );
-
-        } catch (error) {}
-
+        } catch (error) {
+        }
     }
 );
 
@@ -1416,10 +1236,7 @@ sphere.addEventListener(
 sphere.addEventListener(
     "pointermove",
     function (event) {
-
-        if (
-            !isDragging
-        ) {
+        if (!isDragging) {
             return;
         }
 
@@ -1446,13 +1263,11 @@ sphere.addEventListener(
             event.clientY;
 
         updateSphereTransform();
-
     }
 );
 
 
 function finishDragging(event) {
-
     isDragging =
         false;
 
@@ -1461,21 +1276,17 @@ function finishDragging(event) {
     );
 
     try {
-
         if (
             sphere.hasPointerCapture(
                 event.pointerId
             )
         ) {
-
             sphere.releasePointerCapture(
                 event.pointerId
             );
-
         }
-
-    } catch (error) {}
-
+    } catch (error) {
+    }
 }
 
 
@@ -1494,13 +1305,8 @@ sphere.addEventListener(
 sphereContainer.addEventListener(
     "wheel",
     function (event) {
-
-        if (
-            !event.ctrlKey
-        ) {
-
+        if (!event.ctrlKey) {
             return;
-
         }
 
         event.preventDefault();
@@ -1508,15 +1314,11 @@ sphereContainer.addEventListener(
         if (
             event.deltaY < 0
         ) {
-
             sphereScale +=
                 0.05;
-
         } else {
-
             sphereScale -=
                 0.05;
-
         }
 
         sphereScale =
@@ -1529,7 +1331,6 @@ sphereContainer.addEventListener(
             );
 
         updateSphereTransform();
-
     },
     {
         passive: false
@@ -1547,14 +1348,11 @@ let pinchStartScale =
 sphereContainer.addEventListener(
     "touchstart",
     function (event) {
-
         if (
             event.touches.length !==
             2
         ) {
-
             return;
-
         }
 
         const first =
@@ -1567,14 +1365,12 @@ sphereContainer.addEventListener(
             Math.hypot(
                 second.clientX -
                 first.clientX,
-
                 second.clientY -
                 first.clientY
             );
 
         pinchStartScale =
             sphereScale;
-
     },
     {
         passive: true
@@ -1585,16 +1381,13 @@ sphereContainer.addEventListener(
 sphereContainer.addEventListener(
     "touchmove",
     function (event) {
-
         if (
             event.touches.length !==
             2 ||
             pinchStartDistance ===
             null
         ) {
-
             return;
-
         }
 
         const first =
@@ -1607,7 +1400,6 @@ sphereContainer.addEventListener(
             Math.hypot(
                 second.clientX -
                 first.clientX,
-
                 second.clientY -
                 first.clientY
             );
@@ -1629,7 +1421,6 @@ sphereContainer.addEventListener(
             );
 
         updateSphereTransform();
-
     },
     {
         passive: true
@@ -1640,17 +1431,13 @@ sphereContainer.addEventListener(
 sphereContainer.addEventListener(
     "touchend",
     function (event) {
-
         if (
             event.touches.length <
             2
         ) {
-
             pinchStartDistance =
                 null;
-
         }
-
     },
     {
         passive: true
