@@ -1,13 +1,9 @@
 /* Account page */
-./* Centre the entire page content */
+/* Centre the entire page content */
 .account-body {
-    background: #f4f4f4;
+    background: #ffffff;
     color: #222;
     min-height: 100vh;
-   display: flex;
-   flex-direction: column;
-   align-items: center; 
-    
     
     padding: 40px 20px;
     box-sizing: border-box;
