@@ -94,11 +94,13 @@ fetch(LOCATIONS_API)
 
     });
 
-// BRISBANE CITY COUNCIL EVENTS API//
-
+// BRISBANE CITY COUNCIL EVENTS API
 const EVENTS_API =
-    "https://data.brisbane.qld.gov.au/api/explore/v2.1/catalog/datasets/brisbane-city-council-events/records?limit=100";
+    "https://data.brisbane.qld.gov.au/api/explore/v2.1/catalog/datasets/brisbane-city-council-events/records";
 
+// API PAGINATION
+const API_BATCH_SIZE = 100;
+const MAX_API_PAGES = 5;
 let loadedEvents = [];
 let filteredEvents = [];
 
@@ -228,47 +230,104 @@ function applyEventFilters() {
 });
 eventSearch.addEventListener("input", applyEventFilters);
 
+
+/* LOAD EVENTS FROM BCC API WITH PAGINATION */
+
 async function loadEventsFromAPI() {
 
+    let allFetchedEvents = [];
+
     try {
+        for (let page = 0; page < MAX_API_PAGES; page++) {
 
-        const response = await fetch(EVENTS_API);
+            const offset = page * API_BATCH_SIZE;
 
-        if (!response.ok) {
-            throw new Error("API request failed: " + response.status);
+            const url =
+                `${EVENTS_API}?limit=${API_BATCH_SIZE}&offset=${offset}`;
+
+            console.log(`Fetching events: offset ${offset}`);
+
+            const response = await fetch(url);
+
+            if (!response.ok) {
+                throw new Error(
+                    "API request failed: " + response.status
+                );
+            }
+
+            const data = await response.json();
+            const batch = data.results || [];
+
+            allFetchedEvents.push(...batch);
+
+            console.log(
+                `Loaded ${allFetchedEvents.length} events`
+            );
+
+            // Stop when all available records have been fetched
+            if (
+                batch.length === 0 ||
+                allFetchedEvents.length >= data.total_count
+            ) {
+                break;
+            }
         }
 
-        const data = await response.json();
+        // Remove duplicate events using stable record identifiers
+        const uniqueEvents = new Map();
 
-        loadedEvents = data.results || [];
+        allFetchedEvents.forEach(function (event) {
+            const id = getEventId(event);
+            uniqueEvents.set(id, event);
+        });
 
-        console.log("Events:", loadedEvents);
+        loadedEvents = Array.from(uniqueEvents.values());
 
         console.log(
-            "Venues:",
-            loadedEvents.map(function (event) {
-                return event.venue;
-            })
+            "Total unique events loaded:",
+            loadedEvents.length
         );
 
-        applyEventFilters();
+        // Reapply existing filters and recommendation sorting
+        visibleEventCount = EVENTS_PER_PAGE;
+
+        if (typeof applyEventFilters === "function") {
+            applyEventFilters();
+        } else {
+            displayAPIEvents(loadedEvents);
+        }
 
     } catch (error) {
 
         console.error("Error loading events:", error);
 
-        listView.textContent = "Events could not be loaded. Please try again.";
-        showMoreButton.hidden = true;
+        // Keep already fetched events if a later request fails
+        if (allFetchedEvents.length > 0) {
+            loadedEvents = allFetchedEvents;
+
+            visibleEventCount = EVENTS_PER_PAGE;
+
+            if (typeof applyEventFilters === "function") {
+                applyEventFilters();
+            } else {
+                displayAPIEvents(loadedEvents);
+            }
+
+        } else {
+            listView.innerHTML = `
+                <p class="event-load-error">
+                    Events could not be loaded. Please try again.
+                </p>
+            `;
+        }
 
     } finally {
 
-        setTimeout(function () {
-            document.body.classList.add("loaded");
-        }, 500);
+        document.body.classList.add("loaded");
 
     }
-
 }
+
 
 function displayAPIEvents(events) {
 
