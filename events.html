@@ -12,151 +12,158 @@
 
 <body>
 
-    <body>
+    <!-- LOADING OVERLAY -->
+    <div id="loading">
+        <p>Loading events...</p>
+    </div>
 
-        <!-- LOADING OVERLAY -->
-        <div id="loading">
-            <p>Loading events...</p>
+    <!-- NAVBAR -->
+    <nav>
+        <a href="index.html" class="nav-logo">INTROSPHEER</a>
+
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="events.html">Events</a>
+            <a href="strings.html">Strings</a>
+            <a href="chat.html">Chat</a>
+            <a href="account.html">Account</a>
+            <a href="about.html">About</a>
+        </div>
+    </nav>
+
+    <main class="events-container">
+
+        <div class="events-heading">
+            <div>
+                <h1>Discover Events</h1>
+                <p>Find local events and meet people with similar interests.</p>
+            </div>
+
+            <div class="view-toggle">
+                <button type="button" id="listViewButton">List View</button>
+                <button type="button" id="mapViewButton">Map View</button>
+                <button type="button" onclick="window.location.href='my-events.html'">
+                    My Events
+                </button>
+            </div>
         </div>
 
-        <!-- rest of website -->
-
-        <!-- NAVBAR -->
-        <nav>
-            <a href="index.html" class="nav-logo">INTROSPHEER</a>
-
-            <div class="nav-links">
-                <a href="index.html">Home</a>
-                <a href="events.html">Events</a>
-                <a href="strings.html">Strings</a>
-                <a href="chat.html">Chat</a>
-                <a href="account.html">Account</a>
-                <a href="about.html">About</a>
-            </div>
-        </nav>
-
-        <main class="events-container">
-
-            <div class="events-heading">
-                <div>
-                    <h1>Discover Events</h1>
-                    <p>Find local events and meet people with similar interests.</p>
-                </div>
-
-                <div class="view-toggle">
-                    <button type="button" id="listViewButton">List View</button>
-                    <button type="button" id="mapViewButton">Map View</button>
-                    <button type="button" onclick="window.location.href='my-events.html'">
-                        My Events
-                    </button>
-                </div>
-            </div>
 
 
-            <!-- SEARCH AND FILTERS -->
-            <section class="event-filters">
+        <!-- EVENT SEARCH AND FILTERS -->
+        <section class="event-filters">
 
-                <input type="search" id="eventSearch" placeholder="Search events...">
+            <input type="search" id="eventSearch" placeholder="Search Brisbane events...">
 
-                <select id="eventCategory">
-                    <option value="all">All categories</option>
-                    <option value="social">Social</option>
-                    <option value="fitness">Fitness</option>
-                    <option value="creative">Creative</option>
-                    <option value="community">Community</option>
-                </select>
+            <select id="eventCategory">
+                <option value="all">All Categories</option>
+                <option value="creative">Arts & Creative</option>
+                <option value="fitness">Fitness & Wellness</option>
+                <option value="social">Social & Community</option>
+                <option value="education">Learning & Workshops</option>
+            </select>
 
-                <select id="eventCost">
-                    <option value="all">Any cost</option>
-                    <option value="free">Free</option>
-                    <option value="paid">Paid</option>
-                </select>
+            <select id="eventCost">
+                <option value="all">Any Cost</option>
+                <option value="free">Free</option>
+                <option value="paid">Paid</option>
+            </select>
 
-            </section>
+            <select id="eventDate">
+                <option value="all">Any Date</option>
+                <option value="today">Today</option>
+                <option value="week">Next 7 Days</option>
+                <option value="month">Next 30 Days</option>
+            </select>
+
+            <select id="eventSort">
+                <option value="recommended">Recommended</option>
+                <option value="soonest">Date: Soonest</option>
+                <option value="alphabetical">Alphabetical</option>
+            </select>
+
+        </section>
 
 
-            <!-- LIST VIEW -->
-            <section id="listView" class="event-list"></section>
 
-            <button type="button" id="showMoreButton" hidden>
-                Show More Events
+        <!-- LIST VIEW -->
+        <section id="listView" class="event-list"></section>
+
+        <button type="button" id="showMoreButton" hidden>
+            Show More Events
+        </button>
+
+
+        <!-- MAP VIEW -->
+        <section id="mapView" class="map-view" hidden>
+
+            <div id="eventMap"></div>
+
+        </section>
+
+
+        <!-- EVENT DETAILS MODAL -->
+        <section id="eventDetails" class="event-full-details" hidden>
+
+            <!-- CLOSE BUTTON -->
+            <button type="button" id="closeEventDetails">
+                ×
             </button>
 
+            <!-- EVENT CATEGORY -->
+            <span class="event-category" id="detailCategory">
+                Event
+            </span>
 
-            <!-- MAP VIEW -->
-            <section id="mapView" class="map-view" hidden>
+            <!-- EVENT NAME -->
+            <h2 id="detailName">
+                Event Name
+            </h2>
 
-                <div id="eventMap"></div>
+            <!-- EVENT DATE / TIME -->
+            <p class="event-date" id="detailDate"></p>
 
-            </section>
+            <!-- VENUE -->
+            <!-- The JS puts event.venue into this element -->
+            <p id="detailLocation"></p>
+
+            <!-- EVENT COST -->
+            <p id="detailCost"></p>
+
+            <!-- EVENT DESCRIPTION -->
+            <h3>
+                About this event
+            </h3>
+
+            <p id="detailDescription"></p>
 
 
-            <!-- EVENT DETAILS MODAL -->
-            <section id="eventDetails" class="event-full-details" hidden>
+            <!-- BOOKING CONTROLS -->
+            <div class="event-actions">
 
-                <!-- CLOSE BUTTON -->
-                <button type="button" id="closeEventDetails">
-                    ×
+                <button type="button" id="bookEventButton" class="book-event">
+                    Book Event
                 </button>
 
-                <!-- EVENT CATEGORY -->
-                <span class="event-category" id="detailCategory">
-                    Event
-                </span>
+                <p id="attendanceStatus" class="attendance-status" hidden>
+                    ✓ You're attending this event
+                </p>
 
-                <!-- EVENT NAME -->
-                <h2 id="detailName">
-                    Event Name
-                </h2>
+                <button type="button" id="cancelEventButton" class="cancel-event" hidden>
+                    Cancel Attendance
+                </button>
 
-                <!-- EVENT DATE / TIME -->
-                <p class="event-date" id="detailDate"></p>
+            </div>
 
-                <!-- VENUE -->
-                <!-- The JS puts event.venue into this element -->
-                <p id="detailLocation"></p>
+        </section>
 
-                <!-- EVENT COST -->
-                <p id="detailCost"></p>
+    </main>
 
-                <!-- EVENT DESCRIPTION -->
-                <h3>
-                    About this event
-                </h3>
+    <script src="js/leaflet.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/storage.js"></script>
+    <script src="js/events.js?v=4"></script>
 
-                <p id="detailDescription"></p>
-
-
-                <!-- BOOKING CONTROLS -->
-                <div class="event-actions">
-
-                    <button type="button" id="bookEventButton" class="book-event">
-                        Book Event
-                    </button>
-
-                    <p id="attendanceStatus" class="attendance-status" hidden>
-                        ✓ You're attending this event
-                    </p>
-
-                    <button type="button" id="cancelEventButton" class="cancel-event" hidden>
-                        Cancel Attendance
-                    </button>
-
-                </div>
-
-            </section>
-
-
-            </section>
-
-        </main>
-
-        <script src="js/leaflet.js"></script>
-        <script src="js/config.js"></script>
-        <script src="js/storage.js"></script>
-        <script src="js/events.js?v=2"></script>
-
-    </body>
-
+</body>
 
 </html>

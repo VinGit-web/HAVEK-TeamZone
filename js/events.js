@@ -100,12 +100,133 @@ const EVENTS_API =
     "https://data.brisbane.qld.gov.au/api/explore/v2.1/catalog/datasets/brisbane-city-council-events/records?limit=100";
 
 let loadedEvents = [];
+let filteredEvents = [];
 
 // EVENT DISPLAY PAGINATION
 const EVENTS_PER_PAGE = 8;
 let visibleEventCount = EVENTS_PER_PAGE;
 
 const showMoreButton = document.getElementById("showMoreButton");
+const eventSearch = document.getElementById("eventSearch");
+const eventCategory = document.getElementById("eventCategory");
+const eventCost = document.getElementById("eventCost");
+const eventDate = document.getElementById("eventDate");
+const eventSort = document.getElementById("eventSort");
+
+// Tradeshow persona interests. Account integration can replace this array later.
+const demoInterests = ["gaming", "pottery", "ballet", "museums", "reading"];
+const interestKeywords = {
+    gaming: ["gaming", "board game", "trivia", "video game"],
+    pottery: ["pottery", "ceramic", "clay", "craft", "art"],
+    ballet: ["ballet", "dance", "performance"],
+    museums: ["museum", "exhibition", "gallery", "history"],
+    reading: ["book", "reading", "library", "literature", "author"]
+};
+const categoryKeywords = {
+    creative: ["art", "creative", "craft", "pottery", "ceramic", "painting", "music", "dance", "theatre", "exhibition"],
+    fitness: ["fitness", "wellness", "yoga", "zumba", "walking", "exercise", "sport", "pilates", "meditation"],
+    social: ["community", "social", "festival", "market", "meetup", "network", "concert", "celebration"],
+    education: ["workshop", "class", "learning", "library", "book", "lecture", "training", "seminar"]
+};
+
+function getEventStart(event) {
+    const date = new Date(event.start_datetime || "");
+    return Number.isNaN(date.getTime()) ? null : date;
+}
+
+function getEventEnd(event) {
+    const date = new Date(event.end_datetime || event.start_datetime || "");
+    return Number.isNaN(date.getTime()) ? null : date;
+}
+
+function getEventText(event) {
+    return [event.subject, event.title, event.description, event.event_type, event.venue]
+        .filter(Boolean).join(" ").toLowerCase();
+}
+
+function getEventCategory(event) {
+    const type = event.event_type;
+    return Array.isArray(type) ? type.join(", ") : String(type || "Event");
+}
+
+function getRecommendationScore(event) {
+    const title = String(event.subject || event.title || "").toLowerCase();
+    const fullText = getEventText(event);
+    return demoInterests.reduce(function (score, interest) {
+        return score + (interestKeywords[interest] || [interest]).reduce(function (subtotal, keyword) {
+            return subtotal + (title.includes(keyword) ? 10 : fullText.includes(keyword) ? 5 : 0);
+        }, 0);
+    }, 0);
+}
+
+function matchesCost(event, selection) {
+    if (selection === "all") return true;
+    const cost = String(event.cost || "").trim().toLowerCase();
+    const free = /\bfree\b|\$\s*0(?:\.00)?\b|no cost/.test(cost);
+    // Unknown prices must not be mislabelled as paid.
+    const paid = !free && /\$\s*[1-9]|\bpaid\b|\bfee\b|\bticket\s*(?:price|cost)/.test(cost);
+    return selection === "free" ? free : paid;
+}
+
+function matchesDate(event, selection) {
+    const start = getEventStart(event);
+    if (!start) return false;
+    if (selection === "all") return true;
+    const now = new Date();
+    if (selection === "today") return start.toDateString() === now.toDateString();
+    const days = selection === "week" ? 7 : 30;
+    const end = new Date(now);
+    end.setDate(end.getDate() + days);
+    return start >= now && start <= end;
+}
+
+function escapeHTML(value) {
+    return String(value ?? "").replace(/[&<>"']/g, function (character) {
+        return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[character];
+    });
+}
+
+function formatEventDate(value) {
+    const date = new Date(value || "");
+    return Number.isNaN(date.getTime()) ? "Date unavailable" :
+        date.toLocaleString("en-AU", { dateStyle: "medium", timeStyle: "short" });
+}
+
+function applyEventFilters() {
+    const search = eventSearch.value.trim().toLowerCase();
+    const category = eventCategory.value;
+    const cost = eventCost.value;
+    const date = eventDate.value;
+    const sort = eventSort.value;
+    const now = new Date();
+
+    filteredEvents = loadedEvents.filter(function (event) {
+        const end = getEventEnd(event);
+        if (!end || end < now) return false;
+        if (!getEventText(event).includes(search)) return false;
+        if (category !== "all" && !categoryKeywords[category].some(word => getEventText(event).includes(word))) return false;
+        return matchesCost(event, cost) && matchesDate(event, date);
+    });
+
+    filteredEvents.sort(function (a, b) {
+        if (sort === "alphabetical") {
+            return String(a.subject || a.title || "").localeCompare(String(b.subject || b.title || ""));
+        }
+        if (sort === "recommended") {
+            const scoreDiff = getRecommendationScore(b) - getRecommendationScore(a);
+            if (scoreDiff !== 0) return scoreDiff;
+        }
+        return getEventStart(a) - getEventStart(b);
+    });
+
+    visibleEventCount = EVENTS_PER_PAGE;
+    displayAPIEvents(filteredEvents);
+}
+
+[eventCategory, eventCost, eventDate, eventSort].forEach(function (control) {
+    control.addEventListener("change", applyEventFilters);
+});
+eventSearch.addEventListener("input", applyEventFilters);
 
 async function loadEventsFromAPI() {
 
@@ -130,17 +251,14 @@ async function loadEventsFromAPI() {
             })
         );
 
-        displayAPIEvents(loadedEvents);
+        applyEventFilters();
 
     } catch (error) {
 
         console.error("Error loading events:", error);
 
-        listView.innerHTML = `
-            <p class="event-load-error">
-                Events could not be loaded. Please try again.
-            </p>
-        `;
+        listView.textContent = "Events could not be loaded. Please try again.";
+        showMoreButton.hidden = true;
 
     } finally {
 
@@ -158,6 +276,13 @@ function displayAPIEvents(events) {
 
     const visibleEvents = events.slice(0, visibleEventCount);
 
+    if (events.length === 0) {
+        const message = document.createElement("p");
+        message.className = "event-empty-message";
+        message.textContent = "No matching upcoming events. Try changing your filters.";
+        listView.appendChild(message);
+    }
+
     visibleEvents.forEach(function (event, index) {
 
         const name =
@@ -170,23 +295,14 @@ function displayAPIEvents(events) {
             event.venue ||
             "Venue unavailable";
 
-        const startDate =
-            event.start_date ||
-            event.start ||
-            "";
-
-        const endDate =
-            event.end_date ||
-            event.end ||
-            "";
+        const startDate = formatEventDate(event.start_datetime);
+        const endDate = event.end_datetime ? formatEventDate(event.end_datetime) : "";
 
         const cost =
             event.cost ||
             "See details";
 
-        const category =
-            event.category ||
-            "Event";
+        const category = getEventCategory(event);
 
         const description =
             event.description ||
@@ -202,27 +318,27 @@ function displayAPIEvents(events) {
             <div class="event-card-content">
 
                 <span class="event-category">
-                    ${category}
+                    ${escapeHTML(category)}
                 </span>
 
-                <h2>${name}</h2>
+                <h2>${escapeHTML(name)}</h2>
 
                 <p class="event-date">
-                    ${startDate}
-                    ${endDate ? " – " + endDate : ""}
+                    ${escapeHTML(startDate)}
+                    ${endDate ? " – " + escapeHTML(endDate) : ""}
                 </p>
 
                 <p class="event-venue">
-                    ${venue}
+                    ${escapeHTML(venue)}
                 </p>
 
                 <p class="event-description">
-                    ${description}
+                    ${escapeHTML(description)}
                 </p>
 
                 <div class="event-card-footer">
 
-                    <span>${cost}</span>
+                    <span>${escapeHTML(cost)}</span>
 
                     <button
                         type="button"
@@ -258,13 +374,13 @@ function displayAPIEvents(events) {
 
 
                 document.getElementById("detailCategory").textContent =
-                    event.category || "Event";
+                    getEventCategory(event);
 
                 document.getElementById("detailName").textContent =
                     event.subject || event.title || "Brisbane Event";
 
                 document.getElementById("detailDate").textContent =
-                    event.start_date || event.start || "Date unavailable";
+                    formatEventDate(event.start_datetime);
 
                 // IMPORTANT: venue from Events API
                 document.getElementById("detailLocation").textContent =
@@ -286,7 +402,7 @@ function displayAPIEvents(events) {
         });
 
     // SHOW MORE BUTTON VISIBILITY
-    showMoreButton.hidden = visibleEventCount >= events.length;
+    showMoreButton.hidden = listView.hidden || visibleEventCount >= events.length;
 }
 
 
@@ -301,7 +417,7 @@ function getEventId(event) {
     // Fallback for API records without an ID
     return JSON.stringify([
         event.subject || event.title,
-        event.start_date || event.start,
+        event.start_datetime,
         event.venue
     ]);
 }
@@ -324,7 +440,7 @@ showMoreButton.addEventListener("click", function () {
 
     visibleEventCount += EVENTS_PER_PAGE;
 
-    displayAPIEvents(loadedEvents);
+    displayAPIEvents(filteredEvents);
 
 });
 
@@ -332,7 +448,7 @@ showMoreButton.addEventListener("click", function () {
 
 listViewButton.addEventListener("click", function () {
 
-    showMoreButton.hidden = visibleEventCount >= loadedEvents.length;
+    showMoreButton.hidden = visibleEventCount >= filteredEvents.length;
 
     listView.hidden = false;
     mapView.hidden = true;
