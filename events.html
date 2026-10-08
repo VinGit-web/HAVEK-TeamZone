@@ -12,146 +12,148 @@
 
 <body>
 
-<body>
+    <body>
 
-    <!-- LOADING OVERLAY -->
-    <div id="loading">
-        <p>Loading events...</p>
-    </div>
-
-    <!-- rest of website -->
-
-    <!-- NAVBAR -->
-    <nav>
-        <a href="index.html" class="nav-logo">INTROSPHEER</a>
-
-        <div class="nav-links">
-            <a href="index.html">Home</a>
-            <a href="events.html">Events</a>
-            <a href="strings.html">Strings</a>
-            <a href="chat.html">Chat</a>
-            <a href="account.html">Account</a>
-            <a href="about.html">About</a>
-        </div>
-    </nav>
-
-    <main class="events-container">
-
-        <div class="events-heading">
-            <div>
-                <h1>Discover Events</h1>
-                <p>Find local events and meet people with similar interests.</p>
-            </div>
-
-            <div class="view-toggle">
-                <button type="button" id="listViewButton">List View</button>
-                <button type="button" id="mapViewButton">Map View</button>
-                <button type="button" onclick="window.location.href='under.html'">Past Events</button>
-            </div>
+        <!-- LOADING OVERLAY -->
+        <div id="loading">
+            <p>Loading events...</p>
         </div>
 
+        <!-- rest of website -->
 
-        <!-- SEARCH AND FILTERS -->
-        <section class="event-filters">
+        <!-- NAVBAR -->
+        <nav>
+            <a href="index.html" class="nav-logo">INTROSPHEER</a>
 
-            <input type="search" id="eventSearch" placeholder="Search events...">
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="events.html">Events</a>
+                <a href="strings.html">Strings</a>
+                <a href="chat.html">Chat</a>
+                <a href="account.html">Account</a>
+                <a href="about.html">About</a>
+            </div>
+        </nav>
 
-            <select id="eventCategory">
-                <option value="all">All categories</option>
-                <option value="social">Social</option>
-                <option value="fitness">Fitness</option>
-                <option value="creative">Creative</option>
-                <option value="community">Community</option>
-            </select>
+        <main class="events-container">
 
-            <select id="eventCost">
-                <option value="all">Any cost</option>
-                <option value="free">Free</option>
-                <option value="paid">Paid</option>
-            </select>
+            <div class="events-heading">
+                <div>
+                    <h1>Discover Events</h1>
+                    <p>Find local events and meet people with similar interests.</p>
+                </div>
 
-        </section>
-
-
-        <!-- LIST VIEW -->
-        <section id="listView" class="event-list">
-
-        </section>
-
-
-        <!-- MAP VIEW -->
-        <section id="mapView" class="map-view" hidden>
-
-            <div id="eventMap"></div>
-
-        </section>
+                <div class="view-toggle">
+                    <button type="button" id="listViewButton">List View</button>
+                    <button type="button" id="mapViewButton">Map View</button>
+                    <button type="button" onclick="window.location.href='under.html'">Past Events</button>
+                </div>
+            </div>
 
 
-        <!-- EVENT DETAILS MODAL -->
-        <section id="eventDetails" class="event-full-details" hidden>
+            <!-- SEARCH AND FILTERS -->
+            <section class="event-filters">
 
-            <!-- CLOSE BUTTON -->
-            <button type="button" id="closeEventDetails">
-                ×
+                <input type="search" id="eventSearch" placeholder="Search events...">
+
+                <select id="eventCategory">
+                    <option value="all">All categories</option>
+                    <option value="social">Social</option>
+                    <option value="fitness">Fitness</option>
+                    <option value="creative">Creative</option>
+                    <option value="community">Community</option>
+                </select>
+
+                <select id="eventCost">
+                    <option value="all">Any cost</option>
+                    <option value="free">Free</option>
+                    <option value="paid">Paid</option>
+                </select>
+
+            </section>
+
+
+            <!-- LIST VIEW -->
+            <section id="listView" class="event-list"></section>
+
+            <button type="button" id="showMoreButton" hidden>
+                Show More Events
             </button>
 
-            <!-- EVENT CATEGORY -->
-            <span class="event-category" id="detailCategory">
-                Event
-            </span>
 
-            <!-- EVENT NAME -->
-            <h2 id="detailName">
-                Event Name
-            </h2>
+            <!-- MAP VIEW -->
+            <section id="mapView" class="map-view" hidden>
 
-            <!-- EVENT DATE / TIME -->
-            <p class="event-date" id="detailDate"></p>
+                <div id="eventMap"></div>
 
-            <!-- VENUE -->
-            <!-- The JS puts event.venue into this element -->
-            <p id="detailLocation"></p>
-
-            <!-- EVENT COST -->
-            <p id="detailCost"></p>
-
-            <!-- EVENT DESCRIPTION -->
-            <h3>
-                About this event
-            </h3>
-
-            <p id="detailDescription"></p>
+            </section>
 
 
-            <!-- BOOKING CONTROLS -->
-            <div class="event-actions">
+            <!-- EVENT DETAILS MODAL -->
+            <section id="eventDetails" class="event-full-details" hidden>
 
-                <button type="button" id="bookEventButton" class="book-event">
-                    Book Event
+                <!-- CLOSE BUTTON -->
+                <button type="button" id="closeEventDetails">
+                    ×
                 </button>
 
-                <p id="attendanceStatus" class="attendance-status" hidden>
-                    ✓ You're attending this event
-                </p>
+                <!-- EVENT CATEGORY -->
+                <span class="event-category" id="detailCategory">
+                    Event
+                </span>
 
-                <button type="button" id="cancelEventButton" class="cancel-event" hidden>
-                    Cancel Attendance
-                </button>
+                <!-- EVENT NAME -->
+                <h2 id="detailName">
+                    Event Name
+                </h2>
 
-            </div>
+                <!-- EVENT DATE / TIME -->
+                <p class="event-date" id="detailDate"></p>
 
-        </section>
+                <!-- VENUE -->
+                <!-- The JS puts event.venue into this element -->
+                <p id="detailLocation"></p>
+
+                <!-- EVENT COST -->
+                <p id="detailCost"></p>
+
+                <!-- EVENT DESCRIPTION -->
+                <h3>
+                    About this event
+                </h3>
+
+                <p id="detailDescription"></p>
 
 
-        </section>
+                <!-- BOOKING CONTROLS -->
+                <div class="event-actions">
 
-    </main>
+                    <button type="button" id="bookEventButton" class="book-event">
+                        Book Event
+                    </button>
 
-    <script src="js/leaflet.js"></script>
-    <script src="js/config.js"></script>
-    <script src="js/events.js?v=2"></script>
+                    <p id="attendanceStatus" class="attendance-status" hidden>
+                        ✓ You're attending this event
+                    </p>
 
-</body>
+                    <button type="button" id="cancelEventButton" class="cancel-event" hidden>
+                        Cancel Attendance
+                    </button>
+
+                </div>
+
+            </section>
+
+
+            </section>
+
+        </main>
+
+        <script src="js/leaflet.js"></script>
+        <script src="js/config.js"></script>
+        <script src="js/events.js?v=2"></script>
+
+    </body>
 
 
 </html>

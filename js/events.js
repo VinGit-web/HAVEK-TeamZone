@@ -95,9 +95,15 @@ fetch(LOCATIONS_API)
 // BRISBANE CITY COUNCIL EVENTS API//
 
 const EVENTS_API =
-    "https://data.brisbane.qld.gov.au/api/explore/v2.1/catalog/datasets/brisbane-city-council-events/records?limit=4";
+    "https://data.brisbane.qld.gov.au/api/explore/v2.1/catalog/datasets/brisbane-city-council-events/records?limit=100";
 
 let loadedEvents = [];
+
+// EVENT DISPLAY PAGINATION
+const EVENTS_PER_PAGE = 8;
+let visibleEventCount = EVENTS_PER_PAGE;
+
+const showMoreButton = document.getElementById("showMoreButton");
 
 async function loadEventsFromAPI() {
 
@@ -148,7 +154,9 @@ function displayAPIEvents(events) {
 
     listView.innerHTML = "";
 
-    events.forEach(function (event, index) {
+    const visibleEvents = events.slice(0, visibleEventCount);
+
+    visibleEvents.forEach(function (event, index) {
 
         const name =
             event.subject ||
@@ -270,11 +278,25 @@ function displayAPIEvents(events) {
             });
 
         });
+
+    // SHOW MORE BUTTON VISIBILITY
+    showMoreButton.hidden = visibleEventCount >= events.length;
 }
+
+// SHOW MORE EVENTS
+showMoreButton.addEventListener("click", function () {
+
+    visibleEventCount += EVENTS_PER_PAGE;
+
+    displayAPIEvents(loadedEvents);
+
+});
 
 // LIST VIEW //
 
 listViewButton.addEventListener("click", function () {
+
+    showMoreButton.hidden = visibleEventCount >= loadedEvents.length;
 
     listView.hidden = false;
     mapView.hidden = true;
@@ -288,6 +310,8 @@ listViewButton.addEventListener("click", function () {
 // MAP VIEW //
 
 mapViewButton.addEventListener("click", function () {
+
+    showMoreButton.hidden = true;
 
     listView.hidden = true;
     mapView.hidden = false;
