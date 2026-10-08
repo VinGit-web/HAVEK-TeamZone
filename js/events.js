@@ -20,6 +20,8 @@ const bookEventButton = document.getElementById("bookEventButton");
 const cancelEventButton = document.getElementById("cancelEventButton");
 const attendanceStatus = document.getElementById("attendanceStatus");
 
+let selectedEvent = null;
+
 // MAP SETUP
 
 const eventMap = L.map("eventMap").setView([-27.4698, 153.0251], 13);
@@ -250,7 +252,9 @@ function displayAPIEvents(events) {
                     Number(button.dataset.eventIndex);
 
                 const event =
-                    loadedEvents[index];
+                    events[index];
+
+                selectedEvent = event;
 
 
                 document.getElementById("detailCategory").textContent =
@@ -275,6 +279,8 @@ function displayAPIEvents(events) {
 
                 eventDetails.hidden = false;
 
+                updateBookingButtons();
+
             });
 
         });
@@ -282,6 +288,36 @@ function displayAPIEvents(events) {
     // SHOW MORE BUTTON VISIBILITY
     showMoreButton.hidden = visibleEventCount >= events.length;
 }
+
+
+/* EVENT BOOKING HELPERS */
+
+// Create a consistent ID for each BCC event
+function getEventId(event) {
+    if (event.recordid != null) {
+        return String(event.recordid);
+    }
+
+    // Fallback for API records without an ID
+    return JSON.stringify([
+        event.subject || event.title,
+        event.start_date || event.start,
+        event.venue
+    ]);
+}
+
+function updateBookingButtons() {
+    if (!selectedEvent) return;
+
+    const booked = isEventBooked(
+        getEventId(selectedEvent)
+    );
+
+    bookEventButton.hidden = booked;
+    attendanceStatus.hidden = !booked;
+    cancelEventButton.hidden = !booked;
+}
+
 
 // SHOW MORE EVENTS
 showMoreButton.addEventListener("click", function () {
@@ -333,28 +369,50 @@ closeEventDetails.addEventListener("click", function () {
 });
 
 
-// BOOK EVENT //
+/* BOOK EVENT */
 
 bookEventButton.addEventListener("click", function () {
+    if (!selectedEvent) return;
 
-    bookEventButton.hidden = true;
+    const confirmed = confirm(
+        "Would you like to attend this event?"
+    );
 
-    attendanceStatus.hidden = false;
-    cancelEventButton.hidden = false;
+    if (!confirmed) return;
 
+    bookEvent({
+        id: getEventId(selectedEvent),
+        title: selectedEvent.subject ||
+            selectedEvent.title ||
+            "Brisbane Event",
+        startDate: selectedEvent.start_datetime,
+        endDate: selectedEvent.end_datetime,
+        venue: selectedEvent.venue ||
+            "Venue unavailable"
+    });
+
+    updateBookingButtons();
 });
 
 
-// CANCEL ATTENDANCE //
+/* CANCEL ATTENDANCE */
 
 cancelEventButton.addEventListener("click", function () {
+    if (!selectedEvent) return;
 
-    bookEventButton.hidden = false;
+    const confirmed = confirm(
+        "Cancel your attendance for this event?"
+    );
 
-    attendanceStatus.hidden = true;
-    cancelEventButton.hidden = true;
+    if (!confirmed) return;
 
+    cancelEventBooking(
+        getEventId(selectedEvent)
+    );
+
+    updateBookingButtons();
 });
+
 
 // LOAD EVENTS FROM API //
 loadEventsFromAPI();

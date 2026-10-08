@@ -1,0 +1,58 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Events | INTROSPHEER</title>
+
+    <link rel="stylesheet" href="css/app.css">
+    <link rel="stylesheet" href="css/events.css">
+</head>
+
+<body>
+
+    <nav>
+        <a href="index.html" class="nav-logo">INTROSPHEER</a>
+
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="events.html">Events</a>
+            <a href="strings.html">Strings</a>
+            <a href="chat.html">Chat</a>
+            <a href="account.html">Account</a>
+            <a href="about.html">About</a>
+        </div>
+    </nav>
+
+    <main class="events-container">
+
+        <div class="events-heading">
+            <div>
+                <h1>My Events</h1>
+                <p>Manage upcoming events and view your event history.</p>
+            </div>
+
+            <a href="events.html">Discover Events</a>
+        </div>
+
+        <div class="view-toggle">
+            <button id="upcomingEventsButton" type="button">
+                Upcoming Events
+            </button>
+
+            <button id="pastEventsButton" type="button">
+                Past Events
+            </button>
+        </div>
+
+        <section id="myEventsList" class="event-list"></section>
+
+    </main>
+
+    <script src="js/storage.js"></script>
+    <script src="js/my-events.js"></script>
+
+</body>
+</html>
