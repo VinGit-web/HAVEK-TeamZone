@@ -60,36 +60,138 @@
     <!-- INDIVIDUAL CHAT -->
     <main id="conversation-page" class="conversation-page">
 
-        <div class="conversation-header">
+        
+    <div class="conversation-header">
 
-            <button id="back-button">←</button>
+        <button id="back-button" type="button">←</button>
 
-            <div class="conversation-profile">
-                <div id="conversation-avatar" class="profile-image"></div>
+        <div class="conversation-profile">
+            <div id="conversation-avatar" class="profile-image"></div>
 
-                <div>
-                    <h2 id="conversation-name"></h2>
-                    <p class="online-status">Online</p>
-                </div>
+            <div>
+                <h2 id="conversation-name"></h2>
+            <p class="online-status">Online</p>
+
             </div>
-
         </div>
 
+        <!-- Three-dot safety menu -->
+        <div class="chat-safety-menu">
 
-        <div id="messages" class="conversation-messages">
+            <button id="safety-button"
+                    class="safety-button"
+                    type="button"
+                    aria-label="Chat safety options">
+                ⋮
+         </button>
 
+         <div id="safety-options" class="safety-options">
+
+                <button id="report-button" type="button">
+                  🚩 Report
+                </button>
+
+             <button id="block-button" type="button">
+                 🚫 Block
+                </button>
+
+            </div>
         </div>
 
+    </div>
 
-        <div class="chat-input-area">
+    
+    <!-- MESSAGE AREA -->
+    <div id="messages" class="conversation-messages">
+    </div>
 
-            <input type="text" id="message-box" placeholder="Type a message...">
-
-            <button id="send-button">➤</button>
-
-        </div>
+    <!-- MESSAGE INPUT -->
+    <div class="chat-input-area">
+        <input type="text" id="message-box" placeholder="Type a message...">
+        <button id="send-button" type="button">➤</button>
+    </div>
 
     </main>
+
+
+
+    <!-- REPORT MODAL -->
+<div id="report-modal" class="safety-modal">
+    <div class="safety-modal-content">
+
+        <button id="close-report" class="modal-close" type="button">×</button>
+        
+        
+
+        <h2>Report User</h2>
+
+        <p>
+            Why are you reporting
+            <strong id="report-user-name"></strong>?
+        </p>
+
+        <div class="report-options">
+            <label>
+                <input type="radio" name="report-reason" value="harassment">
+                Harassment or bullying
+            </label>
+
+            <label>
+                <input type="radio" name="report-reason" value="inappropriate">
+                Inappropriate behaviour
+            </label>
+
+            <label>
+                <input type="radio" name="report-reason" value="spam">
+                Spam or scam
+            </label>
+
+            <label>
+                <input type="radio" name="report-reason" value="other">
+                Other
+            </label>
+        </div>
+
+        <button id="submit-report" class="danger-button" type="button">
+            Submit Report
+        </button>
+
+    </div>
+</div>
+
+
+<!-- BLOCK MODAL -->
+<div id="block-modal" class="safety-modal">
+    <div class="safety-modal-content">
+
+        <button id="close-block" class="modal-close" type="button">×</button>
+        
+            
+        
+
+        <h2>Block User?</h2>
+
+        <p>
+            Are you sure you want to block
+            <strong id="block-user-name"></strong>?
+        </p>
+
+        <p class="block-warning">
+            This person will no longer be able to message you.
+        </p>
+
+        <div class="modal-buttons">
+            <button id="cancel-block" class="cancel-button" type="button">
+                Cancel
+            </button>
+
+            <button id="confirm-block" class="danger-button" type="button">
+                Block
+            </button>
+        </div>
+
+    </div>
+</div>
 
        <!-- AI DISCLOSURE FOOTER -->
     <footer class="site-footer">
@@ -99,6 +201,9 @@
             and integrated by the team to support the development of the final website.
         </p>
     </footer>
+
+
+
 
 
     <script src="js/chat.js"></script>

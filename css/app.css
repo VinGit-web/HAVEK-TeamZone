@@ -584,3 +584,211 @@ nav {
 .chat-body .site-footer {
     margin-top: auto;
 }
+
+
+
+/* ========================= */
+/* CHAT SAFETY MENU */
+/* ========================= */
+
+.chat-safety-menu {
+    position: relative;
+    margin-left: auto;
+}
+
+.safety-button {
+    border: none;
+    background: transparent;
+
+    font-size: 25px;
+    cursor: pointer;
+
+    padding: 5px 10px;
+}
+
+.safety-button:hover {
+    background: #f1f1f1;
+    border-radius: 50%;
+}
+
+
+/* Dropdown menu */
+
+.safety-options {
+    display: none;
+
+    position: absolute;
+    right: 0;
+    top: 40px;
+
+    width: 160px;
+
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+
+    z-index: 20;
+}
+
+.safety-options.show {
+    display: block;
+}
+
+.safety-options button {
+    width: 100%;
+
+    padding: 12px 15px;
+
+    border: none;
+    background: white;
+
+    text-align: left;
+
+    cursor: pointer;
+
+    font-size: 14px;
+}
+
+.safety-options button:hover {
+    background: #f5f5f5;
+}
+
+
+/* ========================= */
+/* SAFETY MODALS */
+/* ========================= */
+
+.safety-modal {
+    display: none;
+
+    position: fixed;
+
+    inset: 0;
+
+    background: rgba(0, 0, 0, 0.5);
+
+    align-items: center;
+    justify-content: center;
+
+    z-index: 100;
+}
+
+.safety-modal.show {
+    display: flex;
+}
+
+
+/* Modal box */
+
+.safety-modal-content {
+    position: relative;
+
+    width: 400px;
+    max-width: 90%;
+
+    background: white;
+
+    padding: 30px;
+
+    border-radius: 15px;
+
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+}
+
+.safety-modal-content h2 {
+    margin-top: 0;
+}
+
+
+/* Close button */
+
+.modal-close {
+    position: absolute;
+
+    top: 10px;
+    right: 15px;
+
+    border: none;
+    background: none;
+
+    font-size: 25px;
+
+    cursor: pointer;
+}
+
+
+/* Report options */
+
+.report-options label {
+    display: block;
+
+    padding: 10px 0;
+
+    cursor: pointer;
+}
+
+.report-options input {
+    margin-right: 8px;
+}
+
+
+/* Warning */
+
+.block-warning {
+    color: #777;
+}
+
+
+/* Modal buttons */
+
+.modal-buttons {
+    display: flex;
+
+    justify-content: flex-end;
+
+    gap: 10px;
+
+    margin-top: 20px;
+}
+
+
+/* Cancel */
+
+.cancel-button {
+    padding: 10px 20px;
+
+    border: 1px solid #ccc;
+
+    border-radius: 8px;
+
+    background: white;
+
+    cursor: pointer;
+}
+
+.cancel-button:hover {
+    background: #f5f5f5;
+}
+
+
+/* Danger buttons */
+
+.danger-button {
+    padding: 10px 20px;
+
+    border: none;
+
+    border-radius: 8px;
+
+    background: #c62828;
+
+    color: white;
+
+    cursor: pointer;
+}
+
+.danger-button:hover {
+    background: #a91f1f;
+}
