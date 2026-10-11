@@ -11,10 +11,7 @@
     top: 0;
     left: 0;
 
-    background: rgba(255, 255, 255, 0.8)
-                url("../images/sphere_spinner.gif")
-                center center
-                no-repeat;
+    background: rgba(255, 255, 255, 0.8) url("../images/sphere_spinner.gif") center center no-repeat;
 
     z-index: 2000;
 
@@ -89,11 +86,19 @@ body.loaded #loading {
 
 
 /* SEARCH + FILTERS */
-
 .event-filters {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 25px;
+    display: grid;
+
+    grid-template-columns:
+        minmax(0, 2fr) repeat(4, minmax(0, 1fr));
+
+    gap: 0.75rem;
+    margin: 1.5rem 0;
+}
+
+.event-filters>* {
+    width: 100%;
+    min-width: 0;
 }
 
 .event-filters input {
