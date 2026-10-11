@@ -12,18 +12,26 @@
 
     <!-- Styling just for Strings -->
     <link rel="stylesheet" href="css/strings.css">
+
+    <link rel="stylesheet" href="css/theme.css">
+
 </head>
+
+
 
 <body>
 
     <!-- NAVBAR -->
     <nav>
-        <a href="index.html" class="nav-logo">INTROSPHEER</a>
+        <a href="index.html" class="nav-logo">
+            <img src="images/logowhite.png" alt="INTROSPHEER Logo" class="logo-image">
+            <span>INTROSPHEER</span>
+        </a>
 
         <div class="nav-links">
             <a href="index.html">Home</a>
             <a href="events.html">Events</a>
-            <a href="strings.html">Strings</a>
+            <a href="strings.html" class="active">Strings</a>
             <a href="chat.html">Chat</a>
             <a href="account.html">Account</a>
             <a href="about.html">About</a>
@@ -39,11 +47,7 @@
 
             <h1>Strings</h1>
 
-            <button
-                id="openPostForm"
-                class="add-post-button"
-                type="button"
-            >
+            <button id="openPostForm" class="add-post-button" type="button">
                 +
             </button>
 
@@ -51,46 +55,21 @@
 
 
         <!-- CREATE POST FORM -->
-        <section
-            id="postFormContainer"
-            class="post-form-container hidden"
-        >
+        <section id="postFormContainer" class="post-form-container hidden">
 
             <form id="postForm">
 
-                <input
-                    type="text"
-                    id="postName"
-                    placeholder="Your name"
-                    required
-                >
+                <input type="text" id="postName" placeholder="Your name" required>
 
-                <textarea
-                    id="postText"
-                    placeholder="What event are you thinking about?"
-                    required
-                ></textarea>
+                <textarea id="postText" placeholder="What event are you thinking about?" required></textarea>
 
-                <input
-                    type="text"
-                    id="postEvent"
-                    placeholder="Event name"
-                    required
-                >
+                <input type="text" id="postEvent" placeholder="Event name" required>
 
-                <input
-                    type="text"
-                    id="postLocation"
-                    placeholder="Location"
-                    required
-                >
+                <input type="text" id="postLocation" placeholder="Location" required>
 
                 <div class="form-buttons">
 
-                    <button
-                        type="button"
-                        id="cancelPost"
-                    >
+                    <button type="button" id="cancelPost">
                         Cancel
                     </button>
 
@@ -106,10 +85,7 @@
 
 
         <!-- POST FEED -->
-        <section
-            id="stringsFeed"
-            class="strings-feed"
-        >
+        <section id="stringsFeed" class="strings-feed">
 
 
             <!-- MIKE POST -->
@@ -322,7 +298,7 @@
     <footer class="site-footer">
         <p>
             Generative AI tools, including ChatGPT and Claude, were used in the
-            creation and development of this page. Outputs were reviewed, adapted 
+            creation and development of this page. Outputs were reviewed, adapted
             and integrated by the team to support the development of the final website.
         </p>
     </footer>

@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chat</title>
     <link rel="stylesheet" href="css/app.css">
+    <link rel="stylesheet" href="css/theme.css">
 </head>
 
 <body class="chat-body">
@@ -13,191 +14,193 @@
     <!-- SIMPLE NAVBAR CODE -->
 
     <nav>
-     <a href="index.html" class="nav-logo">INTROSPHEER</a>
+        <a href="index.html" class="nav-logo">
+            <img src="images/logowhite.png" alt="INTROSPHEER Logo" class="logo-image">
+            <span>INTROSPHEER</span>
+        </a>
 
-    <div class="nav-links">
-        <a href="index.html">Home</a>
-        <a href="events.html">Events</a>
-        <a href="strings.html">Strings</a>
-        <a href="chat.html">Chat</a>
-        <a href="account.html">Account</a>
-        <a href="about.html">About</a>
-    </div>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="events.html">Events</a>
+            <a href="strings.html">Strings</a>
+            <a href="chat.html" class="active">Chat</a>
+            <a href="account.html">Account</a>
+            <a href="about.html">About</a>
+        </div>
     </nav>
 
-    <!-- CHAT LIST -->
-    <main id="chat-list-page" class="chat-page">
 
-        <h1>Chats</h1>
+    <div class="chat-layout">
+        <!-- CHAT LIST -->
+        <main id="chat-list-page" class="chat-page">
 
-        <div class="chat-list">
+            <h1>Chats</h1>
 
-            <div class="chat-card" data-name="Zach T">
-                <div class="profile-image">ZT</div>
-                <p>Zach T</p>
-            </div>
+            <div class="chat-list">
 
-            <div class="chat-card" data-name="Mike S">
-                <div class="profile-image">MS</div>
-                <p>Mike S</p>
-            </div>
+                <div class="chat-card" data-name="Zach T">
+                    <div class="profile-image">ZT</div>
+                    <p>Zach T</p>
+                </div>
 
-            <div class="chat-card" data-name="Sally S">
-                <div class="profile-image">SS</div>
-                <p>Sally S</p>
-            </div>
+                <div class="chat-card" data-name="Mike S">
+                    <div class="profile-image">MS</div>
+                    <p>Mike S</p>
+                </div>
 
-            <div class="chat-card" data-name="Holly M">
-                <div class="profile-image">HM</div>
-                <p>Holly M</p>
-            </div>
+                <div class="chat-card" data-name="Sally S">
+                    <div class="profile-image">SS</div>
+                    <p>Sally S</p>
+                </div>
 
-        </div>
-
-    </main>
-
-
-    <!-- INDIVIDUAL CHAT -->
-    <main id="conversation-page" class="conversation-page">
-
-        
-    <div class="conversation-header">
-
-        <button id="back-button" type="button">←</button>
-
-        <div class="conversation-profile">
-            <div id="conversation-avatar" class="profile-image"></div>
-
-            <div>
-                <h2 id="conversation-name"></h2>
-            <p class="online-status">Online</p>
+                <div class="chat-card" data-name="Holly M">
+                    <div class="profile-image">HM</div>
+                    <p>Holly M</p>
+                </div>
 
             </div>
-        </div>
 
-        <!-- Three-dot safety menu -->
-        <div class="chat-safety-menu">
+        </main>
 
-            <button id="safety-button"
-                    class="safety-button"
-                    type="button"
-                    aria-label="Chat safety options">
-                ⋮
-         </button>
 
-         <div id="safety-options" class="safety-options">
+        <!-- INDIVIDUAL CHAT -->
+        <main id="conversation-page" class="conversation-page">
 
-                <button id="report-button" type="button">
-                  🚩 Report
-                </button>
 
-             <button id="block-button" type="button">
-                 🚫 Block
-                </button>
+            <div class="conversation-header">
+
+                <button id="back-button" type="button">←</button>
+
+                <div class="conversation-profile">
+                    <div id="conversation-avatar" class="profile-image"></div>
+
+                    <div>
+                        <h2 id="conversation-name"></h2>
+                        <p class="online-status">Online</p>
+
+                    </div>
+                </div>
+
+                <!-- Three-dot safety menu -->
+                <div class="chat-safety-menu">
+
+                    <button id="safety-button" class="safety-button" type="button" aria-label="Chat safety options">
+                        ⋮
+                    </button>
+
+                    <div id="safety-options" class="safety-options">
+
+                        <button id="report-button" type="button">
+                            🚩 Report
+                        </button>
+
+                        <button id="block-button" type="button">
+                            🚫 Block
+                        </button>
+
+                    </div>
+                </div>
 
             </div>
-        </div>
+
+
+            <!-- MESSAGE AREA -->
+            <div id="messages" class="conversation-messages">
+            </div>
+
+            <!-- MESSAGE INPUT -->
+            <div class="chat-input-area">
+                <input type="text" id="message-box" placeholder="Type a message...">
+                <button id="send-button" type="button">➤</button>
+            </div>
+
+        </main>
 
     </div>
-
-    
-    <!-- MESSAGE AREA -->
-    <div id="messages" class="conversation-messages">
-    </div>
-
-    <!-- MESSAGE INPUT -->
-    <div class="chat-input-area">
-        <input type="text" id="message-box" placeholder="Type a message...">
-        <button id="send-button" type="button">➤</button>
-    </div>
-
-    </main>
-
-
 
     <!-- REPORT MODAL -->
-<div id="report-modal" class="safety-modal">
-    <div class="safety-modal-content">
+    <div id="report-modal" class="safety-modal">
+        <div class="safety-modal-content">
 
-        <button id="close-report" class="modal-close" type="button">×</button>
-        
-        
-
-        <h2>Report User</h2>
-
-        <p>
-            Why are you reporting
-            <strong id="report-user-name"></strong>?
-        </p>
-
-        <div class="report-options">
-            <label>
-                <input type="radio" name="report-reason" value="harassment">
-                Harassment or bullying
-            </label>
-
-            <label>
-                <input type="radio" name="report-reason" value="inappropriate">
-                Inappropriate behaviour
-            </label>
-
-            <label>
-                <input type="radio" name="report-reason" value="spam">
-                Spam or scam
-            </label>
-
-            <label>
-                <input type="radio" name="report-reason" value="other">
-                Other
-            </label>
-        </div>
-
-        <button id="submit-report" class="danger-button" type="button">
-            Submit Report
-        </button>
-
-    </div>
-</div>
+            <button id="close-report" class="modal-close" type="button">×</button>
 
 
-<!-- BLOCK MODAL -->
-<div id="block-modal" class="safety-modal">
-    <div class="safety-modal-content">
 
-        <button id="close-block" class="modal-close" type="button">×</button>
-        
-            
-        
+            <h2>Report User</h2>
 
-        <h2>Block User?</h2>
+            <p>
+                Why are you reporting
+                <strong id="report-user-name"></strong>?
+            </p>
 
-        <p>
-            Are you sure you want to block
-            <strong id="block-user-name"></strong>?
-        </p>
+            <div class="report-options">
+                <label>
+                    <input type="radio" name="report-reason" value="harassment">
+                    Harassment or bullying
+                </label>
 
-        <p class="block-warning">
-            This person will no longer be able to message you.
-        </p>
+                <label>
+                    <input type="radio" name="report-reason" value="inappropriate">
+                    Inappropriate behaviour
+                </label>
 
-        <div class="modal-buttons">
-            <button id="cancel-block" class="cancel-button" type="button">
-                Cancel
+                <label>
+                    <input type="radio" name="report-reason" value="spam">
+                    Spam or scam
+                </label>
+
+                <label>
+                    <input type="radio" name="report-reason" value="other">
+                    Other
+                </label>
+            </div>
+
+            <button id="submit-report" class="danger-button" type="button">
+                Submit Report
             </button>
 
-            <button id="confirm-block" class="danger-button" type="button">
-                Block
-            </button>
         </div>
-
     </div>
-</div>
 
-       <!-- AI DISCLOSURE FOOTER -->
+
+    <!-- BLOCK MODAL -->
+    <div id="block-modal" class="safety-modal">
+        <div class="safety-modal-content">
+
+            <button id="close-block" class="modal-close" type="button">×</button>
+
+
+
+
+            <h2>Block User?</h2>
+
+            <p>
+                Are you sure you want to block
+                <strong id="block-user-name"></strong>?
+            </p>
+
+            <p class="block-warning">
+                This person will no longer be able to message you.
+            </p>
+
+            <div class="modal-buttons">
+                <button id="cancel-block" class="cancel-button" type="button">
+                    Cancel
+                </button>
+
+                <button id="confirm-block" class="danger-button" type="button">
+                    Block
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- AI DISCLOSURE FOOTER -->
     <footer class="site-footer">
         <p>
             Generative AI tools, including ChatGPT and Claude, were used in the
-            creation and development of this page. Outputs were reviewed, adapted 
+            creation and development of this page. Outputs were reviewed, adapted
             and integrated by the team to support the development of the final website.
         </p>
     </footer>

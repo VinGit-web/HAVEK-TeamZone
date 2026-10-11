@@ -1,175 +1,181 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Account</title>
-    <link rel="stylesheet" href="css/account.css">
-    <link rel="stylesheet" href="css/app.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Account</title>
+  <link rel="stylesheet" href="css/account.css">
+  <link rel="stylesheet" href="css/app.css">
+  <link rel="stylesheet" href="css/theme.css">
 </head>
 
 
 
 <body class="account-body">
-   
+
   <!-- SIMPLE NAVBAR CODE -->
   <nav>
-         <a href="index.html" class="nav-logo">INTROSPHEER</a>
+    <a href="index.html" class="nav-logo">
+      <img src="images/logowhite.png" alt="INTROSPHEER Logo" class="logo-image">
+      <span>INTROSPHEER</span>
+    </a>
+
     <div class="nav-links">
-        <a href="index.html">Home</a>
-        <a href="events.html">Events</a>
-        <a href="strings.html">Strings</a>
-        <a href="chat.html">Chat</a>
-        <a href="account.html">Account</a>
-        <a href="about.html">About</a>
+      <a href="index.html">Home</a>
+      <a href="events.html">Events</a>
+      <a href="strings.html">Strings</a>
+      <a href="chat.html">Chat</a>
+      <a href="account.html" class="active">Account</a>
+      <a href="about.html">About</a>
     </div>
-    </nav>
+  </nav>
 
-    <h1>Account</h1>
+  <h1>Account</h1>
 
-    <header>
-  <p>Edit your profile and update your account details/privacy preferences.</p>
-</header>
- 
-<hr>
- 
-<main>
-<form>
-<!-- ============================= -->
-  <!--        PROFILE DETAILS        -->
-  <!-- ============================= -->
-  <fieldset>
- 
-    <!-- Profile picture -->
-    <p>
-      <strong>Profile Picture</strong><br>
-      <span id="avatarPreview"></span>
-    </p>
- 
-    <p>
-      <label for="avatarColor">Avatar Colour</label><br>
-      <input type="color" id="avatarColor" value="#8B5E3C">
-    </p>
- 
-    <p>
-      <strong>Accessories</strong><br>
-      <span class="accessory-options">
-        <label><input type="checkbox" id="acc_hat"> Hat</label>
-        <label><input type="checkbox" id="acc_glasses"> Sunglasses</label>
-        <label><input type="checkbox" id="acc_earrings"> Earrings</label>
-      </span>
-    </p>
- 
-    <!-- Profile visibility -->
-    <fieldset>
-      <legend>Profile Visibility</legend>
-      <label><input type="radio" name="visibility" value="public" checked> Public</label>
-      <label><input type="radio" name="visibility" value="private"> Private</label>
-    </fieldset>
- 
-    <!-- Basic info -->
-    <p>
-      <label for="username">Username</label><br>
-      <input type="text" id="username" name="username" size="30" placeholder="Enter username">
-    </p>
- 
-    <p>
-      <label for="name">Full Name</label><br>
-      <input type="text" id="name" name="name" size="30" placeholder="Enter full name">
-    </p>
- 
-    <p>
-      <label for="dob">Date of Birth</label><br>
-      <input type="date" id="dob" name="dob">
-    </p>
- 
-    <p>
-      <label for="age">Age</label><br>
-      <output id="age" name="age">--</output>
-      <small>(calculated from date of birth)</small>
-    </p>
- 
-    <p>
-      <label for="gender">Gender</label><br>
-      <select id="gender" name="gender">
-        <option value="">Select gender</option>
-        <option value="female">Female</option>
-        <option value="male">Male</option>
-        <option value="nonbinary">Non-binary</option>
-        <option value="other">Other</option>
-        <option value="prefer_not">Prefer not to say</option>
-      </select>
-    </p>
-  </fieldset>
- 
-  <br>
- 
-  <!-- ============================= -->
-  <!--   PRIVACY & USER SETTINGS     -->
-  <!-- ============================= -->
-  <fieldset>
-    <legend><strong>Privacy &amp; User Settings</strong></legend>
- 
-    <h3>Privacy</h3>
-    <ul>
-      <li>
-        <label>
-          <input type="checkbox" id="show_email" name="show_email">
-          Show email address on profile
-        </label>
-      </li>
-      <li>
-        <label>
-          <input type="checkbox" id="allow_messages" name="allow_messages" checked>
-          Allow messages from other users
-        </label>
-      </li>
-      <li>
-        <label>
-          <input type="checkbox" id="search_visible" name="search_visible" checked>
-          Show my profile in search results
-        </label>
-      </li>
-    </ul>
- 
-    <h3>Account</h3>
-    <ul>
-      <li>
-        <label>
-          <input type="checkbox" id="email_notifications" name="email_notifications" checked>
-          Email notifications
-        </label>
-      </li>
-      <li>
-        <label>
-          <input type="checkbox" id="two_factor" name="two_factor">
-          Two-factor authentication
-        </label>
-      </li>
-    </ul>
-  </fieldset>
- 
+  <header>
+    <p>Edit your profile and update your account details/privacy preferences.</p>
+  </header>
+
   <hr>
- 
-  <p>
-    <button type="submit">Save Changes</button>
-    <button type="reset">Cancel</button>
-  </p>
- 
-</form>
-</main>
 
-    <!-- AI DISCLOSURE FOOTER -->
-    <footer class="site-footer">
+  <main>
+    <form>
+      <!-- ============================= -->
+      <!--        PROFILE DETAILS        -->
+      <!-- ============================= -->
+      <fieldset>
+
+        <!-- Profile picture -->
         <p>
-            Generative AI tools, including ChatGPT and Claude, were used in the
-            creation and development of this page. Outputs were reviewed, adapted 
-            and integrated by the team to support the development of the final website.
+          <strong>Profile Picture</strong><br>
+          <span id="avatarPreview"></span>
         </p>
-    </footer>
+
+        <p>
+          <label for="avatarColor">Avatar Colour</label><br>
+          <input type="color" id="avatarColor" value="#8B5E3C">
+        </p>
+
+        <p>
+          <strong>Accessories</strong><br>
+          <span class="accessory-options">
+            <label><input type="checkbox" id="acc_hat"> Hat</label>
+            <label><input type="checkbox" id="acc_glasses"> Sunglasses</label>
+            <label><input type="checkbox" id="acc_earrings"> Earrings</label>
+          </span>
+        </p>
+
+        <!-- Profile visibility -->
+        <fieldset>
+          <legend>Profile Visibility</legend>
+          <label><input type="radio" name="visibility" value="public" checked> Public</label>
+          <label><input type="radio" name="visibility" value="private"> Private</label>
+        </fieldset>
+
+        <!-- Basic info -->
+        <p>
+          <label for="username">Username</label><br>
+          <input type="text" id="username" name="username" size="30" placeholder="Enter username">
+        </p>
+
+        <p>
+          <label for="name">Full Name</label><br>
+          <input type="text" id="name" name="name" size="30" placeholder="Enter full name">
+        </p>
+
+        <p>
+          <label for="dob">Date of Birth</label><br>
+          <input type="date" id="dob" name="dob">
+        </p>
+
+        <p>
+          <label for="age">Age</label><br>
+          <output id="age" name="age">--</output>
+          <small>(calculated from date of birth)</small>
+        </p>
+
+        <p>
+          <label for="gender">Gender</label><br>
+          <select id="gender" name="gender">
+            <option value="">Select gender</option>
+            <option value="female">Female</option>
+            <option value="male">Male</option>
+            <option value="nonbinary">Non-binary</option>
+            <option value="other">Other</option>
+            <option value="prefer_not">Prefer not to say</option>
+          </select>
+        </p>
+      </fieldset>
+
+      <br>
+
+      <!-- ============================= -->
+      <!--   PRIVACY & USER SETTINGS     -->
+      <!-- ============================= -->
+      <fieldset>
+        <legend><strong>Privacy &amp; User Settings</strong></legend>
+
+        <h3>Privacy</h3>
+        <ul>
+          <li>
+            <label>
+              <input type="checkbox" id="show_email" name="show_email">
+              Show email address on profile
+            </label>
+          </li>
+          <li>
+            <label>
+              <input type="checkbox" id="allow_messages" name="allow_messages" checked>
+              Allow messages from other users
+            </label>
+          </li>
+          <li>
+            <label>
+              <input type="checkbox" id="search_visible" name="search_visible" checked>
+              Show my profile in search results
+            </label>
+          </li>
+        </ul>
+
+        <h3>Account</h3>
+        <ul>
+          <li>
+            <label>
+              <input type="checkbox" id="email_notifications" name="email_notifications" checked>
+              Email notifications
+            </label>
+          </li>
+          <li>
+            <label>
+              <input type="checkbox" id="two_factor" name="two_factor">
+              Two-factor authentication
+            </label>
+          </li>
+        </ul>
+      </fieldset>
+
+      <hr>
+
+      <p>
+        <button type="submit">Save Changes</button>
+        <button type="reset">Cancel</button>
+      </p>
+
+    </form>
+  </main>
+
+  <!-- AI DISCLOSURE FOOTER -->
+  <footer class="site-footer">
+    <p>
+      Generative AI tools, including ChatGPT and Claude, were used in the
+      creation and development of this page. Outputs were reviewed, adapted
+      and integrated by the team to support the development of the final website.
+    </p>
+  </footer>
 
 </body>
 <script src="js/account.js"></script>
 <script src="js/app.js"></script>
-</html>
 
+</html>

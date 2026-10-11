@@ -8,6 +8,8 @@
     <title>Home | INTROSPHEER</title>
 
     <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/theme.css">
+
 </head>
 
 <body>
@@ -15,7 +17,8 @@
     <nav class="navbar">
 
         <a href="index.html" class="nav-logo">
-            INTROSPHEER
+            <img src="images/logowhite.png" alt="INTROSPHEER Logo" class="logo-image">
+            <span>INTROSPHEER</span>
         </a>
 
         <div class="nav-links">
@@ -35,15 +38,8 @@
 
             <div class="user-area">
 
-                <button
-                    id="currentUserButton"
-                    class="current-user"
-                    type="button"
-                >
-                    <span
-                        id="currentAvatar"
-                        class="current-avatar"
-                    >
+                <button id="currentUserButton" class="current-user" type="button">
+                    <span id="currentAvatar" class="current-avatar">
                         SS
                     </span>
 
@@ -55,24 +51,12 @@
 
                 <div class="search-wrapper">
 
-                    <input
-                        id="userSearch"
-                        type="text"
-                        placeholder="Search people..."
-                        autocomplete="off"
-                        aria-label="Search people"
-                    >
+                    <input id="userSearch" type="text" placeholder="Search people..." autocomplete="off"
+                        aria-label="Search people">
 
-                    <div
-                        id="searchSuggestions"
-                        class="search-suggestions"
-                        hidden
-                    ></div>
+                    <div id="searchSuggestions" class="search-suggestions" hidden></div>
 
-                    <p
-                        id="searchMessage"
-                        class="search-message"
-                    ></p>
+                    <p id="searchMessage" class="search-message"></p>
 
                 </div>
 
@@ -96,14 +80,8 @@
 
         <section class="sphere-area">
 
-            <div
-                id="sphereContainer"
-                class="sphere-container"
-            >
-                <canvas
-                    id="sphereCanvas"
-                    aria-label="Interactive 3D connection sphere"
-                ></canvas>
+            <div id="sphereContainer" class="sphere-container">
+                <canvas id="sphereCanvas" aria-label="Interactive 3D connection sphere"></canvas>
             </div>
 
 
@@ -124,45 +102,26 @@
         </section>
 
 
-        <button
-            id="aboutButton"
-            class="about-button"
-            type="button"
-            aria-label="About INTROSPHEER"
-        >
+        <button id="aboutButton" class="about-button" type="button" aria-label="About INTROSPHEER">
             i
         </button>
 
     </main>
 
 
-    <div
-        id="profileOverlay"
-        class="profile-overlay"
-    ></div>
+    <div id="profileOverlay" class="profile-overlay"></div>
 
 
-    <aside
-        id="profilePanel"
-        class="profile-panel"
-    >
+    <aside id="profilePanel" class="profile-panel">
 
-        <button
-            id="closeProfile"
-            class="close-profile"
-            type="button"
-            aria-label="Close profile"
-        >
+        <button id="closeProfile" class="close-profile" type="button" aria-label="Close profile">
             &times;
         </button>
 
 
         <div class="profile-top">
 
-            <div
-                id="profileAvatar"
-                class="profile-avatar"
-            >
+            <div id="profileAvatar" class="profile-avatar">
                 ZT
             </div>
 
@@ -184,19 +143,11 @@
 
         <div class="profile-actions">
 
-            <button
-                id="messageButton"
-                class="primary-button"
-                type="button"
-            >
+            <button id="messageButton" class="primary-button" type="button">
                 Message
             </button>
 
-            <button
-                id="connectButton"
-                class="secondary-button"
-                type="button"
-            >
+            <button id="connectButton" class="secondary-button" type="button">
                 Connected
             </button>
 
@@ -229,10 +180,7 @@
 
             <h3>Interests</h3>
 
-            <div
-                id="profileInterests"
-                class="interest-list"
-            ></div>
+            <div id="profileInterests" class="interest-list"></div>
 
         </section>
 
@@ -274,20 +222,11 @@
     </aside>
 
 
-    <div
-        id="aboutModal"
-        class="about-modal"
-        hidden
-    >
+    <div id="aboutModal" class="about-modal" hidden>
 
         <div class="about-modal-card">
 
-            <button
-                id="closeAbout"
-                class="close-about"
-                type="button"
-                aria-label="Close about"
-            >
+            <button id="closeAbout" class="close-about" type="button" aria-label="Close about">
                 &times;
             </button>
 
@@ -316,11 +255,7 @@
             <section class="about-team">
 
                 <div>
-                    <img
-                        src="images/team-photo.jpeg"
-                        alt="INTROSPHEER project team"
-                        class="team-photo"
-                    >
+                    <img src="images/team-photo.jpeg" alt="INTROSPHEER project team" class="team-photo">
                 </div>
 
 
@@ -366,20 +301,12 @@
                 </p>
 
 
-                <button
-                    id="showReferences"
-                    class="reference-button"
-                    type="button"
-                >
+                <button id="showReferences" class="reference-button" type="button">
                     View APA 7 Reference List
                 </button>
 
 
-                <div
-                    id="referenceList"
-                    class="reference-list"
-                    hidden
-                >
+                <div id="referenceList" class="reference-list" hidden>
 
                     <p>
                         Brisbane City Council. (n.d.).
