@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -9,6 +10,30 @@
 
     <link rel="stylesheet" href="css/main.css">
     <link rel="stylesheet" href="css/theme.css">
+
+    <style>
+        html {
+            visibility: hidden;
+        }
+
+        .logout-button {
+            padding: 9px 16px;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 20px;
+            background: transparent;
+            color: inherit;
+            font: inherit;
+            font-size: 13px;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .logout-button:hover {
+            background: rgba(128, 128, 128, 0.15);
+        }
+    </style>
+
+    <script type="module" src="./js/auth-guard.js"></script>
 
 </head>
 
@@ -48,11 +73,19 @@
                     </span>
                 </button>
 
+                <button id="logoutBtn" class="logout-button" type="button">
+                    Log Out
+                </button>
 
                 <div class="search-wrapper">
 
-                    <input id="userSearch" type="text" placeholder="Search people..." autocomplete="off"
-                        aria-label="Search people">
+                    <input
+                        id="userSearch"
+                        type="text"
+                        placeholder="Search people..."
+                        autocomplete="off"
+                        aria-label="Search people"
+                    >
 
                     <div id="searchSuggestions" class="search-suggestions" hidden></div>
 
@@ -81,7 +114,10 @@
         <section class="sphere-area">
 
             <div id="sphereContainer" class="sphere-container">
-                <canvas id="sphereCanvas" aria-label="Interactive 3D connection sphere"></canvas>
+                <canvas
+                    id="sphereCanvas"
+                    aria-label="Interactive 3D connection sphere"
+                ></canvas>
             </div>
 
 
@@ -102,7 +138,12 @@
         </section>
 
 
-        <button id="aboutButton" class="about-button" type="button" aria-label="About INTROSPHEER">
+        <button
+            id="aboutButton"
+            class="about-button"
+            type="button"
+            aria-label="About INTROSPHEER"
+        >
             i
         </button>
 
@@ -114,7 +155,12 @@
 
     <aside id="profilePanel" class="profile-panel">
 
-        <button id="closeProfile" class="close-profile" type="button" aria-label="Close profile">
+        <button
+            id="closeProfile"
+            class="close-profile"
+            type="button"
+            aria-label="Close profile"
+        >
             &times;
         </button>
 
@@ -226,7 +272,12 @@
 
         <div class="about-modal-card">
 
-            <button id="closeAbout" class="close-about" type="button" aria-label="Close about">
+            <button
+                id="closeAbout"
+                class="close-about"
+                type="button"
+                aria-label="Close about"
+            >
                 &times;
             </button>
 
@@ -255,7 +306,11 @@
             <section class="about-team">
 
                 <div>
-                    <img src="images/team-photo.jpeg" alt="INTROSPHEER project team" class="team-photo">
+                    <img
+                        src="images/team-photo.jpeg"
+                        alt="INTROSPHEER project team"
+                        class="team-photo"
+                    >
                 </div>
 
 
@@ -301,7 +356,11 @@
                 </p>
 
 
-                <button id="showReferences" class="reference-button" type="button">
+                <button
+                    id="showReferences"
+                    class="reference-button"
+                    type="button"
+                >
                     View APA 7 Reference List
                 </button>
 
@@ -348,14 +407,36 @@
 
 
     <script type="importmap">
-                {
-                    "imports": {
-                    "three": "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js"
-                                }
-                }
+        {
+            "imports": {
+                "three": "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js"
+            }
+        }
     </script>
 
     <script type="module" src="js/main.js"></script>
+
+    <script type="module">
+        import { logoutUser } from "./js/auth.js";
+
+        const logoutButton = document.getElementById("logoutBtn");
+
+        logoutButton.addEventListener("click", async () => {
+            logoutButton.disabled = true;
+            logoutButton.textContent = "Logging out...";
+
+            try {
+                await logoutUser();
+                window.location.replace("login.html");
+            } catch (error) {
+                console.error("Logout failed:", error);
+                logoutButton.disabled = false;
+                logoutButton.textContent = "Log Out";
+                alert("Unable to log out. Please try again.");
+            }
+        });
+    </script>
+
 </body>
 
 </html>
