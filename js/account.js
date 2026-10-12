@@ -56,26 +56,41 @@
  
   renderAvatar();
  
-  /* ---------- Age from date of birth ---------- */
-  const dobInput  = document.getElementById('dob');
-  const ageOutput = document.getElementById('age');
- 
-  dobInput.addEventListener('change', function () {
-    if (!this.value) {
-      ageOutput.textContent = '--';
-      return;
-    }
- 
-    const dob   = new Date(this.value);
-    const today = new Date();
- 
-    let age = today.getFullYear() - dob.getFullYear();
- 
-    const hadBirthdayThisYear =
-      today.getMonth() > dob.getMonth() ||
-      (today.getMonth() === dob.getMonth() && today.getDate() >= dob.getDate());
- 
-    if (!hadBirthdayThisYear) age--;
- 
-    ageOutput.textContent = age >= 0 ? age : '--';
-  });
+  
+/* ---------- Year of birth dropdown and age check ---------- */
+const birthYearInput = document.getElementById('birthYear');
+const ageOutput = document.getElementById('age');
+const ageError = document.getElementById('age-error');
+
+const currentYear = new Date().getFullYear();
+const latestBirthYear = currentYear - 18;
+
+// Add years from the latest eligible year down to 1950
+for (let year = latestBirthYear; year >= 1950; year--) {
+  const option = document.createElement('option');
+  option.value = year;
+  option.textContent = year;
+  birthYearInput.appendChild(option);
+}
+
+birthYearInput.addEventListener('change', function () {
+  const birthYear = Number(this.value);
+
+  if (this.value === '') {
+    ageOutput.textContent = '--';
+    ageError.style.display = 'none';
+    return;
+  }
+
+  const age = currentYear - birthYear;
+
+  if (age < 18 || birthYear < 1950) {
+    ageOutput.textContent = '--';
+    ageError.style.display = 'block';
+    this.value = '';
+    return;
+  }
+
+  ageOutput.textContent = age;
+  ageError.style.display = 'none';
+});

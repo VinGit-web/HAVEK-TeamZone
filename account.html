@@ -84,16 +84,25 @@
           <input type="text" id="name" name="name" size="30" placeholder="Enter full name">
         </p>
 
+       
         <p>
-          <label for="dob">Date of Birth</label><br>
-          <input type="date" id="dob" name="dob">
+          <label for="birthYear">Year of Birth</label><br>
+          <select id="birthYear" name="birthYear" required>
+          <option value="">Select your birth year</option>
+         </select>
+          <small>You must be 18 or older to use this website.</small>
         </p>
 
         <p>
-          <label for="age">Age</label><br>
-          <output id="age" name="age">--</output>
-          <small>(calculated from date of birth)</small>
+         <label for="age">Age</label><br>
+         <output id="age" name="age">--</output>
+         <small>(calculated from year of birth)</small>
         </p>
+
+       <p id="age-error" style="color: red; display: none;">
+          You must be 18 or older to use this website.
+        </p>
+
 
         <p>
           <label for="gender">Gender</label><br>
