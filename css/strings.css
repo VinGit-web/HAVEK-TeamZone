@@ -1,251 +1,277 @@
-/* ============================= */
-/* STRINGS PAGE */
-/* ============================= */
 
-.strings-page {
-    max-width: 650px;
+/* STRINGS PAGE */
+
+.strings-body .strings-page {
+    width: min(1100px, 94%);
+    max-width: 1100px;
     margin: 0 auto;
-    padding: 30px 20px 60px;
+    padding: 30px 0 70px;
 }
 
-
-/* ============================= */
 /* PAGE HEADING */
-/* ============================= */
 
-.strings-heading {
+.strings-body .strings-heading {
     display: flex;
     align-items: center;
     justify-content: space-between;
-
-    margin-bottom: 25px;
-}
-
-.strings-heading h1 {
-    margin: 0;
-}
-
-
-/* + BUTTON */
-
-.add-post-button {
-    width: 46px;
-    height: 38px;
-
-    border: 1px solid #333;
-    border-radius: 8px;
-
-    background: white;
-
-    font-size: 26px;
-
-    cursor: pointer;
-}
-
-.add-post-button:hover {
-    background: #f2f2f2;
-}
-
-
-/* ============================= */
-/* FEED */
-/* ============================= */
-
-.strings-feed {
-    display: flex;
-    flex-direction: column;
-
-    gap: 18px;
-}
-
-
-/* ============================= */
-/* POST CARD */
-/* ============================= */
-
-.string-card {
-    background: white;
-
-    border: 1px solid #d8d8d8;
-    border-radius: 12px;
-
-    padding: 18px;
-
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-}
-
-
-/* ============================= */
-/* USER */
-/* ============================= */
-
-.post-user {
-    display: flex;
-    align-items: center;
-
-    gap: 12px;
-
-    margin-bottom: 14px;
-}
-
-.post-user h3 {
-    margin: 0;
-
-    font-size: 16px;
-}
-
-
-/* PROFILE CIRCLE */
-
-.profile-circle {
-    width: 42px;
-    height: 42px;
-
-    border-radius: 50%;
-
-    background: #eeeeee;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    font-weight: bold;
-}
-
-
-/* ============================= */
-/* POST TEXT */
-/* ============================= */
-
-.post-message {
-    margin: 10px 0 18px;
-
-    line-height: 1.5;
-
-    font-size: 15px;
-}
-
-
-/* ============================= */
-/* EVENT INFO */
-/* ============================= */
-
-.event-details {
-    font-size: 14px;
-
-    margin-bottom: 14px;
-}
-
-.event-details p {
-    margin: 4px 0;
-}
-
-
-/* ============================= */
-/* ACTION BUTTONS */
-/* ============================= */
-
-.post-actions {
-    display: flex;
-
-    justify-content: flex-end;
-    align-items: center;
-
-    gap: 10px;
-}
-
-
-.join-button,
-.comment-button {
-    padding: 8px 16px;
-
-    border-radius: 7px;
-
-    border: 1px solid #444;
-
-    background: white;
-
-    cursor: pointer;
-}
-
-
-.join-button:hover,
-.comment-button:hover {
-    background: #f0f0f0;
-}
-
-
-/* ============================= */
-/* CREATE POST FORM */
-/* ============================= */
-
-.post-form-container {
-    background: white;
-
-    border: 1px solid #ddd;
-    border-radius: 12px;
-
-    padding: 20px;
-
     margin-bottom: 20px;
 }
 
-
-.post-form-container form {
-    display: flex;
-
-    flex-direction: column;
-
-    gap: 12px;
+.strings-body .strings-heading h1 {
+    color: #fff;
+    margin: 0;
+    font-size: 42px;
+    font-weight: 300;
 }
 
-
-.post-form-container input,
-.post-form-container textarea {
-    width: 100%;
-
-    box-sizing: border-box;
-
-    padding: 11px;
-
-    border: 1px solid #ccc;
-    border-radius: 7px;
-
-    font-family: inherit;
-}
-
-
-.post-form-container textarea {
-    min-height: 100px;
-
-    resize: vertical;
-}
-
-
-.form-buttons {
-    display: flex;
-
-    justify-content: flex-end;
-
-    gap: 10px;
-}
-
-
-.form-buttons button {
-    padding: 9px 18px;
-
-    border-radius: 7px;
-
-    border: 1px solid #444;
-
-    background: white;
-
+.strings-body .add-post-button {
+    min-width: 86px;
+    height: 54px;
+    padding: 0 20px;
+    border: 2px solid #fff;
+    border-radius: 10px;
+    background: transparent;
+    color: #fff;
+    font-size: 0;
     cursor: pointer;
 }
 
+.strings-body .add-post-button::after {
+    content: "Post";
+    font-size: 16px;
+    font-weight: 700;
+}
 
-/* hide create form */
+.strings-body .strings-hint {
+    color: #d4d9e5;
+    font-size: 14px;
+    line-height: 1.5;
+    margin: 0 0 20px;
+}
 
-.hidden {
-    display: none;
+/* POST FEED */
+
+.strings-body .strings-feed {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px !important;
+}
+
+/* POST CARDS */
+
+.strings-body .string-card {
+    min-width: 0;
+    color: #111318;
+
+    background:
+        radial-gradient(
+            circle at 80% 70%,
+            rgba(116, 226, 225, .45),
+            transparent 48%
+        ),
+        linear-gradient(
+            120deg,
+            rgba(245, 246, 241, .96),
+            rgba(210, 232, 236, .92)
+        ) !important;
+
+    border: 2px solid #fff !important;
+    border-radius: 20px !important;
+    padding: 19px !important;
+}
+
+/* USER DETAILS */
+
+.strings-body .post-user {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.strings-body .profile-circle {
+    width: 40px !important;
+    height: 40px !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 40px;
+    border-radius: 50%;
+    background: #eaf0f5 !important;
+    color: #111318;
+    font-weight: 700;
+}
+
+.strings-body .post-user h3 {
+    margin: 0;
+    color: #111318;
+    font-size: 16px !important;
+}
+
+/* POST CONTENT */
+
+.strings-body .post-message {
+    margin: 10px 0 18px !important;
+    min-height: 0;
+    font-size: 15px !important;
+    line-height: 1.55 !important;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+.strings-body .event-details {
+    margin-bottom: 14px !important;
+    color: #111318;
+    font-size: 14px;
+}
+
+.strings-body .event-details p {
+    margin: 4px 0;
+}
+
+/* POST ACTIONS */
+
+.strings-body .post-actions {
+    display: flex;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.strings-body .post-actions button {
+    padding: 9px 16px !important;
+    border: 1px solid #333 !important;
+    border-radius: 8px !important;
+    color: #111318 !important;
+    background: rgba(255, 255, 255, .45) !important;
+    cursor: pointer;
+}
+
+.strings-body .post-actions button:hover {
+    background: #fff !important;
+}
+
+/* CREATE POST FORM */
+
+.strings-body .post-form-container {
+    padding: 20px;
+    margin-bottom: 20px;
+    background: #f5f6f2 !important;
+    color: #111318 !important;
+    border: 2px solid #fff;
+    border-radius: 16px;
+}
+
+.strings-body .post-form-container form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.strings-body .post-form-container input,
+.strings-body .post-form-container textarea {
+    width: 100%;
+    padding: 11px;
+    border: 1px solid #aeb7c2;
+    border-radius: 8px;
+    background: #fff;
+    color: #111318;
+}
+
+.strings-body .post-form-container textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+.strings-body .form-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.strings-body .form-buttons button {
+    padding: 9px 18px;
+    border: 1px solid #333;
+    border-radius: 8px;
+    background: #fff;
+    color: #111318;
+    cursor: pointer;
+}
+
+/* HIDDEN ELEMENTS */
+
+.strings-body .hidden {
+    display: none !important;
+}
+
+/* COMMENTS */
+
+.strings-body .comments-section {
+    margin-top: 18px;
+    padding-top: 15px;
+    border-top: 1px solid #b8c2ca;
+    color: #111318;
+}
+
+.strings-body .comments-section h4 {
+    margin: 0 0 13px;
+    font-size: 16px;
+}
+
+.strings-body .comments-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 14px;
+}
+
+.strings-body .comment-item {
+    padding: 11px;
+    background: rgba(255, 255, 255, .66);
+    border-radius: 9px;
+    overflow-wrap: anywhere;
+}
+
+.strings-body .comment-item p {
+    margin: 5px 0 0;
+    white-space: pre-wrap;
+    line-height: 1.5;
+}
+
+.strings-body .comment-form {
+    display: flex;
+    gap: 9px;
+}
+
+.strings-body .comment-form input {
+    min-width: 0;
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #aeb7c2;
+    border-radius: 8px;
+    background: #fff;
+    color: #111318;
+}
+
+.strings-body .comment-form button {
+    padding: 10px 15px;
+    border: 1px solid #333;
+    border-radius: 8px;
+    background: #fff;
+    color: #111318;
+    cursor: pointer;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 820px) {
+    .strings-body .strings-feed {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .strings-body .comment-form {
+        flex-wrap: wrap;
+    }
 }
