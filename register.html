@@ -1,0 +1,63 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register | INTROSPHEER</title>
+</head>
+<body>
+
+  <h1>Create an Account</h1>
+
+  <form id="registerForm">
+    <input
+      type="email"
+      id="email"
+      placeholder="Email"
+      autocomplete="email"
+      required
+    >
+
+    <input
+      type="password"
+      id="password"
+      placeholder="Password (minimum 6 characters)"
+      autocomplete="new-password"
+      minlength="6"
+      required
+    >
+
+    <button type="submit">Register</button>
+  </form>
+
+  <p id="message" role="status"></p>
+
+  <p>
+    Already have an account?
+    <a href="login.html">Log in</a>
+  </p>
+
+  <script type="module">
+    import { registerUser } from "./js/auth.js";
+
+    const form = document.getElementById("registerForm");
+    const message = document.getElementById("message");
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+
+      try {
+        await registerUser(email, password);
+        window.location.href = "index.html";
+      } catch (error) {
+        message.textContent = error.message;
+      }
+    });
+  </script>
+
+</body>
+</html>

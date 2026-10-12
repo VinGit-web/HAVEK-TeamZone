@@ -1,0 +1,62 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login | INTROSPHEER</title>
+</head>
+<body>
+
+  <h1>Welcome Back</h1>
+
+  <form id="loginForm">
+    <input
+      type="email"
+      id="email"
+      placeholder="Email"
+      autocomplete="email"
+      required
+    >
+
+    <input
+      type="password"
+      id="password"
+      placeholder="Password"
+      autocomplete="current-password"
+      required
+    >
+
+    <button type="submit">Log In</button>
+  </form>
+
+  <p id="message" role="status"></p>
+
+  <p>
+    Don't have an account?
+    <a href="register.html">Register</a>
+  </p>
+
+  <script type="module">
+    import { loginUser } from "./js/auth.js";
+
+    const form = document.getElementById("loginForm");
+    const message = document.getElementById("message");
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+
+      try {
+        await loginUser(email, password);
+        window.location.href = "index.html";
+      } catch (error) {
+        message.textContent = "Unable to log in. Check your details and try again.";
+      }
+    });
+  </script>
+
+</body>
+</html>
