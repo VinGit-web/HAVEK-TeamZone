@@ -89,3 +89,99 @@
     color: #333;
 }
 
+
+/* ---------- Avatar customisation options ---------- */
+
+.account-body .avatar-customiser {
+    text-align: center;
+    margin: 20px 0;
+}
+
+.account-body .avatar-choice-buttons {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin: 20px 0;
+}
+
+.account-body .avatar-choice-buttons button {
+    margin: 0;
+}
+
+.account-body #animal-options,
+.account-body #photo-options {
+    margin: 20px auto;
+}
+
+.account-body #animal-options label,
+.account-body #photo-options label {
+    display: inline-block;
+    margin: 6px;
+}
+
+.account-body #avatarColor {
+    width: 55px;
+    height: 40px;
+    padding: 3px;
+    vertical-align: middle;
+    cursor: pointer;
+}
+
+.account-body #profilePhoto {
+    display: block;
+    width: 100%;
+    max-width: 350px;
+    margin: 12px auto;
+    font-size: 14px;
+}
+
+.account-body #avatarPreview {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 120px;
+    height: 120px;
+    margin: 20px auto;
+    overflow: hidden;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.7);
+    border: 2px solid #c6beb0;
+}
+
+.account-body #avatarPreview svg {
+    display: block;
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.account-body #avatarPreview img {
+    display: block;
+}
+
+.account-body #photo-message {
+    font-size: 14px;
+    color: #59636f;
+}
+
+.account-body .avatar-choice-buttons button:focus-visible,
+.account-body #remove-photo:focus-visible {
+    outline: 3px solid #59636f;
+    outline-offset: 3px;
+}
+
+.account-body [hidden] {
+    display: none !important;
+}
+
+@media (max-width: 600px) {
+    .account-body .avatar-choice-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .account-body .avatar-choice-buttons button {
+        width: 100%;
+        max-width: 260px;
+    }
+}

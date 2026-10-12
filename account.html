@@ -46,25 +46,79 @@
       <!-- ============================= -->
       <fieldset>
 
-        <!-- Profile picture -->
-        <p>
-          <strong>Profile Picture</strong><br>
-          <span id="avatarPreview"></span>
-        </p>
+<!-- Profile picture customisation -->
+<div class="avatar-customiser">
 
-        <p>
-          <label for="avatarColor">Avatar Colour</label><br>
-          <input type="color" id="avatarColor" value="#8B5E3C">
-        </p>
+  <h3>Choose your profile picture</h3>
+  <p>Express yourself with an animal avatar or your own photo.</p>
 
-        <p>
-          <strong>Accessories</strong><br>
-          <span class="accessory-options">
-            <label><input type="checkbox" id="acc_hat"> Hat</label>
-            <label><input type="checkbox" id="acc_glasses"> Sunglasses</label>
-            <label><input type="checkbox" id="acc_earrings"> Earrings</label>
-          </span>
-        </p>
+  <!-- Choose a profile picture type -->
+  <div class="avatar-choice-buttons">
+    <button type="button" id="choose-avatar">
+      Customise an Animal
+    </button>
+
+    <button type="button" id="choose-photo">
+      Upload a Photo
+    </button>
+  </div>
+
+  <!-- Animal customisation -->
+  <div id="animal-options">
+
+    <label for="animalType">Choose an animal</label>
+    <select id="animalType">
+      <option value="koala">Koala</option>
+      <option value="cat">Cat</option>
+      <option value="dog">Dog</option>
+      <option value="rabbit">Rabbit</option>
+    </select>
+
+    <p>
+      <label for="avatarColor">Avatar Colour</label><br>
+      <input type="color" id="avatarColor" value="#8B5E3C">
+    </p>
+
+    <p>
+      <label>
+        <input type="checkbox" id="acc_hat">
+        Hat
+      </label>
+
+      <label>
+        <input type="checkbox" id="acc_glasses">
+        Sunglasses
+      </label>
+
+      <label>
+        <input type="checkbox" id="acc_earrings">
+        Earrings
+      </label>
+    </p>
+
+  </div>
+
+  <!-- Photo upload -->
+  <div id="photo-options" hidden>
+    <label for="profilePhoto">Upload your own photo</label>
+    <input
+      type="file"
+      id="profilePhoto"
+      accept="image/*"
+    >
+
+    <button type="button" id="remove-photo">
+      Remove Photo
+    </button>
+  </div>
+
+  <!-- Shared profile picture preview -->
+  <div id="avatarPreview" aria-label="Profile picture preview"></div>
+
+  <p id="photo-message" role="status"></p>
+
+</div>
+
 
         <!-- Profile visibility -->
         <fieldset>
@@ -102,6 +156,9 @@
        <p id="age-error" style="color: red; display: none;">
           You must be 18 or older to use this website.
         </p>
+
+
+      
 
 
         <p>
