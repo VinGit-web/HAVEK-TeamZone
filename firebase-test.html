@@ -1,0 +1,35 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>INTROSPHEER Firebase Test</title>
+</head>
+
+<body>
+
+    <h1>INTROSPHEER Firebase Connection</h1>
+
+    <p id="status">Connecting to Firebase...</p>
+
+    <script type="module">
+
+        import { db, auth } from "./js/firebase.js";
+
+        const status = document.getElementById("status");
+
+        if (db && auth) {
+            status.textContent = "Firebase initialised successfully!";
+            status.style.color = "green";
+        } else {
+            status.textContent = "Firebase initialisation failed.";
+            status.style.color = "red";
+        }
+
+    </script>
+
+</body>
+</html>
