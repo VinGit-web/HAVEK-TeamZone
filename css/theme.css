@@ -53,8 +53,8 @@ body::before {
     z-index: -2;
     opacity: 0.55;
     background-image:
-        radial-gradient(circle, rgba(145, 94, 255, 0.75) 1px, transparent 1.4px),
-        radial-gradient(circle, rgba(255, 255, 255, 0.35) 0.8px, transparent 1.2px);
+        radial-gradient(circle, rgba(145, 94, 255, 0.75) 2px, transparent 1.4px),
+        radial-gradient(circle, rgba(255, 255, 255, 0.35) 1.5px, transparent 1.2px);
     background-size: 170px 145px, 270px 230px;
     background-position: 20px 30px, 90px 120px;
 }
@@ -145,12 +145,12 @@ nav,
 
 .nav-links a:hover {
     background: rgba(255, 255, 255, .12) !important;
-    color: #fff !important;
+    color: #ffffff !important;
 }
 
 .nav-links a.active {
     background: var(--cream) !important;
-    color: #111 !important;
+    color: #000000 !important;
     border-color: var(--cream) !important;
 }
 
@@ -931,10 +931,10 @@ nav,
     content: "";
     position: fixed;
 
-    width: clamp(450px, 65vw, 1100px);
+    width: 250%;
     aspect-ratio: 1;
 
-    right: -25%;
+    right: -125%;
     bottom: -35%;
 
     background-image: url("../images/spheregraphicwhite.png");
