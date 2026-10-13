@@ -230,3 +230,9 @@
     color: #666;
     line-height: 1.5;
 }
+
+#photo-options[hidden],
+#animal-options[hidden] {
+    display: none !important;
+}
+

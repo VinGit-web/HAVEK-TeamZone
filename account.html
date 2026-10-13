@@ -57,87 +57,98 @@
       <fieldset>
         <legend><strong>Profile Details</strong></legend>
 
+        
         <div class="avatar-customiser">
 
           <h3>Choose your profile picture</h3>
-          <p>Express yourself with an animal avatar or preview your own photo.</p>
+          <p>Upload your own photo or customise an animal avatar.</p>
 
-          <div class="avatar-choice-buttons">
-            <button type="button" id="choose-avatar">
-              Customise an Animal
-            </button>
-
-            <button type="button" id="choose-photo">
-              Upload a Photo
-            </button>
-          </div>
-
-          <div id="animal-options">
-
-            <label for="animalType">Choose an animal</label>
-
-            <select id="animalType">
-              <option value="koala">Koala</option>
-              <option value="cat">Cat</option>
-              <option value="dog">Dog</option>
-              <option value="rabbit">Rabbit</option>
-            </select>
-
-            <p>
-              <label for="avatarColor">Avatar Colour</label><br>
-              <input type="color" id="avatarColor" value="#8B5E3C">
-            </p>
-
-            <p>
-              <label>
-                <input type="checkbox" id="acc_hat">
-                Hat
-              </label>
-
-              <label>
-                <input type="checkbox" id="acc_glasses">
-                Sunglasses
-              </label>
-
-              <label>
-                <input type="checkbox" id="acc_earrings">
-                Earrings
-              </label>
-            </p>
-
-          </div>
-
+          <!-- OPTION 1: UPLOAD A PHOTO -->
           <div id="photo-options" hidden>
 
-            <label for="profilePhoto">Preview your own photo</label>
+            <label for="profilePhoto">Upload your own photo</label>
 
-            <input
-              type="file"
+              <input
+                type="file"
               id="profilePhoto"
               accept="image/*"
             >
 
-            <button type="button" id="remove-photo">
-              Remove Photo
-            </button>
+              <button type="button" id="remove-photo">
+                Remove Photo
+              </button>
 
-            <p>
-              <small>
-                Photo uploads are preview-only for now.
-                They are not saved to Firebase.
-              </small>
-            </p>
+              <p>
+                <small>
+                  Photo uploads are preview-only for now.
+                  They are not saved to Firebase.
+                </small>
+              </p>
 
           </div>
+        
 
-          <div
-            id="avatarPreview"
-            aria-label="Profile picture preview"
-          ></div>
+            <!-- OPTION 2: CUSTOMISE AN ANIMAL -->
+            <div id="animal-options" hidden>
 
-          <p id="photo-message" role="status"></p>
+              <h4>Customise your animal avatar</h4>
 
+              <label for="animalType">Choose an animal</label>
+
+              <select id="animalType">
+                <option value="koala">Koala</option>
+                <option value="cat">Cat</option>
+                <option value="dog">Dog</option>
+                <option value="rabbit">Rabbit</option>
+              </select>
+
+              <p>
+                <label for="avatarColor">Avatar Colour</label><br>
+                <input type="color" id="avatarColor" value="#8B5E3C">
+              </p>
+
+              <p>
+                <label>
+                  <input type="checkbox" id="acc_hat">
+                  Hat
+                </label>
+
+                <label>
+                  <input type="checkbox" id="acc_glasses">
+                  Sunglasses
+                </label>
+
+                <label>
+                  <input type="checkbox" id="acc_earrings">
+                  Earrings
+                </label>
+              </p>
+
+            </div>
         </div>
+
+            <!-- BUTTONS TO SWITCH BETWEEN OPTIONS -->
+            <div class="avatar-choice-buttons">
+
+              <button type="button" id="choose-photo">
+                Use Uploaded Photo
+              </button>
+
+              <button type="button" id="choose-avatar">
+                Use Animal Avatar
+              </button>
+
+            </div>
+
+            <!-- PREVIEW -->
+            <div
+              id="avatarPreview"
+              aria-label="Profile picture preview"
+            ></div>
+
+            <p id="photo-message" role="status"></p>
+
+          </div>
 
         <fieldset>
           <legend>Profile Visibility</legend>
@@ -207,7 +218,7 @@
         <p>
           <label for="birthYear">Year of Birth</label><br>
 
-          <select id="birthYear" name="birthYear">
+          <select id="birthYear" name="birthYear" required>
             <option value="">Select your birth year</option>
           </select>
 

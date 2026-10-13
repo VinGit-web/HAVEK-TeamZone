@@ -119,8 +119,11 @@ function getDefaultProfile(user) {
 ===================================================== */
 
 const currentYear = new Date().getFullYear();
+const latestEligibleBirthYear = currentYear - 18;
 
-for (let year = currentYear; year >= 1950; year--) {
+// Only offer birth years that meet the age requirement
+// based on the current year.
+for (let year = latestEligibleBirthYear; year >= 1950; year--) {
     const option = document.createElement("option");
 
     option.value = String(year);
@@ -137,7 +140,8 @@ function updateAge() {
         return;
     }
 
-    ageOutput.textContent = String(currentYear - year);
+    const estimatedAge = currentYear - year;
+    ageOutput.textContent = String(estimatedAge);
 }
 
 birthYearInput.addEventListener("change", updateAge);
@@ -327,6 +331,8 @@ function renderAvatar() {
 
 function switchToAnimal() {
     selectedMode = "animal";
+
+    photoOptions.hidden = true;
 
     animalOptions.hidden = false;
     photoOptions.hidden = true;
@@ -605,6 +611,31 @@ onAuthStateChanged(auth, async user => {
 
 form.addEventListener("submit", async event => {
     event.preventDefault();
+
+     // Check the age requirement before saving.
+    const selectedBirthYear = Number(birthYearInput.value);
+
+    if (!selectedBirthYear) {
+        showStatus(
+            "Please select your year of birth.",
+            true
+        );
+
+        birthYearInput.focus();
+        return;
+    }
+
+    const estimatedAge = currentYear - selectedBirthYear;
+
+    if (estimatedAge < 18) {
+        showStatus(
+            "You must be at least 18 years old.",
+            true
+        );
+
+        birthYearInput.focus();
+        return;
+    }
 
     if (!currentUser) {
         window.location.replace("login.html");
