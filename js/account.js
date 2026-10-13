@@ -434,8 +434,14 @@ profilePhoto.addEventListener("change", function () {
 
     uploadedPhotoURL = URL.createObjectURL(file);
 
-    switchToPhoto();
-});
+    // Hide the upload section after a valid photo is selected
+        animalOptions.hidden = true;
+        photoOptions.hidden = true;
+
+    // Keep the selected photo visible in the preview
+        selectedMode = "photo";
+        showUploadedPhoto();
+    });
 
 removePhotoButton.addEventListener("click", () => {
     clearPhoto();
