@@ -1,5 +1,6 @@
 
 import { auth, db } from "./firebase.js";
+import { supabase } from "./supabase.js";
 import { svgAvatar } from "./avatar-renderer.js";
 
 import {
@@ -14,35 +15,56 @@ import {
   onSnapshot
 } from "https://www.gstatic.com/firebasejs/13.0.0/firebase-firestore.js";
 
-import {
-  getStorage,
-  ref,
-  getBlob
-} from "https://www.gstatic.com/firebasejs/13.0.0/firebase-storage.js";
-
 const $ = id => document.getElementById(id);
-const storage = getStorage();
 
-const viewedUid = new URLSearchParams(location.search).get("uid");
+const viewedUid = new URLSearchParams(
+  window.location.search
+).get("uid");
+
+const FUNCTION_URL =
+  `${supabase.supabaseUrl}/functions/v1/friend-photo`;
 
 let me = null;
 let friendship = null;
 let photoEnabled = false;
 let photoUrl = null;
+
 let unsubscribeFriendship = null;
+let unsubscribePhotoSettings = null;
+let unsubscribeVerification = null;
+
+let photoRequestVersion = 0;
+let photoController = null;
 
 function friendshipId(a, b) {
   return [a, b].sort().join("_");
 }
 
 function message(text) {
-  $("profileMessage").textContent = text;
+  const element = $("profileMessage");
+
+  if (element) element.textContent = text;
+}
+
+function cancelPhotoRequest() {
+  photoRequestVersion++;
+
+  if (photoController) {
+    photoController.abort();
+    photoController = null;
+  }
+}
+
+function clearPhotoUrl() {
+  if (photoUrl) {
+    URL.revokeObjectURL(photoUrl);
+    photoUrl = null;
+  }
 }
 
 function restrictedPhoto(text) {
-  if (photoUrl) URL.revokeObjectURL(photoUrl);
-
-  photoUrl = null;
+  cancelPhotoRequest();
+  clearPhotoUrl();
 
   const box = document.createElement("div");
   box.className = "restricted-photo";
@@ -51,13 +73,23 @@ function restrictedPhoto(text) {
   label.textContent = "Photo restricted";
 
   box.append(label);
-  $("viewedPhoto").replaceChildren(box);
 
-  $("photoAccessMessage").textContent = text;
+  $("viewedPhoto")?.replaceChildren(box);
+
+  const accessMessage = $("photoAccessMessage");
+
+  if (accessMessage) {
+    accessMessage.textContent = text;
+  }
 }
 
 async function showPhoto() {
-  if (!me || !viewedUid) return;
+  cancelPhotoRequest();
+
+  if (!me || !viewedUid) {
+    restrictedPhoto("Sign in to view photographs.");
+    return;
+  }
 
   if (!photoEnabled) {
     restrictedPhoto(
@@ -66,42 +98,117 @@ async function showPhoto() {
     return;
   }
 
-  if (!friendship || friendship.status !== "accepted") {
+  if (
+    !friendship ||
+    friendship.status !== "accepted" ||
+    !Array.isArray(friendship.members) ||
+    !friendship.members.includes(me.uid) ||
+    !friendship.members.includes(viewedUid)
+  ) {
     restrictedPhoto(
       "Connect as friends to view this photograph."
     );
     return;
   }
 
+  const version = photoRequestVersion;
+  const controller = new AbortController();
+
+  photoController = controller;
+
+  const accessMessage = $("photoAccessMessage");
+
+  if (accessMessage) {
+    accessMessage.textContent = "Loading private photograph...";
+  }
+
   try {
-    const blob = await getBlob(
-      ref(storage, `profilePhotos/${viewedUid}/original`)
-    );
+    const token = await me.getIdToken();
+
+    if (version !== photoRequestVersion) return;
+
+    const response = await fetch(FUNCTION_URL, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+        apikey: supabase.supabaseKey
+      },
+      body: JSON.stringify({
+        ownerUid: viewedUid
+      }),
+      signal: controller.signal,
+      cache: "no-store"
+    });
+
+    if (version !== photoRequestVersion) return;
+
+    if (!response.ok) {
+      if (response.status === 401) {
+        throw new Error("Your session has expired. Sign in again.");
+      }
+
+      if (response.status === 403) {
+        throw new Error(
+          "You do not currently have permission to view this photograph."
+        );
+      }
+
+      if (response.status === 404) {
+        throw new Error("This user has not uploaded a photograph.");
+      }
+
+      throw new Error(
+        `The photograph is unavailable (${response.status}).`
+      );
+    }
+
+    const contentType =
+      response.headers.get("Content-Type") || "";
+
+    if (!contentType.startsWith("image/")) {
+      throw new Error("The server returned an invalid photograph.");
+    }
+
+    const blob = await response.blob();
 
     if (
+      version !== photoRequestVersion ||
       !photoEnabled ||
-      !friendship ||
-      friendship.status !== "accepted"
-    ) return;
+      friendship?.status !== "accepted"
+    ) {
+      return;
+    }
 
-    if (photoUrl) URL.revokeObjectURL(photoUrl);
+    const newUrl = URL.createObjectURL(blob);
 
-    photoUrl = URL.createObjectURL(blob);
+    clearPhotoUrl();
+    photoUrl = newUrl;
 
     const image = document.createElement("img");
-    image.src = photoUrl;
+
+    image.src = newUrl;
     image.alt = "Friend's personal photograph";
 
-    $("viewedPhoto").replaceChildren(image);
+    $("viewedPhoto")?.replaceChildren(image);
 
-    $("photoAccessMessage").textContent =
-      "Visible because you are connected friends.";
+    if (accessMessage) {
+      accessMessage.textContent =
+        "Visible because you are connected friends.";
+    }
   } catch (error) {
+    if (error.name === "AbortError") return;
+    if (version !== photoRequestVersion) return;
+
+    console.error("Friend photograph:", error);
+
     restrictedPhoto(
-      error.code === "storage/object-not-found"
-        ? "This user has not uploaded a photograph."
-        : "The photograph is unavailable."
+      error.message || "The photograph is unavailable."
     );
+  } finally {
+    if (version === photoRequestVersion) {
+      photoController = null;
+    }
   }
 }
 
@@ -132,15 +239,20 @@ async function acceptRequest() {
   if (
     !me ||
     !friendship ||
+    friendship.status !== "pending" ||
     friendship.recipientId !== me.uid
-  ) return;
+  ) {
+    return;
+  }
 
   $("friendAction").disabled = true;
 
   try {
     await updateDoc(
       doc(db, "friendships", friendshipId(me.uid, viewedUid)),
-      { status: "accepted" }
+      {
+        status: "accepted"
+      }
     );
 
     message("Friend request accepted.");
@@ -151,21 +263,31 @@ async function acceptRequest() {
 }
 
 function renderFriendship() {
+  if (!me) return;
+
   const button = $("friendAction");
+
+  if (!button) return;
 
   button.hidden = false;
   button.disabled = false;
+  button.onclick = null;
 
   if (!friendship) {
     $("friendStatus").textContent = "You are not connected.";
+
     button.textContent = "Add friend";
     button.onclick = sendRequest;
   } else if (friendship.status === "accepted") {
-    $("friendStatus").textContent = "You are connected friends.";
+    $("friendStatus").textContent =
+      "You are connected friends.";
+
     button.textContent = "Friends";
     button.disabled = true;
   } else if (friendship.requesterId === me.uid) {
-    $("friendStatus").textContent = "Your friend request is pending.";
+    $("friendStatus").textContent =
+      "Your friend request is pending.";
+
     button.textContent = "Request sent";
     button.disabled = true;
   } else if (friendship.recipientId === me.uid) {
@@ -174,24 +296,30 @@ function renderFriendship() {
 
     button.textContent = "Accept friend request";
     button.onclick = acceptRequest;
+  } else {
+    $("friendStatus").textContent =
+      "Friendship status unavailable.";
+
+    button.hidden = true;
   }
 
   showPhoto();
 }
 
 async function loadProfile() {
-  const snap = await getDoc(
+  const snapshot = await getDoc(
     doc(db, "publicProfiles", viewedUid)
   );
 
-  if (!snap.exists()) {
+  if (!snapshot.exists()) {
     $("viewedUsername").textContent = "Profile unavailable";
     $("viewedVerification").textContent = "Age not verified";
     $("friendAction").disabled = true;
+
     return false;
   }
 
-  const profile = snap.data();
+  const profile = snapshot.data();
 
   $("viewedUsername").textContent =
     profile.username || "INTROSPHEER user";
@@ -200,11 +328,11 @@ async function loadProfile() {
     $("viewedAvatar").innerHTML = svgAvatar(profile.avatar);
   }
 
-  onSnapshot(
+  unsubscribeVerification = onSnapshot(
     doc(db, "verificationPublic", viewedUid),
-    verificationSnap => {
-      const state = verificationSnap.exists()
-        ? verificationSnap.data().status
+    verificationSnapshot => {
+      const state = verificationSnapshot.exists()
+        ? verificationSnapshot.data().status
         : "unverified";
 
       const labels = {
@@ -223,11 +351,35 @@ async function loadProfile() {
   return true;
 }
 
+function cleanup() {
+  cancelPhotoRequest();
+  clearPhotoUrl();
+
+  if (unsubscribeFriendship) {
+    unsubscribeFriendship();
+    unsubscribeFriendship = null;
+  }
+
+  if (unsubscribePhotoSettings) {
+    unsubscribePhotoSettings();
+    unsubscribePhotoSettings = null;
+  }
+
+  if (unsubscribeVerification) {
+    unsubscribeVerification();
+    unsubscribeVerification = null;
+  }
+}
+
 onAuthStateChanged(auth, async user => {
+  cleanup();
+
   me = user;
+  friendship = null;
+  photoEnabled = false;
 
   if (!user) {
-    location.replace("login.html");
+    window.location.replace("login.html");
     return;
   }
 
@@ -237,41 +389,54 @@ onAuthStateChanged(auth, async user => {
   }
 
   if (viewedUid === user.uid) {
-    location.replace("account.html");
+    window.location.replace("account.html");
     return;
   }
+
+  restrictedPhoto(
+    "Connect as friends to view this photograph."
+  );
 
   try {
     const exists = await loadProfile();
 
-    if (!exists) return;
+    if (!exists || auth.currentUser?.uid !== user.uid) return;
 
     unsubscribeFriendship = onSnapshot(
       doc(db, "friendships", friendshipId(user.uid, viewedUid)),
-      snap => {
-        friendship = snap.exists() ? snap.data() : null;
+      snapshot => {
+        friendship = snapshot.exists()
+          ? snapshot.data()
+          : null;
+
         renderFriendship();
       },
-      error => message(error.message)
+      error => {
+        friendship = null;
+        restrictedPhoto("Friendship access unavailable.");
+        message(error.message);
+      }
     );
 
-    onSnapshot(
+    unsubscribePhotoSettings = onSnapshot(
       doc(db, "photoSettings", viewedUid),
-      snap => {
+      snapshot => {
         photoEnabled =
-          snap.exists() &&
-          snap.data().friendsCanSeePhoto === true;
+          snapshot.exists() &&
+          snapshot.data().friendsCanSeePhoto === true;
 
         showPhoto();
       },
-      error => message(error.message)
+      error => {
+        photoEnabled = false;
+        restrictedPhoto("Photo visibility unavailable.");
+        message(error.message);
+      }
     );
   } catch (error) {
+    console.error(error);
     message(error.message);
   }
 });
 
-window.addEventListener("pagehide", () => {
-  if (unsubscribeFriendship) unsubscribeFriendship();
-  if (photoUrl) URL.revokeObjectURL(photoUrl);
-});
+window.addEventListener("pagehide", cleanup);
