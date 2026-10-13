@@ -185,3 +185,48 @@
         max-width: 260px;
     }
 }
+
+.account-body input[type="email"],
+.account-body input[type="color"] {
+    padding: 9px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+.account-body input[type="email"] {
+    width: 100%;
+    max-width: 350px;
+}
+
+.account-body input[readonly] {
+    background: #f1f1f1;
+    color: #555;
+    cursor: not-allowed;
+}
+
+.account-body #accountStatus {
+    min-height: 22px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.account-body #saveAccount:disabled {
+    opacity: 0.6;
+    cursor: wait;
+}
+
+.account-body #avatarPreview {
+    background: #f4f4f4;
+}
+
+.account-body #avatarPreview span {
+    line-height: 1;
+}
+
+.account-body main small {
+    display: inline-block;
+    margin-top: 5px;
+    color: #666;
+    line-height: 1.5;
+}
