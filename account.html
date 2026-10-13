@@ -12,242 +12,301 @@
   <script type="module" src="js/auth-guard.js"></script>
 </head>
 <body class="account-body">
-<nav>
-  <a href="index.html" class="nav-logo">
-    <img src="images/logowhite.png" alt="INTROSPHEER Logo" class="logo-image">
-    <span>INTROSPHEER</span>
-  </a>
-  <div class="nav-links">
-    <a href="index.html">Home</a>
-    <a href="events.html">Events</a>
-    <a href="strings.html">Strings</a>
-    <a href="chat.html">Chat</a>
-    <a href="account.html" class="active">Account</a>
-    <a href="about.html">About</a>
-  </div>
-</nav>
-
-<h1>My Account</h1>
-<header>
-  <p>Manage your profile, design your character and review account verification.</p>
-</header>
-
-<main>
-  <div class="account-tabs" role="tablist" aria-label="Account sections">
-    <button type="button" class="tab active" data-tab="profile" aria-selected="true">Profile</button>
-    <button type="button" class="tab" data-tab="studio" aria-selected="false">Avatar Studio</button>
-    <button type="button" class="tab" data-tab="verification" aria-selected="false">Verification</button>
-  </div>
-
-  <form id="accountForm">
-    <section class="account-panel active" id="panel-profile">
-      <h2>Profile details</h2>
-
-      <div class="profile-summary">
-        <div id="profileAvatar" class="mini-avatar" aria-hidden="true"></div>
-        <p>Your avatar is created in Avatar Studio and saved with your profile.</p>
-      </div>
-
-      <div class="field-grid">
-        <label>Username
-          <input id="username" maxlength="30" autocomplete="nickname" required>
-        </label>
-        <label>Full name
-          <input id="name" maxlength="80" autocomplete="name">
-        </label>
-        <label>Email
-          <input id="email" type="email" readonly>
-        </label>
-        <label>Year of birth
-          <select id="birthYear" required>
-            <option value="">Select birth year</option>
-          </select>
-        </label>
-        <label>Approximate age
-          <output id="age">--</output>
-        </label>
-        <label>Gender
-          <select id="gender">
-            <option value="">Prefer not to specify</option>
-            <option value="female">Female</option>
-            <option value="male">Male</option>
-            <option value="nonbinary">Non-binary</option>
-            <option value="other">Other</option>
-            <option value="prefer_not">Prefer not to say</option>
-          </select>
-        </label>
-      </div>
-
-      <fieldset>
-        <legend>Profile visibility</legend>
-        <label><input type="radio" name="visibility" value="public"> Public</label>
-        <label><input type="radio" name="visibility" value="private" checked> Private</label>
-      </fieldset>
-
-      <fieldset>
-        <legend>Privacy preferences</legend>
-        <label><input type="checkbox" id="show_email"> Show email on profile (not publicly exposed by the current database rules)</label>
-        <label><input type="checkbox" id="allow_messages" checked> Allow messages</label>
-        <label><input type="checkbox" id="search_visible" checked> Show profile in search when discovery is implemented</label>
-        <label><input type="checkbox" id="email_notifications" checked> Email notification preference (delivery not yet connected)</label>
-      </fieldset>
-    </section>
-
-    <section class="account-panel" id="panel-studio" hidden>
-      <h2>Animal Avatar Studio</h2>
-      <p>Design a character. Changes are previewed instantly and saved when you click Save Changes.</p>
-
-      <div class="studio-layout">
-        <div class="studio-preview">
-          <div id="avatarPreview" role="img" aria-label="Animal avatar preview"></div>
-          <label>Character name
-            <input id="characterName" maxlength="24" placeholder="Give your character a name">
-          </label>
-          <div class="studio-actions">
-            <button type="button" id="randomAvatar">Surprise me</button>
-            <button type="button" id="resetAvatar" class="light-button">Reset avatar</button>
-          </div>
-        </div>
-
-        <div class="studio-controls">
-          <h3>Choose an animal</h3>
-          <div class="animal-tabs">
-            <button type="button" data-category="australia" class="selected">Australian wildlife</button>
-            <button type="button" data-category="pets">Popular pets</button>
-            <button type="button" data-category="world">Other favourites</button>
-          </div>
-          <div id="animalGrid" class="animal-grid" aria-label="Choose an animal"></div>
-
-          <h3>Appearance</h3>
-          <div class="control-grid">
-            <label>Main colour <input type="color" id="primaryColor" value="#b88860"></label>
-            <label>Accent colour <input type="color" id="secondaryColor" value="#f2d6b3"></label>
-            <label>Expression
-              <select id="expression">
-                <option value="happy">Happy</option>
-                <option value="curious">Curious</option>
-                <option value="sleepy">Sleepy</option>
-                <option value="excited">Excited</option>
-                <option value="cheeky">Cheeky</option>
-              </select>
-            </label>
-            <label>Pattern
-              <select id="pattern">
-                <option value="none">None</option>
-                <option value="spots">Spots</option>
-                <option value="stripe">Stripe</option>
-                <option value="blush">Rosy cheeks</option>
-              </select>
-            </label>
-          </div>
-
-          <h3>Accessories</h3>
-          <div class="control-grid">
-            <label>Headwear
-              <select id="headwear">
-                <option value="none">None</option>
-                <option value="beanie">Beanie</option>
-                <option value="cap">Baseball cap</option>
-                <option value="bucket">Bucket hat</option>
-                <option value="crown">Crown</option>
-                <option value="bow">Bow</option>
-                <option value="headphones">Headphones</option>
-                <option value="flower">Flower</option>
-                <option value="party">Party hat</option>
-              </select>
-            </label>
-            <label>Eyewear
-              <select id="eyewear">
-                <option value="none">None</option>
-                <option value="round">Round glasses</option>
-                <option value="square">Square glasses</option>
-                <option value="sunglasses">Sunglasses</option>
-                <option value="heart">Heart glasses</option>
-                <option value="star">Star glasses</option>
-              </select>
-            </label>
-            <label>Earrings
-              <select id="earrings">
-                <option value="none">None</option>
-                <option value="studs">Studs</option>
-                <option value="hoops">Hoops</option>
-              </select>
-            </label>
-            <label>Neckwear
-              <select id="neckwear">
-                <option value="none">None</option>
-                <option value="scarf">Scarf</option>
-                <option value="bandana">Bandana</option>
-                <option value="bowtie">Bow tie</option>
-                <option value="necklace">Necklace</option>
-              </select>
-            </label>
-            <label>Extra
-              <select id="extra">
-                <option value="none">None</option>
-                <option value="backpack">Backpack</option>
-                <option value="wings">Little wings</option>
-                <option value="sparkles">Sparkles</option>
-              </select>
-            </label>
-          </div>
-
-          <h3>Outfit</h3>
-          <div class="control-grid">
-            <label>Clothing
-              <select id="outfit">
-                <option value="none">None</option>
-                <option value="hoodie">Hoodie</option>
-                <option value="tshirt">T-shirt</option>
-                <option value="sweater">Sweater</option>
-                <option value="denim">Denim jacket</option>
-                <option value="suit">Suit</option>
-                <option value="jersey">Sports jersey</option>
-                <option value="coat">Winter coat</option>
-                <option value="astronaut">Astronaut suit</option>
-                <option value="wizard">Wizard robe</option>
-              </select>
-            </label>
-            <label>Outfit colour <input type="color" id="outfitColor" value="#7895b2"></label>
-            <label>Trim colour <input type="color" id="trimColor" value="#ffffff"></label>
-            <label>Background
-              <select id="backgroundPreset">
-                <option value="sunset">Sunset</option>
-                <option value="sky">Blue sky</option>
-                <option value="forest">Forest</option>
-                <option value="lavender">Lavender</option>
-                <option value="sand">Warm sand</option>
-                <option value="plain">Plain</option>
-              </select>
-            </label>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="account-panel" id="panel-verification" hidden>
-      <h2>Age assurance</h2>
-      <div class="verification-box">
-        <strong id="verificationStatus">Not verified</strong>
-        <p>Choosing a birth year is self-declaration, not independent age verification. Face-based age estimation is not guaranteed to establish someone's age or identity.</p>
-        <p>Before activating this feature, INTROSPHEER needs a suitable age-assurance provider, a secure backend, a privacy notice, an alternative verification route and a review process for incorrect results.</p>
-        <button type="button" disabled>Verification provider not connected</button>
-        <small>No face images or identity documents are collected by this page.</small>
-      </div>
-    </section>
-
-    <div class="account-savebar">
-      <p id="accountStatus" role="status" aria-live="polite">Loading profile...</p>
-      <button id="saveAccount" type="submit" disabled>Save Changes</button>
-      <button type="reset" class="light-button">Cancel changes</button>
+  <nav>
+    <a href="index.html" class="nav-logo">INTROSPHEER</a>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="events.html">Events</a>
+      <a href="strings.html">Strings</a>
+      <a href="chat.html">Chat</a>
+      <a href="account.html" class="active">Account</a>
+      <a href="about.html">About</a>
     </div>
-  </form>
-</main>
+  </nav>
 
-<footer class="site-footer">
-  <p>Generative AI tools, including ChatGPT and Claude, were used in the creation and development of this page. Outputs were reviewed, adapted and integrated by the team.</p>
-</footer>
+  <h1>My Account</h1>
+  <header>
+    <p>Manage your profile, character, photographs and verification.</p>
+  </header>
 
-<script type="module" src="js/account.js"></script>
+  <main>
+    <div class="account-tabs" role="tablist">
+      <button type="button" class="tab active" data-tab="profile" aria-selected="true">Profile</button>
+      <button type="button" class="tab" data-tab="studio" aria-selected="false">Avatar Studio</button>
+      <button type="button" class="tab" data-tab="verification" aria-selected="false">Verification</button>
+    </div>
+
+    <form id="accountForm">
+      <section class="account-panel active" id="panel-profile">
+        <h2>Profile details</h2>
+
+        <div class="profile-summary">
+          <div id="profileAvatar" class="mini-avatar"></div>
+          <p>Your animal avatar represents you throughout INTROSPHEER.</p>
+        </div>
+
+        <div class="field-grid">
+          <label>Username
+            <input id="username" maxlength="30" required>
+          </label>
+
+          <label>Full name
+            <input id="name" maxlength="80">
+          </label>
+
+          <label>Email
+            <input id="email" type="email" readonly>
+          </label>
+
+          <label>Year of birth
+            <select id="birthYear" required>
+              <option value="">Select birth year</option>
+            </select>
+          </label>
+
+          <label>Approximate age
+            <output id="age">--</output>
+          </label>
+
+          <label>Gender
+            <select id="gender">
+              <option value="">Prefer not to specify</option>
+              <option value="female">Female</option>
+              <option value="male">Male</option>
+              <option value="nonbinary">Non-binary</option>
+              <option value="other">Other</option>
+              <option value="prefer_not">Prefer not to say</option>
+            </select>
+          </label>
+        </div>
+
+        <fieldset>
+          <legend>Profile visibility</legend>
+          <label><input type="radio" name="visibility" value="public"> Public</label>
+          <label><input type="radio" name="visibility" value="private" checked> Private</label>
+        </fieldset>
+
+        <fieldset>
+          <legend>Privacy preferences</legend>
+          <label><input type="checkbox" id="show_email"> Email visibility preference</label>
+          <label><input type="checkbox" id="allow_messages" checked> Allow messages</label>
+          <label><input type="checkbox" id="search_visible" checked> Allow profile discovery</label>
+          <label><input type="checkbox" id="email_notifications" checked> Email notifications</label>
+        </fieldset>
+
+        <section class="photo-settings">
+          <h3>Personal profile photograph</h3>
+          <p>Your personal photograph is optional and separate from your animal avatar.</p>
+
+          <div id="myPhotoPreview" class="photo-preview">
+            <span>Photo not uploaded</span>
+          </div>
+
+          <label for="profilePhoto">Choose a photograph</label>
+          <input id="profilePhoto" type="file" accept="image/jpeg,image/png,image/webp">
+
+          <label class="photo-checkbox">
+            <input id="friendsCanSeePhoto" type="checkbox">
+            Allow accepted friends to view my personal photograph
+          </label>
+
+          <div class="photo-actions">
+            <button type="button" id="uploadPhoto">Upload photo</button>
+            <button type="button" id="removePhoto" class="light-button">Remove photo</button>
+          </div>
+
+          <p id="photoStatus" role="status"></p>
+        </section>
+      </section>
+
+      <section class="account-panel" id="panel-studio" hidden>
+        <h2>Animal Avatar Studio</h2>
+        <p>Choose an animal, customise its appearance and save your character.</p>
+
+        <div class="studio-layout">
+          <div class="studio-preview">
+            <div id="avatarPreview" role="img" aria-label="Animal avatar preview"></div>
+
+            <label>Character name
+              <input id="characterName" maxlength="24" placeholder="Character name">
+            </label>
+
+            <div class="studio-actions">
+              <button type="button" id="randomAvatar">Surprise me</button>
+              <button type="button" id="resetAvatar" class="light-button">Reset avatar</button>
+            </div>
+          </div>
+
+          <div class="studio-controls">
+            <h3>Choose an animal</h3>
+
+            <div class="animal-tabs">
+              <button type="button" data-category="australia" class="selected">Australian wildlife</button>
+              <button type="button" data-category="pets">Popular pets</button>
+              <button type="button" data-category="world">Other favourites</button>
+            </div>
+
+            <div id="animalGrid" class="animal-grid"></div>
+
+            <h3>Appearance</h3>
+
+            <div class="control-grid">
+              <label>Main colour <input type="color" id="primaryColor" value="#92979c"></label>
+              <label>Accent colour <input type="color" id="secondaryColor" value="#e2e4e5"></label>
+
+              <label>Expression
+                <select id="expression">
+                  <option value="happy">Happy</option>
+                  <option value="curious">Curious</option>
+                  <option value="sleepy">Sleepy</option>
+                  <option value="excited">Excited</option>
+                  <option value="cheeky">Cheeky</option>
+                </select>
+              </label>
+
+              <label>Pattern
+                <select id="pattern">
+                  <option value="none">None</option>
+                  <option value="spots">Spots</option>
+                  <option value="stripe">Stripe</option>
+                  <option value="blush">Rosy cheeks</option>
+                </select>
+              </label>
+            </div>
+
+            <h3>Accessories</h3>
+
+            <div class="control-grid">
+              <label>Headwear
+                <select id="headwear">
+                  <option value="none">None</option>
+                  <option value="beanie">Beanie</option>
+                  <option value="cap">Baseball cap</option>
+                  <option value="bucket">Bucket hat</option>
+                  <option value="crown">Crown</option>
+                  <option value="bow">Bow</option>
+                  <option value="headphones">Headphones</option>
+                  <option value="flower">Flower</option>
+                  <option value="party">Party hat</option>
+                </select>
+              </label>
+
+              <label>Eyewear
+                <select id="eyewear">
+                  <option value="none">None</option>
+                  <option value="round">Round glasses</option>
+                  <option value="square">Square glasses</option>
+                  <option value="sunglasses">Sunglasses</option>
+                  <option value="heart">Heart glasses</option>
+                  <option value="star">Star glasses</option>
+                </select>
+              </label>
+
+              <label>Earrings
+                <select id="earrings">
+                  <option value="none">None</option>
+                  <option value="studs">Studs</option>
+                  <option value="hoops">Hoops</option>
+                </select>
+              </label>
+
+              <label>Neckwear
+                <select id="neckwear">
+                  <option value="none">None</option>
+                  <option value="scarf">Scarf</option>
+                  <option value="bandana">Bandana</option>
+                  <option value="bowtie">Bow tie</option>
+                  <option value="necklace">Necklace</option>
+                </select>
+              </label>
+
+              <label>Extra
+                <select id="extra">
+                  <option value="none">None</option>
+                  <option value="backpack">Backpack</option>
+                  <option value="wings">Little wings</option>
+                  <option value="sparkles">Sparkles</option>
+                </select>
+              </label>
+            </div>
+
+            <h3>Outfit</h3>
+
+            <div class="control-grid">
+              <label>Clothing
+                <select id="outfit">
+                  <option value="none">None</option>
+                  <option value="hoodie">Hoodie</option>
+                  <option value="tshirt">T-shirt</option>
+                  <option value="sweater">Sweater</option>
+                  <option value="denim">Denim jacket</option>
+                  <option value="suit">Suit</option>
+                  <option value="jersey">Sports jersey</option>
+                  <option value="coat">Winter coat</option>
+                  <option value="astronaut">Astronaut suit</option>
+                  <option value="wizard">Wizard robe</option>
+                </select>
+              </label>
+
+              <label>Outfit colour
+                <input type="color" id="outfitColor" value="#75a78a">
+              </label>
+
+              <label>Trim colour
+                <input type="color" id="trimColor" value="#ffffff">
+              </label>
+
+              <label>Background
+                <select id="backgroundPreset">
+                  <option value="sunset">Sunset</option>
+                  <option value="sky">Blue sky</option>
+                  <option value="forest">Forest</option>
+                  <option value="lavender">Lavender</option>
+                  <option value="sand">Warm sand</option>
+                  <option value="plain">Plain</option>
+                </select>
+              </label>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="account-panel" id="panel-verification" hidden>
+        <h2>Age verification</h2>
+
+        <div class="verification-box">
+          <h3 id="verificationStatus">Age not verified</h3>
+
+          <p id="verificationDescription">
+            Your age eligibility has not been independently confirmed.
+          </p>
+
+          <p>
+            Verification must be completed through an approved independent
+            provider. INTROSPHEER does not display verification evidence
+            on public profiles.
+          </p>
+
+          <button type="button" id="startVerification" disabled>
+            Verification provider not connected
+          </button>
+
+          <small>
+            A non-biometric verification alternative will be provided
+            when this service is activated.
+          </small>
+        </div>
+      </section>
+
+      <div class="account-savebar">
+        <p id="accountStatus" role="status">Loading profile...</p>
+        <button id="saveAccount" type="submit" disabled>Save Changes</button>
+        <button type="reset" class="light-button">Cancel changes</button>
+      </div>
+    </form>
+  </main>
+
+  <script type="module" src="js/account.js"></script>
+  <script type="module" src="js/profile-features.js"></script>
 </body>
 </html>

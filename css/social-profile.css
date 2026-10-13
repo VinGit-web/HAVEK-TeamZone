@@ -1,0 +1,119 @@
+
+.public-profile-body {
+  background: #f7f8fa;
+  min-height: 100vh;
+  color: #25334b;
+}
+
+.public-profile-card {
+  max-width: 760px;
+  margin: 45px auto;
+  padding: 30px;
+  background: white;
+  border-radius: 18px;
+  box-shadow: 0 6px 30px #14243b12;
+}
+
+.back-link {
+  display: inline-block;
+  margin-bottom: 25px;
+  color: #315b9e;
+  text-decoration: none;
+}
+
+.public-profile-heading {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+}
+
+.viewed-avatar {
+  width: 110px;
+  height: 110px;
+  flex-shrink: 0;
+}
+
+.viewed-avatar svg {
+  width: 100%;
+  height: 100%;
+}
+
+.verification-label {
+  font-size: 14px;
+  color: #53647b;
+  font-weight: 600;
+}
+
+.connection-section,
+.personal-photo-section {
+  margin-top: 30px;
+  padding-top: 22px;
+  border-top: 1px solid #e1e5ec;
+}
+
+.public-profile-card button {
+  padding: 11px 20px;
+  background: #25334b;
+  color: white;
+  border: 0;
+  border-radius: 9px;
+  cursor: pointer;
+  font: inherit;
+}
+
+.public-profile-card button:disabled {
+  opacity: .55;
+  cursor: not-allowed;
+}
+
+.viewed-photo {
+  width: min(100%, 340px);
+  aspect-ratio: 1;
+  overflow: hidden;
+  border-radius: 16px;
+  background: #e6eaf0;
+}
+
+.viewed-photo img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+.restricted-photo {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  background:
+    radial-gradient(circle at 30% 25%, #bdc8d8, transparent 50%),
+    radial-gradient(circle at 70% 70%, #a8b8ce, transparent 55%),
+    #d9e0e9;
+  color: #47566c;
+  font-weight: 600;
+  text-align: center;
+}
+
+#photoAccessMessage,
+#profileMessage {
+  color: #647084;
+  font-size: 14px;
+}
+
+@media (max-width: 600px) {
+  .public-profile-card {
+    margin: 20px 12px;
+    padding: 20px;
+  }
+
+  .public-profile-heading {
+    align-items: flex-start;
+  }
+
+  .viewed-avatar {
+    width: 78px;
+    height: 78px;
+  }
+}

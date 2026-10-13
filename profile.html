@@ -1,0 +1,72 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>User Profile | INTROSPHEER</title>
+
+  <link rel="stylesheet" href="css/app.css">
+  <link rel="stylesheet" href="css/theme.css">
+  <link rel="stylesheet" href="css/social-profile.css">
+
+  <style>html{visibility:hidden}</style>
+  <script type="module" src="js/auth-guard.js"></script>
+</head>
+
+<body class="public-profile-body">
+  <nav>
+    <a href="index.html" class="nav-logo">INTROSPHEER</a>
+
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="events.html">Events</a>
+      <a href="strings.html">Strings</a>
+      <a href="chat.html">Chat</a>
+      <a href="account.html">Account</a>
+    </div>
+  </nav>
+
+  <main class="public-profile-card">
+    <a href="strings.html" class="back-link">← Back to Strings</a>
+
+    <div class="public-profile-heading">
+      <div id="viewedAvatar" class="viewed-avatar"></div>
+
+      <div>
+        <h1 id="viewedUsername">Loading profile...</h1>
+        <p id="viewedVerification" class="verification-label">
+          Checking verification status...
+        </p>
+      </div>
+    </div>
+
+    <section class="connection-section">
+      <h2>Connection</h2>
+      <p id="friendStatus">Checking connection...</p>
+
+      <button id="friendAction" type="button" disabled>
+        Loading
+      </button>
+    </section>
+
+    <section class="personal-photo-section">
+      <h2>Personal photograph</h2>
+
+      <div id="viewedPhoto" class="viewed-photo">
+        <div class="restricted-photo">
+          <span>Photo restricted</span>
+        </div>
+      </div>
+
+      <p id="photoAccessMessage">
+        This photograph is restricted.
+      </p>
+    </section>
+
+    <p id="profileMessage" role="status"></p>
+  </main>
+
+  <script type="module" src="js/public-profile.js"></script>
+</body>
+</html>

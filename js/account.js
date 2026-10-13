@@ -1,10 +1,12 @@
 
 import { animalPreset, svgAvatar } from "./avatar-renderer.js";
 import { auth, db } from "./firebase.js";
+
 import {
   onAuthStateChanged,
   updateProfile
 } from "https://www.gstatic.com/firebasejs/13.0.0/firebase-auth.js";
+
 import {
   doc,
   getDoc,
@@ -68,16 +70,17 @@ let currentUser = null;
 let savedProfile = null;
 let ready = false;
 
-const random = a => a[Math.floor(Math.random() * a.length)];
+const random = items =>
+  items[Math.floor(Math.random() * items.length)];
 
-const escapeText = s =>
-  String(s || "").replace(/[&<>"']/g, c => ({
+const escapeText = value =>
+  String(value || "").replace(/[&<>"']/g, character => ({
     "&": "&amp;",
     "<": "&lt;",
     ">": "&gt;",
     '"': "&quot;",
     "'": "&#39;"
-  }[c]));
+  }[character]));
 
 function status(message, error = false) {
   $("accountStatus").textContent = message;
@@ -90,47 +93,43 @@ function render() {
 }
 
 function grid() {
-  const list = categories[category];
-
   $("animalGrid").replaceChildren();
 
-  for (const [id, label] of list) {
-    const b = document.createElement("button");
+  for (const [id, label] of categories[category]) {
+    const button = document.createElement("button");
 
-    b.type = "button";
-    b.className = avatar.animal === id ? "selected" : "";
+    button.type = "button";
+    button.className = avatar.animal === id ? "selected" : "";
+    button.setAttribute("aria-pressed", String(avatar.animal === id));
 
-    b.setAttribute(
-      "aria-pressed",
-      String(avatar.animal === id)
-    );
-
-    b.innerHTML =
+    button.innerHTML =
       svgAvatar(animalPreset(id)) +
       `<span>${escapeText(label)}</span>`;
 
-    b.addEventListener("click", () => {
+    button.addEventListener("click", () => {
       setAvatar(animalPreset(id));
     });
 
-    $("animalGrid").append(b);
+    $("animalGrid").append(button);
   }
 }
 
-function setAvatar(a) {
+function setAvatar(value) {
+  const animal = value?.animal || "koala";
+
   avatar = {
-    ...animalPreset(a?.animal || "koala"),
-    ...a
+    ...animalPreset(animal),
+    ...value
   };
 
-  if (a && a.version !== 2) {
+  if (value && value.version !== 2) {
     avatar = {
-      ...animalPreset(a.animal || "koala"),
+      ...animalPreset(animal),
       primaryColor:
-        a.color || animalPreset(a.animal || "koala").primaryColor,
-      headwear: a.hat ? "cap" : "none",
-      eyewear: a.glasses ? "sunglasses" : "none",
-      earrings: a.earrings ? "studs" : "none"
+        value.color || animalPreset(animal).primaryColor,
+      headwear: value.hat ? "cap" : "none",
+      eyewear: value.glasses ? "sunglasses" : "none",
+      earrings: value.earrings ? "studs" : "none"
     };
   }
 
@@ -138,15 +137,14 @@ function setAvatar(a) {
     $(id).value = avatar[id] ?? defaults[id];
   }
 
-  category =
-    Object.keys(categories).find(k =>
-      categories[k].some(([id]) => id === avatar.animal)
-    ) || "australia";
+  category = Object.keys(categories).find(key =>
+    categories[key].some(([id]) => id === avatar.animal)
+  ) || "australia";
 
-  document.querySelectorAll("[data-category]").forEach(b => {
-    b.classList.toggle(
+  document.querySelectorAll("[data-category]").forEach(button => {
+    button.classList.toggle(
       "selected",
-      b.dataset.category === category
+      button.dataset.category === category
     );
   });
 
@@ -161,42 +159,38 @@ ids.forEach(id => {
   });
 });
 
-document.querySelectorAll("[data-category]").forEach(b => {
-  b.addEventListener("click", () => {
-    category = b.dataset.category;
+document.querySelectorAll("[data-category]").forEach(button => {
+  button.addEventListener("click", () => {
+    category = button.dataset.category;
 
-    document.querySelectorAll("[data-category]").forEach(x => {
-      x.classList.toggle("selected", x === b);
+    document.querySelectorAll("[data-category]").forEach(item => {
+      item.classList.toggle("selected", item === button);
     });
 
     grid();
   });
 });
 
-document.querySelectorAll("[data-tab]").forEach(b => {
-  b.addEventListener("click", () => {
-    document.querySelectorAll("[data-tab]").forEach(x => {
-      x.classList.toggle("active", x === b);
-
-      x.setAttribute(
-        "aria-selected",
-        String(x === b)
-      );
+document.querySelectorAll("[data-tab]").forEach(button => {
+  button.addEventListener("click", () => {
+    document.querySelectorAll("[data-tab]").forEach(item => {
+      item.classList.toggle("active", item === button);
+      item.setAttribute("aria-selected", String(item === button));
     });
 
-    document.querySelectorAll(".account-panel").forEach(p => {
-      p.hidden = p.id !== `panel-${b.dataset.tab}`;
-      p.classList.toggle("active", !p.hidden);
+    document.querySelectorAll(".account-panel").forEach(panel => {
+      panel.hidden = panel.id !== `panel-${button.dataset.tab}`;
+      panel.classList.toggle("active", !panel.hidden);
     });
   });
 });
 
 $("randomAvatar").addEventListener("click", () => {
   const animals = Object.values(categories).flat();
-  const selectedAnimal = random(animals)[0];
+  const selected = random(animals)[0];
 
-  avatar = {
-    ...animalPreset(selectedAnimal),
+  setAvatar({
+    ...animalPreset(selected),
 
     primaryColor: random([
       "#b88860",
@@ -242,14 +236,6 @@ $("randomAvatar").addEventListener("click", () => {
       "star"
     ]),
 
-    neckwear: random([
-      "none",
-      "scarf",
-      "bandana",
-      "bowtie",
-      "necklace"
-    ]),
-
     outfit: random([
       "hoodie",
       "tshirt",
@@ -260,37 +246,43 @@ $("randomAvatar").addEventListener("click", () => {
       "coat",
       "astronaut",
       "wizard"
-    ]),
-
-    backgroundPreset: random([
-      "sunset",
-      "sky",
-      "forest",
-      "lavender",
-      "sand",
-      "plain"
     ])
-  };
-
-  setAvatar(avatar);
+  });
 });
 
 $("resetAvatar").addEventListener("click", () => {
   setAvatar(animalPreset(avatar.animal));
 });
 
-const year = new Date().getFullYear();
+function populateBirthYears() {
+  const currentYear = new Date().getFullYear();
+  const latestYear = currentYear - 18;
 
-for (let y = year; y >= 1900; y--) {
-  const o = document.createElement("option");
-  o.value = String(y);
-  o.textContent = String(y);
-  $("birthYear").append(o);
+  $("birthYear").replaceChildren();
+
+  const placeholder = document.createElement("option");
+  placeholder.value = "";
+  placeholder.textContent = "Select birth year";
+
+  $("birthYear").append(placeholder);
+
+  for (let y = latestYear; y >= 1900; y--) {
+    const option = document.createElement("option");
+
+    option.value = String(y);
+    option.textContent = String(y);
+
+    $("birthYear").append(option);
+  }
 }
 
+populateBirthYears();
+
 $("birthYear").addEventListener("change", () => {
-  $("age").textContent = $("birthYear").value
-    ? String(year - Number($("birthYear").value))
+  const selected = Number($("birthYear").value);
+
+  $("age").textContent = selected
+    ? String(new Date().getFullYear() - selected)
     : "--";
 });
 
@@ -310,22 +302,22 @@ function profileDefault(user) {
   };
 }
 
-function populate(p) {
-  $("username").value = p.username || "";
-  $("name").value = p.fullName || "";
+function populate(profile) {
+  $("username").value = profile.username || "";
+  $("name").value = profile.fullName || "";
   $("email").value = currentUser?.email || "";
 
-  $("birthYear").value = p.birthYear
-    ? String(p.birthYear)
+  $("birthYear").value = profile.birthYear
+    ? String(profile.birthYear)
     : "";
 
   $("birthYear").dispatchEvent(new Event("change"));
 
-  $("gender").value = p.gender || "";
+  $("gender").value = profile.gender || "";
 
   document.querySelector(
     `input[name="visibility"][value="${
-      p.visibility === "public" ? "public" : "private"
+      profile.visibility === "public" ? "public" : "private"
     }"]`
   ).checked = true;
 
@@ -335,15 +327,16 @@ function populate(p) {
     ["search_visible", "searchVisible"],
     ["email_notifications", "emailNotifications"]
   ]) {
-    $(id).checked = p[key] === true;
+    $(id).checked = profile[key] === true;
   }
 
-  setAvatar(p.avatar || animalPreset("koala"));
+  setAvatar(profile.avatar || animalPreset("koala"));
 }
 
 onAuthStateChanged(auth, async user => {
   currentUser = user;
   ready = false;
+
   $("saveAccount").disabled = true;
 
   if (!user) {
@@ -372,36 +365,31 @@ onAuthStateChanged(auth, async user => {
         ? ""
         : "Complete your profile and click Save Changes."
     );
-  } catch (e) {
-    console.error("Profile load:", e);
-
-    status(
-      `Unable to load profile: ${e.code || e.message}`,
-      true
-    );
+  } catch (error) {
+    status(error.message, true);
   }
 });
 
-$("accountForm").addEventListener("submit", async e => {
-  e.preventDefault();
+$("accountForm").addEventListener("submit", async event => {
+  event.preventDefault();
 
-  if (!ready || !currentUser) {
-    status("Profile is not ready.", true);
-    return;
-  }
+  if (!ready || !currentUser) return;
 
   const username = $("username").value.trim();
   const birthYear = Number($("birthYear").value);
+  const latestYear = new Date().getFullYear() - 18;
 
-  if (!username || !birthYear) {
-    status(
-      "Enter a username and select a birth year.",
-      true
-    );
+  if (
+    !username ||
+    !Number.isInteger(birthYear) ||
+    birthYear < 1900 ||
+    birthYear > latestYear
+  ) {
+    status("Enter a username and select an eligible birth year.", true);
     return;
   }
 
-  const p = {
+  const profile = {
     uid: currentUser.uid,
     username,
     fullName: $("name").value.trim(),
@@ -419,62 +407,52 @@ $("accountForm").addEventListener("submit", async e => {
 
     avatar: {
       ...avatar,
-      mode: "animal",
-      version: 2
+      version: 2,
+      mode: "animal"
     },
 
-    createdAt:
-      savedProfile?.createdAt || serverTimestamp(),
-
+    createdAt: savedProfile?.createdAt || serverTimestamp(),
     updatedAt: serverTimestamp()
   };
 
   $("saveAccount").disabled = true;
   status("Saving profile...");
 
-  let firestoreSaved = false;
-
   try {
-    const ref = doc(db, "users", currentUser.uid);
+    await setDoc(
+      doc(db, "users", currentUser.uid),
+      profile
+    );
 
-    await setDoc(ref, p);
-    firestoreSaved = true;
+    await setDoc(
+      doc(db, "publicProfiles", currentUser.uid),
+      {
+        uid: currentUser.uid,
+        username: profile.username,
+        avatar: profile.avatar
+      }
+    );
 
-    const snap = await getDoc(ref);
+    const snap = await getDoc(
+      doc(db, "users", currentUser.uid)
+    );
+
     savedProfile = snap.data();
 
-    try {
-      await updateProfile(currentUser, {
-        displayName: username
-      });
+    await updateProfile(currentUser, {
+      displayName: username
+    });
 
-      status("Your profile and avatar have been saved.");
-    } catch (err) {
-      console.error("Display name:", err);
-
-      status(
-        "Firestore profile saved; login display name update failed.",
-        true
-      );
-    }
-  } catch (err) {
-    console.error("Profile save:", err);
-
-    status(
-      firestoreSaved
-        ? "Profile saved, but read-back failed: " +
-          (err.code || err.message)
-        : "Unable to save profile: " +
-          (err.code || err.message),
-      true
-    );
+    status("Your profile and avatar have been saved.");
+  } catch (error) {
+    status(`Save failed: ${error.message}`, true);
   } finally {
     $("saveAccount").disabled = false;
   }
 });
 
-$("accountForm").addEventListener("reset", e => {
-  e.preventDefault();
+$("accountForm").addEventListener("reset", event => {
+  event.preventDefault();
 
   if (savedProfile) {
     populate(savedProfile);
