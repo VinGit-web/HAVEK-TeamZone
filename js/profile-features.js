@@ -286,13 +286,15 @@ async function saveVisibility() {
   visibilityInput.disabled = true;
 
   try {
-    await setDoc(
-      doc(db, "photoSettings", currentUser.uid),
-      {
-        ownerId: currentUser.uid,
-        friendsCanSeePhoto: visibilityInput.checked
-      }
-    );
+   
+        await setDoc(
+          doc(db, "photoSettings", currentUser.uid),
+        {
+          ownerId: currentUser.uid,
+          friendsCanSeePhoto: visibilityInput.checked
+        },
+        { merge: true }
+        );
 
     setStatus("Photo visibility preference saved.");
   } catch (error) {
