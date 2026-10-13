@@ -1,5 +1,6 @@
 
 import { auth, db } from "./firebase.js";
+import { supabase } from "./supabase.js";
 
 import {
   onAuthStateChanged
@@ -8,214 +9,327 @@ import {
 import {
   doc,
   getDoc,
-  setDoc,
-  onSnapshot
+  setDoc
 } from "https://www.gstatic.com/firebasejs/13.0.0/firebase-firestore.js";
 
-import {
-  getStorage,
-  ref,
-  uploadBytes,
-  getBlob,
-  deleteObject
-} from "https://www.gstatic.com/firebasejs/13.0.0/firebase-storage.js";
+const BUCKET = "profile-photos";
+const MAX_FILE_SIZE = 5 * 1024 * 1024;
 
-const $ = id => document.getElementById(id);
-const storage = getStorage();
+const EXTENSIONS = {
+  "image/jpeg": "jpg",
+  "image/png": "png",
+  "image/webp": "webp"
+};
 
-let user = null;
-let previewUrl = null;
+const preview = document.getElementById("myPhotoPreview");
+const fileInput = document.getElementById("profilePhoto");
+const uploadButton = document.getElementById("uploadPhoto");
+const removeButton = document.getElementById("removePhoto");
+const visibilityInput = document.getElementById("friendsCanSeePhoto");
+const photoStatus = document.getElementById("photoStatus");
 
-function message(text, error = false) {
-  $("photoStatus").textContent = text;
-  $("photoStatus").style.color = error ? "#a52b22" : "#236c45";
+let currentUser = null;
+let currentPhotoPath = null;
+let busy = false;
+
+function setStatus(message) {
+  if (photoStatus) photoStatus.textContent = message;
 }
 
-function photoRef() {
-  return ref(storage, `profilePhotos/${user.uid}/original`);
+function setBusy(value) {
+  busy = value;
+
+  if (uploadButton) uploadButton.disabled = value;
+  if (removeButton) removeButton.disabled = value;
+  if (fileInput) fileInput.disabled = value;
+  if (visibilityInput) visibilityInput.disabled = value;
 }
 
 function clearPreview() {
-  if (previewUrl) URL.revokeObjectURL(previewUrl);
+  if (!preview) return;
 
-  previewUrl = null;
-
-  const label = document.createElement("span");
-  label.textContent = "Photo not uploaded";
-
-  $("myPhotoPreview").replaceChildren(label);
+  if (preview.tagName === "IMG") {
+    preview.removeAttribute("src");
+    preview.alt = "No personal photo uploaded";
+  } else {
+    preview.replaceChildren();
+    preview.textContent = "No personal photo uploaded";
+  }
 }
 
-function displayPhoto(blob) {
-  clearPreview();
+function displayPhoto(url) {
+  if (!preview) return;
 
-  previewUrl = URL.createObjectURL(blob);
+  if (preview.tagName === "IMG") {
+    preview.src = url;
+    preview.alt = "Your personal profile photograph";
+  } else {
+    const image = document.createElement("img");
 
-  const image = document.createElement("img");
-  image.src = previewUrl;
-  image.alt = "Your profile photograph";
+    image.src = url;
+    image.alt = "Your personal profile photograph";
+    image.style.width = "100%";
+    image.style.height = "100%";
+    image.style.objectFit = "cover";
 
-  $("myPhotoPreview").replaceChildren(image);
+    preview.replaceChildren(image);
+  }
+}
+
+function possiblePaths(uid) {
+  return [
+    `${uid}/original.jpg`,
+    `${uid}/original.png`,
+    `${uid}/original.webp`
+  ];
+}
+
+async function checkSupabaseAuthentication(user) {
+  const token = await user.getIdTokenResult(true);
+
+  if (token.claims.role !== "authenticated") {
+    throw new Error(
+      "Your Firebase account is missing the Supabase authenticated role."
+    );
+  }
+}
+
+async function findExistingPhoto(uid) {
+  for (const path of possiblePaths(uid)) {
+    const { data, error } = await supabase.storage
+      .from(BUCKET)
+      .createSignedUrl(path, 120);
+
+    if (!error && data?.signedUrl) {
+      return {
+        path,
+        url: data.signedUrl
+      };
+    }
+
+    if (error && !/not found|does not exist|404/i.test(error.message)) {
+      throw error;
+    }
+  }
+
+  return null;
 }
 
 async function loadPhoto() {
-  if (!user) return;
+  if (!currentUser) return;
+
+  clearPreview();
+
+  const existing = await findExistingPhoto(currentUser.uid);
+
+  currentPhotoPath = existing?.path || null;
+
+  if (existing) {
+    displayPhoto(existing.url);
+    setStatus("Your private personal photo is available.");
+  } else {
+    setStatus("No personal photo uploaded.");
+  }
+
+  if (removeButton) {
+    removeButton.disabled = !existing;
+  }
+}
+
+async function loadVisibility() {
+  if (!currentUser || !visibilityInput) return;
+
+  const snapshot = await getDoc(
+    doc(db, "photoSettings", currentUser.uid)
+  );
+
+  visibilityInput.checked =
+    snapshot.exists() &&
+    snapshot.data().friendsCanSeePhoto === true;
+}
+
+async function loadVerification() {
+  if (!currentUser) return;
+
+  const snapshot = await getDoc(
+    doc(db, "verificationPublic", currentUser.uid)
+  );
+
+  const status = snapshot.exists()
+    ? snapshot.data().status
+    : "unverified";
+
+  const labels = {
+    verified: "Age verified",
+    pending: "Verification pending",
+    expired: "Verification expired",
+    unverified: "Age not verified"
+  };
+
+  const label = labels[status] || labels.unverified;
+
+  const elements = [
+    document.getElementById("verificationStatus"),
+    document.getElementById("verificationBadge")
+  ];
+
+  for (const element of elements) {
+    if (element) element.textContent = label;
+  }
+}
+
+async function uploadPhoto() {
+  if (!currentUser || busy) return;
+
+  const file = fileInput?.files?.[0];
+
+  if (!file) {
+    setStatus("Choose a photograph first.");
+    return;
+  }
+
+  if (!EXTENSIONS[file.type]) {
+    setStatus("Choose a JPG, PNG or WebP image.");
+    return;
+  }
+
+  if (file.size > MAX_FILE_SIZE) {
+    setStatus("The photograph must be 5 MB or smaller.");
+    return;
+  }
+
+  setBusy(true);
+  setStatus("Uploading photograph...");
 
   try {
-    const blob = await getBlob(photoRef());
-    displayPhoto(blob);
+    await checkSupabaseAuthentication(currentUser);
+
+    const extension = EXTENSIONS[file.type];
+    const path = `${currentUser.uid}/original.${extension}`;
+
+    const { error } = await supabase.storage
+      .from(BUCKET)
+      .upload(path, file, {
+        contentType: file.type,
+        cacheControl: "60",
+        upsert: true
+      });
+
+    if (error) throw error;
+
+    const oldPaths = possiblePaths(currentUser.uid)
+      .filter(candidate => candidate !== path);
+
+    if (oldPaths.length) {
+      const { error: cleanupError } = await supabase.storage
+        .from(BUCKET)
+        .remove(oldPaths);
+
+      if (cleanupError) {
+        console.warn(
+          "Old photograph cleanup:",
+          cleanupError.message
+        );
+      }
+    }
+
+    currentPhotoPath = path;
+    fileInput.value = "";
+
+    await loadPhoto();
+
+    setStatus("Your personal photograph was uploaded successfully.");
   } catch (error) {
+    console.error(error);
+    setStatus(`Upload failed: ${error.message}`);
+  } finally {
+    setBusy(false);
+  }
+}
+
+async function removePhoto() {
+  if (!currentUser || busy || !currentPhotoPath) return;
+
+  setBusy(true);
+  setStatus("Removing photograph...");
+
+  try {
+    await checkSupabaseAuthentication(currentUser);
+
+    const { error } = await supabase.storage
+      .from(BUCKET)
+      .remove(possiblePaths(currentUser.uid));
+
+    if (error) throw error;
+
+    currentPhotoPath = null;
     clearPreview();
 
-    if (error.code !== "storage/object-not-found") {
-      console.error(error);
+    if (fileInput) fileInput.value = "";
+
+    setStatus("Your personal photograph has been removed.");
+  } catch (error) {
+    console.error(error);
+    setStatus(`Removal failed: ${error.message}`);
+  } finally {
+    setBusy(false);
+
+    if (removeButton) {
+      removeButton.disabled = !currentPhotoPath;
     }
   }
 }
 
-$("profilePhoto").addEventListener("change", () => {
-  const file = $("profilePhoto").files[0];
+async function saveVisibility() {
+  if (!currentUser || !visibilityInput || busy) return;
 
-  if (!file) return;
-
-  if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
-    $("profilePhoto").value = "";
-    message("Choose a JPG, PNG or WebP image.", true);
-    return;
-  }
-
-  if (file.size > 5 * 1024 * 1024) {
-    $("profilePhoto").value = "";
-    message("Maximum file size is 5 MB.", true);
-    return;
-  }
-
-  displayPhoto(file);
-  message("Preview ready. Click Upload photo to save.");
-});
-
-$("uploadPhoto").addEventListener("click", async () => {
-  if (!user) return;
-
-  const file = $("profilePhoto").files[0];
-
-  if (!file) {
-    message("Choose a photograph first.", true);
-    return;
-  }
-
-  $("uploadPhoto").disabled = true;
-
-  try {
-    await uploadBytes(photoRef(), file, {
-      contentType: file.type,
-      cacheControl: "private,no-store"
-    });
-
-    $("profilePhoto").value = "";
-
-    await loadPhoto();
-
-    message("Photograph uploaded.");
-  } catch (error) {
-    message(error.message, true);
-  } finally {
-    $("uploadPhoto").disabled = false;
-  }
-});
-
-$("removePhoto").addEventListener("click", async () => {
-  if (!user) return;
-
-  try {
-    await deleteObject(photoRef());
-    clearPreview();
-    $("profilePhoto").value = "";
-
-    message("Photograph removed.");
-  } catch (error) {
-    if (error.code === "storage/object-not-found") {
-      clearPreview();
-      message("No photograph is stored.");
-      return;
-    }
-
-    message(error.message, true);
-  }
-});
-
-$("friendsCanSeePhoto").addEventListener("change", async () => {
-  if (!user) return;
-
-  const enabled = $("friendsCanSeePhoto").checked;
+  visibilityInput.disabled = true;
 
   try {
     await setDoc(
-      doc(db, "photoSettings", user.uid),
+      doc(db, "photoSettings", currentUser.uid),
       {
-        ownerId: user.uid,
-        friendsCanSeePhoto: enabled
+        ownerId: currentUser.uid,
+        friendsCanSeePhoto: visibilityInput.checked
       }
     );
 
-    message("Photo visibility updated.");
+    setStatus("Photo visibility preference saved.");
   } catch (error) {
-    $("friendsCanSeePhoto").checked = !enabled;
-    message(error.message, true);
+    console.error(error);
+    setStatus(`Could not save visibility: ${error.message}`);
+  } finally {
+    visibilityInput.disabled = false;
   }
-});
+}
 
-const labels = {
-  verified: [
-    "Age verified",
-    "Age eligibility has been independently confirmed."
-  ],
-  pending: [
-    "Verification pending",
-    "The independent verification result is pending."
-  ],
-  expired: [
-    "Verification required",
-    "A new eligibility check is required."
-  ],
-  unverified: [
-    "Age not verified",
-    "This account has not completed independent age verification."
-  ]
-};
+uploadButton?.addEventListener("click", uploadPhoto);
+removeButton?.addEventListener("click", removePhoto);
+visibilityInput?.addEventListener("change", saveVisibility);
 
-onAuthStateChanged(auth, async currentUser => {
-  user = currentUser;
+onAuthStateChanged(auth, async user => {
+  currentUser = user;
+  currentPhotoPath = null;
 
-  if (!user) return;
+  clearPreview();
 
-  await loadPhoto();
+  if (!user) {
+    setStatus("Sign in to manage your personal photograph.");
+    return;
+  }
+
+  setStatus("Loading your photograph...");
 
   try {
-    const snap = await getDoc(
-      doc(db, "photoSettings", user.uid)
-    );
+    await checkSupabaseAuthentication(user);
 
-    $("friendsCanSeePhoto").checked =
-      snap.exists() &&
-      snap.data().friendsCanSeePhoto === true;
+    await Promise.all([
+      loadPhoto(),
+      loadVisibility(),
+      loadVerification()
+    ]);
   } catch (error) {
-    message(error.message, true);
+    console.error(error);
+    setStatus(`Photo setup error: ${error.message}`);
   }
-
-  onSnapshot(
-    doc(db, "verificationPublic", user.uid),
-    snap => {
-      const state = snap.exists()
-        ? snap.data().status
-        : "unverified";
-
-      const [heading, description] =
-        labels[state] || labels.unverified;
-
-      $("verificationStatus").textContent = heading;
-      $("verificationDescription").textContent = description;
-    },
-    error => console.error(error)
-  );
 });

@@ -5,10 +5,10 @@ import {
   createClient
 } from "https://esm.sh/@supabase/supabase-js@2";
 
-const supabaseUrl = "https://ujftkcqylocqwfrbmwrh.supabase.co";
+const supabaseUrl = "YOUR_SUPABASE_PROJECT_URL";
 
 const supabasePublishableKey =
-  "sb_publishable_xnxILfnj_uTJh8Eq66stwA_D2JPtoLm";
+  "YOUR_SUPABASE_PUBLISHABLE_KEY";
 
 export const supabase = createClient(
   supabaseUrl,
