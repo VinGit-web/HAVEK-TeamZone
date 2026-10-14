@@ -203,10 +203,18 @@ body.loaded #loading {
     cursor: pointer;
 }
 
+/* Remove persistent focus outline after mouse selection */
+.events-body .event-filter input:focus:not(:focus-visible),
+.events-body .event-filter select:focus:not(:focus-visible) {
+    outline: none;
+    box-shadow: none;
+}
+
+/* Keep focus indicators for keyboard navigation */
 .events-body .event-filter input:focus-visible,
 .events-body .event-filter select:focus-visible,
 .events-body button:focus-visible {
-    outline: 3px solid #c5a3ff;
+    outline: 2px solid #c5a3ff;
     outline-offset: 2px;
 }
 
@@ -379,14 +387,34 @@ body.loaded #loading {
     overflow-wrap: anywhere;
 }
 
+/* SHOW MORE EVENTS BUTTON */
+
 .events-body #showMoreButton {
-    margin-top: 1.5rem;
-    padding: 0.75rem 1.6rem;
-    background: rgba(62, 39, 99, 0.8);
-    border: 1px solid #e5d5ff;
-    border-radius: 0.75rem;
-    color: #fff;
+    display: block;
+    margin: 1.5rem auto 0;
+    min-height: 2.75rem;
+    padding: 0.65rem 1.1rem;
+
+    border: 1px solid rgba(210, 188, 247, 0.7) !important;
+    border-radius: 0.75rem !important;
+
+    background: rgba(23, 24, 56, 0.8) !important;
+    color: #f7f3ff !important;
+
+    font-size: 0.94rem;
     cursor: pointer;
+
+    transition: background-color 160ms ease, border-color 160ms ease;
+}
+
+.events-body #showMoreButton:hover,
+.events-body #showMoreButton:focus-visible {
+    background: rgba(81, 53, 122, 0.88) !important;
+    border-color: #decaff !important;
+}
+
+.events-body #showMoreButton[hidden] {
+    display: none;
 }
 
 /* MAP */
