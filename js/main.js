@@ -565,13 +565,13 @@ function isConnected(user) {
             return (
                 String(connection)
                     .toLowerCase() ===
-                    String(userId)
-                        .toLowerCase() ||
+                String(userId)
+                    .toLowerCase() ||
 
                 String(connection)
                     .toLowerCase() ===
-                    userName
-                        .toLowerCase()
+                userName
+                    .toLowerCase()
             );
         }
     );
@@ -976,46 +976,25 @@ currentUserButton.addEventListener(
 );
 
 
-aboutButton.addEventListener(
-    "click",
-    function () {
-        aboutModal.hidden =
-            false;
+// Keep the About overlay keyboard-accessible and restore the launch control.
+function closeAboutDialog() {
+    if (aboutModal.hidden) return;
+    aboutModal.hidden = true;
+    document.body.style.overflow = "";
+    aboutButton.focus();
+}
 
-        document.body.style.overflow =
-            "hidden";
-    }
-);
+aboutButton.addEventListener("click", function () {
+    aboutModal.hidden = false;
+    document.body.style.overflow = "hidden";
+    closeAbout.focus();
+});
 
+closeAbout.addEventListener("click", closeAboutDialog);
 
-closeAbout.addEventListener(
-    "click",
-    function () {
-        aboutModal.hidden =
-            true;
-
-        document.body.style.overflow =
-            "";
-    }
-);
-
-
-aboutModal.addEventListener(
-    "click",
-    function (event) {
-        if (
-            event.target ===
-            aboutModal
-        ) {
-            aboutModal.hidden =
-                true;
-
-            document.body.style.overflow =
-                "";
-        }
-    }
-);
-
+aboutModal.addEventListener("click", function (event) {
+    if (event.target === aboutModal) closeAboutDialog();
+});
 
 showReferences.addEventListener(
     "click",
@@ -1045,11 +1024,7 @@ document.addEventListener(
 
             closeUserProfile();
 
-            aboutModal.hidden =
-                true;
-
-            document.body.style.overflow =
-                "";
+            closeAboutDialog();
         }
     }
 );
@@ -1074,7 +1049,7 @@ const camera =
     new THREE.PerspectiveCamera(
         42,
         sphereContainer.clientWidth /
-            sphereContainer.clientHeight,
+        sphereContainer.clientHeight,
         0.1,
         100
     );
@@ -1292,15 +1267,15 @@ for (
 
     particlePositions.push(
         radius *
-            Math.sin(phi) *
-            Math.cos(theta),
+        Math.sin(phi) *
+        Math.cos(theta),
 
         radius *
-            Math.cos(phi),
+        Math.cos(phi),
 
         radius *
-            Math.sin(phi) *
-            Math.sin(theta)
+        Math.sin(phi) *
+        Math.sin(theta)
     );
 }
 
@@ -1492,7 +1467,7 @@ function createNodeTexture(
 
             context.roundRect(
                 256 -
-                    labelWidth / 2,
+                labelWidth / 2,
                 335,
                 labelWidth,
                 66,
@@ -1503,7 +1478,7 @@ function createNodeTexture(
         } else {
             context.fillRect(
                 256 -
-                    labelWidth / 2,
+                labelWidth / 2,
                 335,
                 labelWidth,
                 66
@@ -1701,7 +1676,7 @@ function createNode(data) {
             data.initials || "",
             data.name || "",
             data.colour ||
-                "#888899",
+            "#888899",
             Boolean(
                 data.locked
             )
@@ -1997,15 +1972,15 @@ for (
     internalPoints.push(
         new THREE.Vector3(
             radius *
-                Math.sin(phi) *
-                Math.cos(theta),
+            Math.sin(phi) *
+            Math.cos(theta),
 
             radius *
-                Math.cos(phi),
+            Math.cos(phi),
 
             radius *
-                Math.sin(phi) *
-                Math.sin(theta)
+            Math.sin(phi) *
+            Math.sin(theta)
         )
     );
 }
@@ -2339,10 +2314,10 @@ sphereCanvas.addEventListener(
             pinchDistance =
                 Math.hypot(
                     second.clientX -
-                        first.clientX,
+                    first.clientX,
 
                     second.clientY -
-                        first.clientY
+                    first.clientY
                 );
         }
     },
@@ -2357,7 +2332,7 @@ sphereCanvas.addEventListener(
     function (event) {
         if (
             event.touches.length !==
-                2 ||
+            2 ||
             pinchDistance === null
         ) {
             return;
@@ -2372,10 +2347,10 @@ sphereCanvas.addEventListener(
         const newDistance =
             Math.hypot(
                 second.clientX -
-                    first.clientX,
+                first.clientX,
 
                 second.clientY -
-                    first.clientY
+                first.clientY
             );
 
         const difference =
@@ -2450,10 +2425,10 @@ function updateNodeDepth() {
 
             sprite.scale.set(
                 baseSize *
-                    depthFactor,
+                depthFactor,
 
                 baseSize *
-                    depthFactor,
+                depthFactor,
 
                 1
             );
