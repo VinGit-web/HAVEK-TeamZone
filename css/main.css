@@ -2742,3 +2742,38 @@ input {
         top: 105px;
     }
 }
+
+.home-body .home-user-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    width: max-content;
+    pointer-events: auto;
+}
+
+.home-body .my-events-button {
+    position: static;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    min-width: 0;
+    height: 42px;
+    margin: 0;
+    padding: 4px 12px;
+    border: 1px solid rgba(166, 77, 255, 0.65);
+    border-radius: 19px;
+    background: rgba(18, 23, 58, 0.9);
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    box-sizing: border-box;
+    pointer-events: auto;
+}
+
+.home-body .my-events-button:hover {
+    background: rgba(112, 55, 185, 0.9);
+}
