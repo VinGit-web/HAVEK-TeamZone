@@ -1,6 +1,11 @@
 
 import { animalPreset, svgAvatar } from "./avatar-renderer.js";
-import { mbtiDescriptions, interestCategories } from "./profile-options.js";
+
+import {
+  mbtiDescriptions,
+  interestCategories
+} from "./profile-options.js";
+
 import { auth, db } from "./firebase.js";
 
 import {
@@ -29,6 +34,7 @@ const categories = {
     ["tasdevil", "Tasmanian devil"],
     ["emu", "Emu"]
   ],
+
   pets: [
     ["dog", "Dog"],
     ["cat", "Cat"],
@@ -37,6 +43,7 @@ const categories = {
     ["guineapig", "Guinea pig"],
     ["parrot", "Parrot"]
   ],
+
   world: [
     ["redpanda", "Red panda"],
     ["penguin", "Penguin"],
@@ -64,6 +71,7 @@ const avatarFields = [
 ];
 
 let avatar = { ...animalPreset("koala") };
+
 let category = "australia";
 let currentUser = null;
 let savedProfile = null;
@@ -71,46 +79,33 @@ let ready = false;
 
 const selectedInterests = new Set();
 
+/* STATUS */
+
 function status(message, isError = false) {
   const element = $("accountStatus");
+
   if (!element) return;
 
   element.textContent = message;
-  element.style.color = isError ? "#a52b22" : "#236c45";
+  element.style.color = isError
+    ? "#a52b22"
+    : "#236c45";
 }
 
 function escapeText(value) {
-  return String(value ?? "").replace(/[&<>"']/g, character => ({
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    '"': "&quot;",
-    "'": "&#39;"
-  }[character]));
+  return String(value ?? "").replace(
+    /[&<>"']/g,
+    character => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;"
+    }[character])
+  );
 }
 
 /* PERSONALITY */
-
-function setupMbti() {
-  const select = $("mbti");
-  if (!select) return;
-
-  const existingValues = new Set(
-    [...select.options].map(option => option.value)
-  );
-
-  Object.keys(mbtiDescriptions).forEach(type => {
-    if (existingValues.has(type)) return;
-
-    const option = document.createElement("option");
-    option.value = type;
-    option.textContent = type;
-    select.append(option);
-  });
-
-  select.addEventListener("change", describeMbti);
-  describeMbti();
-}
 
 function describeMbti() {
   const description = $("accountMbtiDescription");
@@ -123,16 +118,38 @@ function describeMbti() {
     "MBTI is optional. You can update it later.";
 }
 
+function setupMbti() {
+  const select = $("mbti");
+
+  if (!select) return;
+
+  const existing = new Set(
+    [...select.options].map(option => option.value)
+  );
+
+  Object.keys(mbtiDescriptions).forEach(type => {
+    if (existing.has(type)) return;
+
+    const option = document.createElement("option");
+
+    option.value = type;
+    option.textContent = type;
+
+    select.append(option);
+  });
+
+  select.addEventListener("change", describeMbti);
+
+  describeMbti();
+}
+
 /* INTERESTS */
 
 function updateInterestCount() {
   const count = selectedInterests.size;
-  const element = $("accountInterestCount");
 
-  if (element) {
-    element.textContent =
-      `${count} interest${count === 1 ? "" : "s"} selected`;
-  }
+  $("accountInterestCount").textContent =
+    `${count} interest${count === 1 ? "" : "s"} selected`;
 }
 
 function renderInterests() {
@@ -140,11 +157,16 @@ function renderInterests() {
   const searchInput = $("accountInterestSearch");
 
   if (!container || !searchInput) {
-    console.error("Account interest elements are missing.");
+    console.error(
+      "Missing Account interest HTML elements."
+    );
     return;
   }
 
-  const search = searchInput.value.trim().toLowerCase();
+  const search = searchInput.value
+    .trim()
+    .toLowerCase();
+
   container.replaceChildren();
 
   Object.entries(interestCategories).forEach(
@@ -175,7 +197,11 @@ function renderInterests() {
         const selected = selectedInterests.has(interest);
 
         button.classList.toggle("selected", selected);
-        button.setAttribute("aria-pressed", String(selected));
+
+        button.setAttribute(
+          "aria-pressed",
+          String(selected)
+        );
 
         options.append(button);
       });
@@ -192,7 +218,10 @@ function setupInterests() {
   const container = $("accountInterestOptions");
   const search = $("accountInterestSearch");
 
-  if (!container || !search) return;
+  if (!container || !search) {
+    console.error("Interest selector cannot initialise.");
+    return;
+  }
 
   search.addEventListener("input", renderInterests);
 
@@ -216,11 +245,18 @@ function setupInterests() {
     const selected = selectedInterests.has(interest);
 
     button.classList.toggle("selected", selected);
-    button.setAttribute("aria-pressed", String(selected));
+
+    button.setAttribute(
+      "aria-pressed",
+      String(selected)
+    );
 
     updateInterestCount();
 
-    console.log("Selected interests:", [...selectedInterests]);
+    console.log(
+      "Selected interests:",
+      [...selectedInterests]
+    );
   });
 
   renderInterests();
@@ -242,6 +278,7 @@ function renderAvatar() {
 
 function renderAnimalGrid() {
   const container = $("animalGrid");
+
   if (!container) return;
 
   container.replaceChildren();
@@ -250,6 +287,7 @@ function renderAnimalGrid() {
     const button = document.createElement("button");
 
     button.type = "button";
+
     button.className =
       avatar.animal === id ? "selected" : "";
 
@@ -281,11 +319,18 @@ function setAvatar(value) {
   if (value && value.version !== 2) {
     avatar = {
       ...animalPreset(animal),
+
       primaryColor:
-        value.color || animalPreset(animal).primaryColor,
+        value.color ||
+        animalPreset(animal).primaryColor,
+
       headwear: value.hat ? "cap" : "none",
-      eyewear: value.glasses ? "sunglasses" : "none",
-      earrings: value.earrings ? "studs" : "none"
+
+      eyewear:
+        value.glasses ? "sunglasses" : "none",
+
+      earrings:
+        value.earrings ? "studs" : "none"
     };
   }
 
@@ -293,13 +338,16 @@ function setAvatar(value) {
 
   avatarFields.forEach(id => {
     if ($(id)) {
-      $(id).value = avatar[id] ?? defaults[id] ?? "";
+      $(id).value =
+        avatar[id] ?? defaults[id] ?? "";
     }
   });
 
   category =
     Object.keys(categories).find(key =>
-      categories[key].some(([id]) => id === avatar.animal)
+      categories[key].some(
+        ([id]) => id === avatar.animal
+      )
     ) || "australia";
 
   document.querySelectorAll("[data-category]").forEach(button => {
@@ -316,6 +364,7 @@ function setAvatar(value) {
 function setupAvatar() {
   avatarFields.forEach(id => {
     const input = $(id);
+
     if (!input) return;
 
     input.addEventListener("input", () => {
@@ -329,7 +378,10 @@ function setupAvatar() {
       category = button.dataset.category;
 
       document.querySelectorAll("[data-category]").forEach(item => {
-        item.classList.toggle("selected", item === button);
+        item.classList.toggle(
+          "selected",
+          item === button
+        );
       });
 
       renderAnimalGrid();
@@ -337,35 +389,70 @@ function setupAvatar() {
   });
 
   $("randomAvatar")?.addEventListener("click", () => {
-    const animals = Object.values(categories).flat();
     const random = values =>
       values[Math.floor(Math.random() * values.length)];
+
+    const animals = Object.values(categories).flat();
 
     const animal = random(animals)[0];
 
     setAvatar({
       ...animalPreset(animal),
+
       primaryColor: random([
-        "#b88860", "#9aaacb", "#e2a6b7",
-        "#94b99b", "#d5a46d", "#a58cbf"
+        "#b88860",
+        "#9aaacb",
+        "#e2a6b7",
+        "#94b99b",
+        "#d5a46d",
+        "#a58cbf"
       ]),
+
       secondaryColor: random([
-        "#f2d6b3", "#f8e7d8", "#d9e9ee"
+        "#f2d6b3",
+        "#f8e7d8",
+        "#d9e9ee"
       ]),
+
       expression: random([
-        "happy", "curious", "sleepy", "excited", "cheeky"
+        "happy",
+        "curious",
+        "sleepy",
+        "excited",
+        "cheeky"
       ]),
+
       headwear: random([
-        "none", "beanie", "cap", "bucket",
-        "crown", "bow", "headphones", "flower", "party"
+        "none",
+        "beanie",
+        "cap",
+        "bucket",
+        "crown",
+        "bow",
+        "headphones",
+        "flower",
+        "party"
       ]),
+
       eyewear: random([
-        "none", "round", "square",
-        "sunglasses", "heart", "star"
+        "none",
+        "round",
+        "square",
+        "sunglasses",
+        "heart",
+        "star"
       ]),
+
       outfit: random([
-        "hoodie", "tshirt", "sweater", "denim",
-        "suit", "jersey", "coat", "astronaut", "wizard"
+        "hoodie",
+        "tshirt",
+        "sweater",
+        "denim",
+        "suit",
+        "jersey",
+        "coat",
+        "astronaut",
+        "wizard"
       ])
     });
   });
@@ -377,7 +464,7 @@ function setupAvatar() {
   setAvatar(animalPreset("koala"));
 }
 
-/* ACCOUNT TABS */
+/* TABS */
 
 function setupTabs() {
   document.querySelectorAll("[data-tab]").forEach(button => {
@@ -386,12 +473,21 @@ function setupTabs() {
         const active = item === button;
 
         item.classList.toggle("active", active);
-        item.setAttribute("aria-selected", String(active));
+
+        item.setAttribute(
+          "aria-selected",
+          String(active)
+        );
       });
 
       document.querySelectorAll(".account-panel").forEach(panel => {
-        panel.hidden = panel.id !== `panel-${button.dataset.tab}`;
-        panel.classList.toggle("active", !panel.hidden);
+        panel.hidden =
+          panel.id !== `panel-${button.dataset.tab}`;
+
+        panel.classList.toggle(
+          "active",
+          !panel.hidden
+        );
       });
     });
   });
@@ -401,6 +497,7 @@ function setupTabs() {
 
 function setupBirthYears() {
   const select = $("birthYear");
+
   if (!select) return;
 
   const latestYear = new Date().getFullYear() - 18;
@@ -408,14 +505,18 @@ function setupBirthYears() {
   select.replaceChildren();
 
   const placeholder = document.createElement("option");
+
   placeholder.value = "";
   placeholder.textContent = "Select birth year";
+
   select.append(placeholder);
 
   for (let year = latestYear; year >= 1900; year--) {
     const option = document.createElement("option");
+
     option.value = String(year);
     option.textContent = String(year);
+
     select.append(option);
   }
 
@@ -430,33 +531,43 @@ function setupBirthYears() {
   });
 }
 
-/* PROFILE DATA */
+/* DEFAULT PROFILE */
 
 function profileDefault(user) {
   return {
     uid: user.uid,
+
     username: user.displayName || "",
     fullName: "",
     birthYear: 0,
     gender: "",
+
     persona: "",
     mbti: "",
     interests: [],
+
     suburb: "",
     preference: "none",
     showSuburb: false,
+
     visibility: "private",
+
     showEmail: false,
     allowMessages: true,
     searchVisible: true,
     emailNotifications: true,
+
     avatar: animalPreset("koala")
   };
 }
 
+/* POPULATE FORM */
+
 function populate(profile) {
   $("username").value = profile.username || "";
+
   $("name").value = profile.fullName || "";
+
   $("email").value = currentUser?.email || "";
 
   $("birthYear").value = profile.birthYear
@@ -468,7 +579,9 @@ function populate(profile) {
   $("gender").value = profile.gender || "";
 
   $("persona").value = profile.persona || "";
+
   $("mbti").value = profile.mbti || "";
+
   describeMbti();
 
   selectedInterests.clear();
@@ -482,14 +595,21 @@ function populate(profile) {
   }
 
   $("accountInterestSearch").value = "";
+
   renderInterests();
 
   $("suburb").value = profile.suburb || "";
-  $("preference").value = profile.preference || "none";
-  $("showSuburb").checked = profile.showSuburb === true;
+
+  $("preference").value =
+    profile.preference || "none";
+
+  $("showSuburb").checked =
+    profile.showSuburb === true;
 
   const visibility =
-    profile.visibility === "public" ? "public" : "private";
+    profile.visibility === "public"
+      ? "public"
+      : "private";
 
   const radio = document.querySelector(
     `input[name="visibility"][value="${visibility}"]`
@@ -505,15 +625,17 @@ function populate(profile) {
   ];
 
   checkboxFields.forEach(([id, key, defaultValue]) => {
-    if ($(id)) {
-      $(id).checked =
-        typeof profile[key] === "boolean"
-          ? profile[key]
-          : defaultValue;
-    }
+    if (!$(id)) return;
+
+    $(id).checked =
+      typeof profile[key] === "boolean"
+        ? profile[key]
+        : defaultValue;
   });
 
-  setAvatar(profile.avatar || animalPreset("koala"));
+  setAvatar(
+    profile.avatar || animalPreset("koala")
+  );
 }
 
 /* LOAD ACCOUNT */
@@ -523,9 +645,7 @@ async function loadAccount(user) {
   savedProfile = null;
   ready = false;
 
-  if ($("saveAccount")) {
-    $("saveAccount").disabled = true;
-  }
+  $("saveAccount").disabled = true;
 
   if (!user) {
     location.replace("login.html");
@@ -534,10 +654,17 @@ async function loadAccount(user) {
 
   $("email").value = user.email || "";
 
+  console.log("Firebase account authenticated.");
+  console.log("Loading private account document...");
+
   try {
-    const snapshot = await getDoc(doc(db, "users", user.uid));
+    const snapshot = await getDoc(
+      doc(db, "users", user.uid)
+    );
 
     if (auth.currentUser?.uid !== user.uid) return;
+
+    console.log("PRIVATE PROFILE LOADED SUCCESSFULLY");
 
     savedProfile = snapshot.exists()
       ? {
@@ -549,6 +676,7 @@ async function loadAccount(user) {
     populate(savedProfile);
 
     ready = true;
+
     $("saveAccount").disabled = false;
 
     status(
@@ -556,9 +684,17 @@ async function loadAccount(user) {
         ? ""
         : "Complete your profile and click Save Changes."
     );
+
   } catch (error) {
-    console.error("Account loading failed:", error);
-    status(`Unable to load account: ${error.message}`, true);
+    console.error(
+      "PRIVATE PROFILE LOAD FAILED:",
+      error
+    );
+
+    status(
+      `Unable to load private profile: ${error.message}`,
+      true
+    );
   }
 }
 
@@ -573,12 +709,18 @@ async function saveAccount(event) {
   }
 
   const user = currentUser;
+
   const username = $("username").value.trim();
+
   const birthYear = Number($("birthYear").value);
+
   const latestYear = new Date().getFullYear() - 18;
 
   if (!username || username.length > 30) {
-    status("Enter a username of up to 30 characters.", true);
+    status(
+      "Enter a username of up to 30 characters.",
+      true
+    );
     return;
   }
 
@@ -592,19 +734,28 @@ async function saveAccount(event) {
   }
 
   if (!$("persona").value) {
-    status("Select a personality description.", true);
+    status(
+      "Select a personality description.",
+      true
+    );
     return;
   }
 
   if (selectedInterests.size === 0) {
-    status("Select at least one interest.", true);
+    status(
+      "Select at least one interest.",
+      true
+    );
     return;
   }
 
   const suburb = $("suburb").value.trim();
 
   if (!suburb) {
-    status("Enter your suburb or locality.", true);
+    status(
+      "Enter your suburb or locality.",
+      true
+    );
     return;
   }
 
@@ -616,25 +767,38 @@ async function saveAccount(event) {
     ...savedProfile,
 
     uid: user.uid,
+
     username,
+
     fullName: $("name").value.trim(),
+
     birthYear,
+
     gender: $("gender").value,
 
     persona: $("persona").value,
+
     mbti: $("mbti").value,
+
     interests: [...selectedInterests],
 
     suburb,
+
     preference: $("preference").value,
+
     showSuburb: $("showSuburb").checked,
 
-    visibility: visibilityRadio?.value || "private",
+    visibility:
+      visibilityRadio?.value || "private",
 
     showEmail: $("show_email").checked,
+
     allowMessages: $("allow_messages").checked,
+
     searchVisible: $("search_visible").checked,
-    emailNotifications: $("email_notifications").checked,
+
+    emailNotifications:
+      $("email_notifications").checked,
 
     avatar: {
       ...avatar,
@@ -642,19 +806,33 @@ async function saveAccount(event) {
       mode: "animal"
     },
 
-    createdAt: savedProfile.createdAt || serverTimestamp(),
+    createdAt:
+      savedProfile.createdAt ||
+      serverTimestamp(),
+
     updatedAt: serverTimestamp()
   };
 
   const saveButton = $("saveAccount");
+
   saveButton.disabled = true;
 
-  status("Saving profile...");
+  let saveStage = "private profile";
 
   try {
     if (auth.currentUser?.uid !== user.uid) {
-      throw new Error("Your sign-in session has changed.");
+      throw new Error(
+        "Your sign-in session has changed."
+      );
     }
+
+    /* FIRST WRITE */
+
+    status("Saving private profile...");
+
+    console.log(
+      "STEP 1: Saving users/{uid}..."
+    );
 
     await setDoc(
       doc(db, "users", user.uid),
@@ -662,19 +840,38 @@ async function saveAccount(event) {
       { merge: true }
     );
 
+    console.log(
+      "STEP 1 SUCCESS: Private profile saved."
+    );
+
+    // The private profile is already saved at this point.
     savedProfile = profile;
+
+    /* SECOND WRITE */
+
+    saveStage = "public profile";
 
     const publicProfile = {
       uid: user.uid,
+
       username: profile.username,
+
       avatar: profile.avatar,
+
       persona: profile.persona,
+
       mbti: profile.mbti,
+
       interests: profile.interests,
+
       preference: profile.preference,
+
       visibility: profile.visibility,
+
       searchVisible: profile.searchVisible,
+
       showSuburb: profile.showSuburb,
+
       updatedAt: serverTimestamp()
     };
 
@@ -682,29 +879,60 @@ async function saveAccount(event) {
       publicProfile.suburb = profile.suburb;
     }
 
+    status("Saving public profile...");
+
+    console.log(
+      "STEP 2: Saving publicProfiles/{uid}..."
+    );
+
     await setDoc(
       doc(db, "publicProfiles", user.uid),
       publicProfile
+    );
+
+    console.log(
+      "STEP 2 SUCCESS: Public profile saved."
+    );
+
+    /* AUTH DISPLAY NAME */
+
+    saveStage = "Firebase Auth display name";
+
+    status("Updating display name...");
+
+    console.log(
+      "STEP 3: Updating Firebase Auth display name..."
     );
 
     await updateProfile(user, {
       displayName: username
     });
 
-    status("Your profile and interests have been saved.");
-  } catch (error) {
-    console.error("Account save failed:", error);
+    console.log(
+      "STEP 3 SUCCESS: Auth display name updated."
+    );
 
     status(
-      `Save failed: ${error.message}`,
+      "Your profile and interests have been saved."
+    );
+
+  } catch (error) {
+    console.error(
+      `SAVE FAILED AT: ${saveStage}`,
+      error
+    );
+
+    status(
+      `Save failed at ${saveStage}: ${error.message}`,
       true
     );
+
   } finally {
     saveButton.disabled = false;
   }
 }
 
-/* DISCARD CHANGES */
+/* CANCEL CHANGES */
 
 function resetAccount(event) {
   event.preventDefault();
@@ -712,6 +940,7 @@ function resetAccount(event) {
   if (!savedProfile) return;
 
   populate(savedProfile);
+
   status("Unsaved changes discarded.");
 }
 
@@ -719,13 +948,24 @@ function resetAccount(event) {
 
 function initialise() {
   setupMbti();
+
   setupInterests();
+
   setupAvatar();
+
   setupTabs();
+
   setupBirthYears();
 
-  $("accountForm").addEventListener("submit", saveAccount);
-  $("accountForm").addEventListener("reset", resetAccount);
+  $("accountForm").addEventListener(
+    "submit",
+    saveAccount
+  );
+
+  $("accountForm").addEventListener(
+    "reset",
+    resetAccount
+  );
 
   $("saveAccount").disabled = true;
 
