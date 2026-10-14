@@ -14,7 +14,10 @@ const listView = document.getElementById("listView");
 const mapView = document.getElementById("mapView");
 
 const eventDetails = document.getElementById("eventDetails");
-const closeEventDetails = document.getElementById("closeEventDetails");
+const closeEventDetailsButton = document.getElementById("closeEventDetails");
+const eventDetailsBackdrop = document.getElementById("eventDetailsBackdrop");
+const eventResultsStatus = document.getElementById("eventResultsStatus");
+const mapResultsStatus = document.getElementById("mapResultsStatus");
 
 const bookEventButton = document.getElementById("bookEventButton");
 const cancelEventButton = document.getElementById("cancelEventButton");
@@ -51,48 +54,117 @@ const sphereMarker = L.icon({
 
 
 // BCC EVENT LOCATIONS API
-
+// Venue lookup is only used when an event does not include coordinates.
+// Map markers themselves now represent matching Events API records.
 const LOCATIONS_API =
     "https://data.brisbane.qld.gov.au/api/explore/v2.1/catalog/datasets/brisbane-city-council-events-locations/records?limit=100";
 
-fetch(LOCATIONS_API)
-    .then(function (response) {
+const venueCoordinates = new Map();
+const eventMarkers = L.layerGroup().addTo(eventMap);
+let activeView = "list";
+let returnFocusTo = null;
+let partialLoadWarning = false;
 
-        if (!response.ok) {
-            throw new Error("BCC locations API request failed");
+function normalizedVenue(value) {
+    return String(value || "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+}
+
+function validCoords(latitude, longitude) {
+    if (latitude == null || longitude == null || latitude === "" || longitude === "") return null;
+    const lat = Number(latitude);
+    const lon = Number(longitude);
+    return Number.isFinite(lat) && Number.isFinite(lon) && !(lat === 0 && lon === 0) &&
+        Math.abs(lat) <= 90 && Math.abs(lon) <= 180
+        ? [lat, lon] : null;
+}
+
+function getCoordinates(location) {
+    if (!location) return null;
+    if (Array.isArray(location)) return validCoords(location[0], location[1]);
+    if (typeof location !== "object") return null;
+    if (location.type === "Point" && Array.isArray(location.coordinates)) {
+        return validCoords(location.coordinates[1], location.coordinates[0]);
+    }
+    return validCoords(location.lat ?? location.latitude, location.lon ?? location.lng ?? location.longitude)
+        || getCoordinates(location.geometry)
+        || getCoordinates(location.geolocation);
+}
+
+function eventCoords(event) {
+    const direct = getCoordinates(event.geolocation) || getCoordinates(event.location) ||
+        getCoordinates({ latitude: event.latitude, longitude: event.longitude });
+    if (direct) return direct;
+    const venue = normalizedVenue(event.venue);
+    if (!venue) return null;
+    if (venueCoordinates.has(venue)) return venueCoordinates.get(venue);
+    // BCC event venues can contain an address suffix; compare named venue prefixes.
+    for (const [name, coords] of venueCoordinates) {
+        if (name.length >= 6 && (venue.startsWith(name + " ") || name.startsWith(venue + " "))) {
+            return coords;
         }
+    }
+    return null;
+}
 
-        return response.json();
+async function loadEventLocations() {
+    try {
+        const response = await fetch(LOCATIONS_API);
+        if (!response.ok) throw new Error(`Venue lookup request failed (${response.status})`);
+        const data = await response.json();
+        for (const venue of data.results || []) {
+            const name = normalizedVenue(venue.venue_name || venue.name);
+            const coords = getCoordinates(venue.geolocation) || getCoordinates(venue.location) ||
+                validCoords(venue.latitude, venue.longitude);
+            if (name && coords) venueCoordinates.set(name, coords);
+        }
+        if (activeView === "map") renderEventMarkers();
+    } catch (error) {
+        // Events with their own coordinates can still be shown.
+        console.warn("Unable to look up some venue coordinates:", error);
+    }
+}
 
-    })
-    .then(function (data) {
+function eventPopup(event) {
+    const container = element("div", "event-map-popup");
+    container.append(
+        element("h3", "", event.subject || event.title || "Brisbane Event"),
+        element("p", "", formatEventDate(event.start_datetime)),
+        element("p", "", event.venue || "Venue unavailable")
+    );
+    const actions = element("div", "event-popup-actions");
+    const details = element("button", "", "View details");
+    details.type = "button";
+    details.addEventListener("click", () => openEventDetails(event));
+    const book = element("button", "", "Book event");
+    book.type = "button";
+    book.addEventListener("click", () => openEventDetails(event, { focusBooking: true }));
+    actions.append(details, book);
+    container.append(actions);
+    return container;
+}
 
-        console.log("BCC EVENT LOCATIONS:", data);
+function renderEventMarkers() {
+    eventMarkers.clearLayers();
+    const bounds = [];
+    for (const event of filteredEvents) {
+        const coords = eventCoords(event);
+        if (!coords) continue;
+        L.marker(coords, { icon: sphereMarker })
+            .bindPopup(eventPopup(event))
+            .addTo(eventMarkers);
+        bounds.push(coords);
+    }
+    const located = bounds.length;
+    mapResultsStatus.textContent = located
+        ? `Showing ${located} of ${filteredEvents.length} matching events with a mapped location. Select a marker to view or book an event.`
+        : "No matching events have a mapped location. Try another filter or use List View.";
+    if (located) {
+        eventMap.fitBounds(bounds, { padding: [36, 36], maxZoom: 13 });
+    } else {
+        eventMap.setView([-27.4698, 153.0251], 12);
+    }
+}
 
-        data.results.forEach(function (location) {
-
-            if (location.latitude && location.longitude) {
-
-                L.marker(
-                    [location.latitude, location.longitude],
-                    { icon: sphereMarker }
-                )
-                    .addTo(eventMap)
-                    .bindPopup(
-                        "<strong>" + location.venue_name + "</strong><br>" +
-                        location.venue_address
-                    );
-
-            }
-
-        });
-
-    })
-    .catch(function (error) {
-
-        console.error("Error loading BCC event locations:", error);
-
-    });
 
 // BRISBANE CITY COUNCIL EVENTS API
 const EVENTS_API =
@@ -171,15 +243,21 @@ function matchesCost(event, selection) {
 }
 
 function matchesDate(event, selection) {
-    const start = getEventStart(event);
-    if (!start) return false;
     if (selection === "all") return true;
+    const start = getEventStart(event);
+    const end = getEventEnd(event);
+    if (!start || !end) return false;
     const now = new Date();
-    if (selection === "today") return start.toDateString() === now.toDateString();
-    const days = selection === "week" ? 7 : 30;
-    const end = new Date(now);
-    end.setDate(end.getDate() + days);
-    return start >= now && start <= end;
+    if (selection === "today") {
+        const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        const tomorrow = new Date(todayStart);
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        // An ongoing multi-day event should be included if it overlaps today.
+        return start < tomorrow && end >= todayStart;
+    }
+    const windowEnd = new Date(now);
+    windowEnd.setDate(windowEnd.getDate() + (selection === "week" ? 7 : 30));
+    return start <= windowEnd && end >= now;
 }
 
 function escapeHTML(value) {
@@ -193,6 +271,77 @@ function formatEventDate(value) {
     return Number.isNaN(date.getTime()) ? "Date unavailable" :
         date.toLocaleString("en-AU", { dateStyle: "medium", timeStyle: "short" });
 }
+
+function formatEventDateRange(event) {
+    const start = formatEventDate(event.start_datetime);
+    const end = getEventEnd(event);
+    const begin = getEventStart(event);
+    if (!end || !begin || end.getTime() === begin.getTime()) return start;
+    // Avoid huge duplicated date strings for short same-day events.
+    if (end.toDateString() === begin.toDateString()) {
+        return `${start} – ${end.toLocaleTimeString("en-AU", { hour: "numeric", minute: "2-digit" })}`;
+    }
+    return `${start} – ${formatEventDate(event.end_datetime)}`;
+}
+
+function element(tag, className, content) {
+    const node = document.createElement(tag);
+    if (className) node.className = className;
+    if (content !== undefined) node.textContent = String(content);
+    return node;
+}
+
+/* BCC eventimage may be a URL or an image object depending on the record. */
+function getEventImageUrl(event) {
+    const rawSource = event.eventimage ?? event.event_image ?? null;
+    const source = Array.isArray(rawSource) ? rawSource[0] : rawSource;
+    const candidate = typeof source === "string" ? source :
+        (source && typeof source === "object" ?
+            (source.url || source.thumbnail || source.href || source.src) : null);
+    if (typeof candidate !== "string") return null;
+    try {
+        const url = new URL(candidate);
+        return url.protocol === "https:" || url.protocol === "http:" ? url.href : null;
+    } catch (_) {
+        return null;
+    }
+}
+
+function makeEventMedia(event) {
+    const media = element("div", "event-card-image");
+    const imageUrl = getEventImageUrl(event);
+    const fallback = element("span", "event-image-placeholder", "Image not provided for this event");
+    if (!imageUrl) {
+        media.append(fallback);
+        return media;
+    }
+    const image = document.createElement("img");
+    image.src = imageUrl;
+    image.alt = ""; // Title follows immediately in the card.
+    image.loading = "lazy";
+    image.decoding = "async";
+    image.addEventListener("error", () => image.replaceWith(fallback), { once: true });
+    media.append(image);
+    return media;
+}
+
+function createEventCard(event) {
+    // A button makes the entire card keyboard-accessible without nested buttons.
+    const card = element("button", "event-card event-card-button");
+    card.type = "button";
+    card.setAttribute("aria-label", `View ${event.subject || event.title || "event"} details`);
+    card.append(makeEventMedia(event));
+    const content = element("div", "event-card-content");
+    content.append(
+        element("h2", "", event.subject || event.title || "Brisbane Event"),
+        element("p", "event-date", formatEventDateRange(event)),
+        element("p", "event-venue", event.venue || "Venue unavailable")
+    );
+    card.append(content);
+    card.addEventListener("click", () => openEventDetails(event));
+    return card;
+}
+
 
 function applyEventFilters() {
     const search = eventSearch.value.trim().toLowerCase();
@@ -222,7 +371,14 @@ function applyEventFilters() {
     });
 
     visibleEventCount = EVENTS_PER_PAGE;
+    eventResultsStatus.textContent =
+        `${filteredEvents.length} matching event${filteredEvents.length === 1 ? "" : "s"}` +
+        (partialLoadWarning ? " (some API results could not be loaded)" : "");
+
     displayAPIEvents(filteredEvents);
+
+    // Keep map markers synchronised with the active filters.
+    if (activeView === "map") renderEventMarkers();
 }
 
 [eventCategory, eventCost, eventDate, eventSort].forEach(function (control) {
@@ -297,12 +453,15 @@ async function loadEventsFromAPI() {
             displayAPIEvents(loadedEvents);
         }
 
+        await openDeepLinkedEvent();
+
     } catch (error) {
 
         console.error("Error loading events:", error);
 
         // Keep already fetched events if a later request fails
         if (allFetchedEvents.length > 0) {
+            partialLoadWarning = true;
             loadedEvents = allFetchedEvents;
 
             visibleEventCount = EVENTS_PER_PAGE;
@@ -319,6 +478,7 @@ async function loadEventsFromAPI() {
                     Events could not be loaded. Please try again.
                 </p>
             `;
+            eventResultsStatus.textContent = "Events unavailable";
         }
 
     } finally {
@@ -342,127 +502,75 @@ function displayAPIEvents(events) {
         listView.appendChild(message);
     }
 
-    visibleEvents.forEach(function (event, index) {
-
-        const name =
-            event.subject ||
-            event.title ||
-            "Brisbane Event";
-
-        // KEEP THIS AS event.venue //
-        const venue =
-            event.venue ||
-            "Venue unavailable";
-
-        const startDate = formatEventDate(event.start_datetime);
-        const endDate = event.end_datetime ? formatEventDate(event.end_datetime) : "";
-
-        const cost =
-            event.cost ||
-            "See details";
-
-        const category = getEventCategory(event);
-
-        const description =
-            event.description ||
-            "More information available from Brisbane City Council.";
-
-
-        const card =
-            document.createElement("article");
-
-        card.className = "event-card";
-
-        card.innerHTML = `
-            <div class="event-card-content">
-
-                <span class="event-category">
-                    ${escapeHTML(category)}
-                </span>
-
-                <h2>${escapeHTML(name)}</h2>
-
-                <p class="event-date">
-                    ${escapeHTML(startDate)}
-                    ${endDate ? " – " + escapeHTML(endDate) : ""}
-                </p>
-
-                <p class="event-venue">
-                    ${escapeHTML(venue)}
-                </p>
-
-                <p class="event-description">
-                    ${escapeHTML(description)}
-                </p>
-
-                <div class="event-card-footer">
-
-                    <span>${escapeHTML(cost)}</span>
-
-                    <button
-                        type="button"
-                        class="view-event"
-                        data-event-index="${index}"
-                    >
-                        View Event
-                    </button>
-
-                </div>
-
-            </div>
-        `;
-
+    // Each whole card is a button so it can be used with mouse or keyboard.
+    visibleEvents.forEach(function (event) {
+        const card = createEventCard(event);
         listView.appendChild(card);
     });
-
-    // Add click events AFTER API cards exist //
-
-    document
-        .querySelectorAll(".view-event")
-        .forEach(function (button) {
-
-            button.addEventListener("click", function () {
-
-                const index =
-                    Number(button.dataset.eventIndex);
-
-                const event =
-                    events[index];
-
-                selectedEvent = event;
-
-
-                document.getElementById("detailCategory").textContent =
-                    getEventCategory(event);
-
-                document.getElementById("detailName").textContent =
-                    event.subject || event.title || "Brisbane Event";
-
-                document.getElementById("detailDate").textContent =
-                    formatEventDate(event.start_datetime);
-
-                // IMPORTANT: venue from Events API
-                document.getElementById("detailLocation").textContent =
-                    event.venue || "Venue unavailable";
-
-                document.getElementById("detailCost").textContent =
-                    event.cost || "See details";
-
-                document.getElementById("detailDescription").textContent =
-                    event.description || "No description available";
-
-
-                eventDetails.hidden = false;
-
-                updateBookingButtons();
-
-            });
-
-        });
 
     // SHOW MORE BUTTON VISIBILITY
     showMoreButton.hidden = listView.hidden || visibleEventCount >= events.length;
 }
+
+
+/* EVENT DETAILS DIALOG */
+// List cards and map markers open the same details and booking controls.
+function openEventDetails(event, { focusBooking = false } = {}) {
+    returnFocusTo = document.activeElement;
+    selectedEvent = event;
+    document.getElementById("detailCategory").textContent = getEventCategory(event);
+    document.getElementById("detailName").textContent = event.subject || event.title || "Brisbane Event";
+    document.getElementById("detailDate").textContent = formatEventDateRange(event);
+    document.getElementById("detailLocation").textContent = event.venue || "Venue unavailable";
+    document.getElementById("detailCost").textContent = event.cost || "Cost information unavailable";
+    document.getElementById("detailDescription").textContent = event.description || "No description provided by Brisbane City Council.";
+
+    const image = document.getElementById("detailImage");
+    const placeholder = document.getElementById("detailImageFallback");
+    const imageUrl = getEventImageUrl(event);
+    document.getElementById("detailImageContainer").hidden = false;
+    image.hidden = !imageUrl;
+    placeholder.hidden = Boolean(imageUrl);
+    image.removeAttribute("src");
+    if (imageUrl) image.src = imageUrl;
+    image.onerror = () => { image.hidden = true; placeholder.hidden = false; };
+    updateBookingButtons();
+    eventDetailsBackdrop.hidden = false;
+    eventDetails.hidden = false;
+    document.body.classList.add("event-dialog-open");
+    (focusBooking && !bookEventButton.hidden ? bookEventButton : closeEventDetailsButton).focus();
+}
+
+function closeEventDetails() {
+    if (eventDetails.hidden) return;
+    eventDetails.hidden = true;
+    eventDetailsBackdrop.hidden = true;
+    document.body.classList.remove("event-dialog-open");
+    if (returnFocusTo && document.contains(returnFocusTo)) returnFocusTo.focus();
+    returnFocusTo = null;
+}
+
+closeEventDetailsButton.addEventListener("click", closeEventDetails);
+eventDetailsBackdrop.addEventListener("click", closeEventDetails);
+document.addEventListener("keydown", event => {
+    if (eventDetails.hidden) return;
+    if (event.key === "Escape") {
+        event.preventDefault();
+        closeEventDetails();
+        return;
+    }
+    if (event.key !== "Tab") return;
+    const focusable = [...eventDetails.querySelectorAll("button:not([disabled]):not([hidden]), a[href]:not([hidden])")]
+        .filter(node => node.getClientRects().length > 0);
+    if (!focusable.length) return;
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault(); last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault(); first.focus();
+    }
+});
 
 
 /* EVENT BOOKING HELPERS */
@@ -504,44 +612,19 @@ showMoreButton.addEventListener("click", function () {
 });
 
 // LIST VIEW //
-
 listViewButton.addEventListener("click", function () {
-
-    showMoreButton.hidden = visibleEventCount >= filteredEvents.length;
-
-    listView.hidden = false;
-    mapView.hidden = true;
-
-    // Close event popup if open
-    eventDetails.hidden = true;
-
+    setActiveView("list");
 });
 
 
 // MAP VIEW //
-
 mapViewButton.addEventListener("click", function () {
-
-    showMoreButton.hidden = true;
-
-    listView.hidden = true;
-    mapView.hidden = false;
-    eventDetails.hidden = true;
-
-    // Resize Leaflet after the map becomes visible
-    setTimeout(function () {
-        eventMap.invalidateSize(true);
-    }, 300);
-
+    setActiveView("map");
 });
+
 
 // CLOSE EVENT DETAILS //
-
-closeEventDetails.addEventListener("click", function () {
-
-    eventDetails.hidden = true;
-
-});
+// Handled by closeEventDetails() in the dialog section above.
 
 
 /* BOOK EVENT */
@@ -589,5 +672,42 @@ cancelEventButton.addEventListener("click", function () {
 });
 
 
+function setActiveView(view) {
+    activeView = view;
+    listView.hidden = view !== "list";
+    mapView.hidden = view !== "map";
+    listViewButton.classList.toggle("active", view === "list");
+    mapViewButton.classList.toggle("active", view === "map");
+    listViewButton.setAttribute("aria-pressed", String(view === "list"));
+    mapViewButton.setAttribute("aria-pressed", String(view === "map"));
+    closeEventDetails();
+    showMoreButton.hidden = view !== "list" || visibleEventCount >= filteredEvents.length;
+    if (view === "map") {
+        requestAnimationFrame(() => { eventMap.invalidateSize(true); renderEventMarkers(); });
+    }
+}
+
+async function openDeepLinkedEvent() {
+    const id = new URLSearchParams(window.location.search).get("event");
+    if (!id || id.length > 400) return;
+    let event = loadedEvents.find(item => getEventId(item) === id);
+    // Future Strings links must also work for events beyond the first 500 records.
+    if (!event && !id.startsWith("[")) {
+        try {
+            const response = await fetch(`${EVENTS_API}/${encodeURIComponent(id)}`);
+            if (response.ok) event = await response.json();
+        } catch (error) {
+            console.warn("Couldn't resolve event link:", error);
+        }
+    }
+    if (event) {
+        openEventDetails(event);
+    } else {
+        eventResultsStatus.textContent = "That linked event could not be found in the current dataset.";
+    }
+}
+
+
 // LOAD EVENTS FROM API //
+loadEventLocations();
 loadEventsFromAPI();

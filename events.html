@@ -5,11 +5,12 @@
     <script type="module" src="js/auth-guard.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Events</title>
+    <title>Discover Events | INTROSPHEER</title>
     <link rel="stylesheet" href="css/app.css">
     <link rel="stylesheet" href="css/events.css">
     <link rel="stylesheet" href="css/leaflet.css">
     <link rel="stylesheet" href="css/theme.css">
+    <link rel="stylesheet" href="css/events-redesign.css">
 </head>
 
 <body class="events-body">
@@ -45,51 +46,57 @@
             </div>
 
             <div class="view-toggle">
-                <button type="button" id="listViewButton">List View</button>
-                <button type="button" id="mapViewButton">Map View</button>
-                <button type="button" onclick="window.location.href='my-events.html'">
-                    My Events
-                </button>
+                <button type="button" id="listViewButton" class="active" aria-pressed="true">List View</button>
+                <button type="button" id="mapViewButton" aria-pressed="false">Map View</button>
+                <a href="my-events.html" class="my-events-link">My Events</a>
             </div>
         </div>
 
 
 
-        <!-- EVENT SEARCH AND FILTERS -->
-        <section class="event-filters">
-
-            <input type="search" id="eventSearch" placeholder="Search Brisbane events...">
-
-            <select id="eventCategory">
-                <option value="all">All Categories</option>
-                <option value="creative">Arts & Creative</option>
-                <option value="fitness">Fitness & Wellness</option>
-                <option value="social">Social & Community</option>
-                <option value="education">Learning & Workshops</option>
-            </select>
-
-            <select id="eventCost">
-                <option value="all">Any Cost</option>
-                <option value="free">Free</option>
-                <option value="paid">Paid</option>
-            </select>
-
-            <select id="eventDate">
-                <option value="all">Any Date</option>
-                <option value="today">Today</option>
-                <option value="week">Next 7 Days</option>
-                <option value="month">Next 30 Days</option>
-            </select>
-
-            <select id="eventSort">
-                <option value="recommended">Recommended</option>
-                <option value="soonest">Date: Soonest</option>
-                <option value="alphabetical">Alphabetical</option>
-            </select>
-
+        <!-- Search and filter both list and map results. Labels remain readable at narrow widths. -->
+        <section class="event-filters" aria-label="Find events">
+            <label class="event-filter event-filter--search" for="eventSearch">
+                <span>Search events</span>
+                <input type="search" id="eventSearch" placeholder="Event, activity or venue..." autocomplete="off">
+            </label>
+            <label class="event-filter" for="eventCategory">
+                <span>Category</span>
+                <select id="eventCategory">
+                    <option value="all">All categories</option>
+                    <option value="creative">Arts & creative</option>
+                    <option value="fitness">Fitness & wellness</option>
+                    <option value="social">Social & community</option>
+                    <option value="education">Learning & workshops</option>
+                </select>
+            </label>
+            <label class="event-filter" for="eventCost">
+                <span>Cost</span>
+                <select id="eventCost">
+                    <option value="all">Any cost</option>
+                    <option value="free">Free</option>
+                    <option value="paid">Paid</option>
+                </select>
+            </label>
+            <label class="event-filter" for="eventDate">
+                <span>Date</span>
+                <select id="eventDate">
+                    <option value="all">Any date</option>
+                    <option value="today">Today</option>
+                    <option value="week">Next 7 days</option>
+                    <option value="month">Next 30 days</option>
+                </select>
+            </label>
+            <label class="event-filter" for="eventSort">
+                <span>Sort by</span>
+                <select id="eventSort">
+                    <option value="recommended">Recommended</option>
+                    <option value="soonest">Date: soonest</option>
+                    <option value="alphabetical">Alphabetical</option>
+                </select>
+            </label>
         </section>
-
-
+        <p id="eventResultsStatus" class="events-results-status" role="status" aria-live="polite">Loading events...</p>
 
         <!-- LIST VIEW -->
         <section id="listView" class="event-list"></section>
@@ -102,67 +109,41 @@
         <!-- MAP VIEW -->
         <section id="mapView" class="map-view" hidden>
 
-            <div id="eventMap"></div>
+            <p id="mapResultsStatus" class="map-results-status" role="status" aria-live="polite"></p>
+            <div id="eventMap" aria-label="Map of matching events"></div>
 
         </section>
 
-
-        <!-- EVENT DETAILS MODAL -->
-        <section id="eventDetails" class="event-full-details" hidden>
-
-            <!-- CLOSE BUTTON -->
-            <button type="button" id="closeEventDetails">
-                ×
-            </button>
-
-            <!-- EVENT CATEGORY -->
-            <span class="event-category" id="detailCategory">
-                Event
-            </span>
-
-            <!-- EVENT NAME -->
-            <h2 id="detailName">
-                Event Name
-            </h2>
-
-            <!-- EVENT DATE / TIME -->
-            <p class="event-date" id="detailDate"></p>
-
-            <!-- VENUE -->
-            <!-- The JS puts event.venue into this element -->
-            <p id="detailLocation"></p>
-
-            <!-- EVENT COST -->
-            <p id="detailCost"></p>
-
-            <!-- EVENT DESCRIPTION -->
-            <h3>
-                About this event
-            </h3>
-
-            <p id="detailDescription"></p>
-
-
-            <!-- BOOKING CONTROLS -->
-            <div class="event-actions">
-
-                <button type="button" id="bookEventButton" class="book-event">
-                    Book Event
-                </button>
-
-                <p id="attendanceStatus" class="attendance-status" hidden>
-                    ✓ You're attending this event
-                </p>
-
-                <button type="button" id="cancelEventButton" class="cancel-event" hidden>
-                    Cancel Attendance
-                </button>
-
-            </div>
-
-        </section>
 
     </main>
+
+    <!-- Shared detail dialog for cards and map markers. -->
+    <div id="eventDetailsBackdrop" class="event-details-backdrop" hidden></div>
+    <section id="eventDetails" class="event-full-details" role="dialog" aria-modal="true" aria-labelledby="detailName"
+        aria-describedby="detailDescription" tabindex="-1" hidden>
+        <button type="button" id="closeEventDetails" aria-label="Close event details">&times;</button>
+        <div id="detailImageContainer" class="event-detail-image" hidden>
+            <img id="detailImage" alt="" loading="lazy" hidden>
+            <div id="detailImageFallback" class="event-image-placeholder">Image not provided for this event</div>
+        </div>
+        <div class="event-detail-content">
+            <span class="event-category" id="detailCategory">Event</span>
+            <h2 id="detailName">Event name</h2>
+            <div class="event-detail-meta">
+                <p class="event-date" id="detailDate"></p>
+                <p id="detailLocation"></p>
+                <p id="detailCost"></p>
+            </div>
+            <h3>About this event</h3>
+            <p id="detailDescription"></p>
+            <div class="event-actions">
+                <button type="button" id="bookEventButton" class="book-event">Book Event</button>
+                <p id="attendanceStatus" class="attendance-status" role="status" hidden>You're attending this event</p>
+                <button type="button" id="cancelEventButton" class="cancel-event" hidden>Cancel Attendance</button>
+            </div>
+        </div>
+    </section>
+
 
     <footer class="site-footer">
         <p>Generative AI tools, including ChatGPT and Claude, were used in the creation and development of this website.
@@ -173,7 +154,7 @@
     <script src="js/leaflet.js"></script>
     <script src="js/config.js"></script>
     <script src="js/storage.js"></script>
-    <script src="js/events.js?v=4"></script>
+    <script src="js/events.js?v=5"></script>
 
 </body>
 
