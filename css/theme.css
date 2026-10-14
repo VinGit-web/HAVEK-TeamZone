@@ -884,11 +884,9 @@ body>.navbar .nav-logo:focus-visible {
 }
 
 /* ---------- PAGE DECORATION ---------- */
-/* No decorative sphere on Home or About; it must never sit over controls. */
-.events-body::after,
-.chat-body::after,
-.strings-body::after,
-.account-body::after {
+/* Keep the existing grey decorative sphere on every non-home page. */
+/* The homepage keeps the dots and interactive My Sphere, but not this artwork. */
+body:not(.home-body)::after {
     content: "";
     position: fixed;
     width: clamp(24rem, 55vw, 62rem);
@@ -901,10 +899,7 @@ body>.navbar .nav-logo:focus-visible {
     z-index: 0;
 }
 
-.events-body,
-.chat-body,
-.strings-body,
-.account-body {
+body:not(.home-body) {
     overflow-x: clip;
 }
 
@@ -916,11 +911,7 @@ body>.chat-layout {
 }
 
 @media (max-width: 820px) {
-
-    .events-body::after,
-    .chat-body::after,
-    .strings-body::after,
-    .account-body::after {
+    body:not(.home-body)::after {
         width: 31rem;
         right: -17rem;
         bottom: -13rem;
