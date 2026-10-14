@@ -203,16 +203,14 @@ body.loaded #loading {
     cursor: pointer;
 }
 
-/* Remove persistent focus outline after mouse selection */
-.events-body .event-filter input:focus:not(:focus-visible),
-.events-body .event-filter select:focus:not(:focus-visible) {
+/* Remove focus outline from filter dropdowns */
+.events-body .event-filter select:focus {
     outline: none;
     box-shadow: none;
 }
 
-/* Keep focus indicators for keyboard navigation */
+/* Keep keyboard focus visible on other controls */
 .events-body .event-filter input:focus-visible,
-.events-body .event-filter select:focus-visible,
 .events-body button:focus-visible {
     outline: 2px solid #c5a3ff;
     outline-offset: 2px;
@@ -704,5 +702,354 @@ body.event-dialog-open {
 
     .events-body .event-card.event-card-button:hover {
         transform: none;
+    }
+}
+
+
+.my-events-body .events-container {
+    width: min(94%, 1400px);
+    padding-block: clamp(1.25rem, 3vw, 2.5rem) 4rem;
+}
+
+.my-events-body .events-heading p {
+    color: #d5d8e9 !important;
+}
+
+.my-events-body .events-heading>a,
+.my-events-body .my-events-view-toggle button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.75rem;
+    padding: 0.65rem 1.1rem;
+    border: 1px solid rgba(210, 188, 247, 0.7) !important;
+    border-radius: 0.75rem !important;
+    background: rgba(23, 24, 56, 0.8) !important;
+    color: #f7f3ff !important;
+    text-decoration: none;
+    font-size: 0.94rem;
+    cursor: pointer;
+    transition: background-color 160ms ease, border-color 160ms ease;
+}
+
+.my-events-body .events-heading>a:hover,
+.my-events-body .my-events-view-toggle button:hover {
+    background: rgba(81, 53, 122, 0.88) !important;
+    border-color: #decaff !important;
+}
+
+.my-events-body .my-events-view-toggle button[aria-pressed="true"] {
+    background: #ebe2fc !important;
+    color: #24203a !important;
+    border-color: #ebe2fc !important;
+}
+
+.my-events-body .my-events-view-toggle {
+    flex-wrap: wrap;
+    gap: 0.65rem;
+    margin-bottom: 1.5rem;
+}
+
+.my-events-body .my-events-calendar-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.7fr) minmax(18rem, 1fr);
+    gap: 1.25rem;
+    align-items: start;
+}
+
+.my-events-body .my-calendar-panel,
+.my-events-body .my-selected-events,
+.my-events-body .my-events-past-list {
+    min-width: 0;
+    background: #f3f0f9;
+    color: #242039;
+    border: 1px solid #d9ceea;
+    border-radius: 1rem;
+    padding: clamp(1rem, 2.4vw, 1.65rem);
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.15);
+}
+
+.my-events-body .my-calendar-heading {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 1.4rem;
+}
+
+.my-events-body .my-calendar-label {
+    margin: 0 0 0.4rem;
+    color: #68528c;
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.11em;
+}
+
+.my-events-body .my-calendar-heading h2,
+.my-events-body .my-selected-events h2,
+.my-events-body .my-past-heading {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: clamp(1.3rem, 2.4vw, 1.8rem);
+    line-height: 1.3;
+    font-weight: 700;
+    color: #292139;
+}
+
+.my-events-body .my-calendar-summary {
+    color: #726781;
+    margin: 0.4rem 0 0;
+    font-size: 0.88rem;
+}
+
+/* Shortcut to the next actual booking if the current calendar month is empty. */
+.my-events-body .my-calendar-jump {
+    margin-top: 0.55rem;
+    padding: 0.25rem 0;
+    border: 0;
+    background: transparent;
+    color: #5c3c87;
+    font-size: 0.86rem;
+    font-weight: 700;
+    text-decoration: underline;
+    text-underline-offset: 0.18rem;
+    cursor: pointer;
+}
+
+.my-events-body .my-calendar-jump:hover {
+    color: #3d225f;
+}
+
+.my-events-body .my-calendar-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+}
+
+.my-events-body .my-calendar-controls button {
+    min-height: 2.4rem;
+    min-width: 2.4rem;
+    padding: 0.35rem 0.7rem;
+    border: 1px solid #ab97ce !important;
+    border-radius: 0.55rem;
+    color: #3c2a57 !important;
+    background: #fff !important;
+    cursor: pointer;
+}
+
+.my-events-body .my-calendar-controls button:hover:not(:disabled) {
+    background: #e4d9f5 !important;
+}
+
+.my-events-body .my-calendar-controls button:disabled {
+    opacity: 0.42;
+    cursor: not-allowed;
+}
+
+.my-events-body .my-calendar-weekdays,
+.my-events-body .my-calendar-days {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 0.35rem;
+}
+
+.my-events-body .my-calendar-weekdays {
+    margin-bottom: 0.35rem;
+}
+
+.my-events-body .my-calendar-weekdays span {
+    color: #786e8b;
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-align: center;
+    padding-block: 0.3rem;
+}
+
+.my-events-body .my-calendar-day,
+.my-events-body .my-calendar-blank {
+    min-width: 0;
+    min-height: clamp(3.6rem, 6vw, 5rem);
+    padding: 0.45rem 0.2rem;
+    border-radius: 0.6rem;
+}
+
+.my-events-body .my-calendar-day {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 0.35rem;
+    border: 1px solid #ddd5e9 !important;
+    background: #fff !important;
+    color: #332943 !important;
+    cursor: pointer;
+    transition: border-color 160ms ease, background-color 160ms ease;
+}
+
+.my-events-body .my-calendar-day:hover {
+    background: #eee5fb !important;
+    border-color: #9479c1 !important;
+}
+
+.my-events-body .my-calendar-day-number {
+    font-size: 0.95rem;
+    font-weight: 650;
+}
+
+.my-events-body .my-calendar-day.is-today {
+    border: 2px solid #9479c1 !important;
+}
+
+.my-events-body .my-calendar-day.has-events {
+    background: #eee4fd !important;
+    border-color: #b89ddf !important;
+}
+
+.my-events-body .my-calendar-day[aria-pressed="true"] {
+    color: #fff !important;
+    background: #593c84 !important;
+    border-color: #593c84 !important;
+}
+
+.my-events-body .my-calendar-day.is-past-day:not(.has-events) {
+    opacity: 0.6;
+}
+
+.my-events-body .my-calendar-event-count {
+    font-size: 0.66rem;
+    font-weight: 700;
+    color: #62448a;
+    line-height: 1.2;
+    text-align: center;
+}
+
+.my-events-body .my-calendar-day[aria-pressed="true"] .my-calendar-event-count {
+    color: #fff;
+}
+
+.my-events-body .my-calendar-help {
+    margin: 1rem 0 0;
+    color: #716680;
+    font-size: 0.84rem;
+}
+
+.my-events-body .my-selected-events h2 {
+    margin: 0 0 1rem;
+    font-size: clamp(1.15rem, 1.8vw, 1.4rem);
+}
+
+.my-events-body .my-booking-card {
+    border: 1px solid #d5cae7;
+    border-radius: 0.75rem;
+    background: #fff;
+    padding: 1rem;
+    margin-bottom: 0.85rem;
+}
+
+.my-events-body .my-booking-card h3 {
+    margin: 0 0 0.6rem;
+    font-size: 1.05rem;
+    line-height: 1.35;
+    overflow-wrap: anywhere;
+}
+
+.my-events-body .my-booking-card p {
+    margin: 0.35rem 0;
+    color: #554b66;
+    line-height: 1.45;
+    overflow-wrap: anywhere;
+}
+
+.my-events-body .my-cancel-event {
+    margin-top: 0.7rem;
+    padding: 0.6rem 0.85rem;
+    border: 1px solid #8266ae !important;
+    border-radius: 0.6rem;
+    background: #f5f0fc !important;
+    color: #4d3672 !important;
+    cursor: pointer;
+    font-size: 0.87rem;
+}
+
+.my-events-body .my-cancel-event:hover {
+    background: #e6d8f6 !important;
+}
+
+.my-events-body .my-events-empty {
+    color: #60566e;
+    line-height: 1.5;
+}
+
+.my-events-body .my-past-heading {
+    margin-bottom: 1rem;
+}
+
+.my-events-body .my-past-event {
+    display: grid;
+    grid-template-columns: minmax(8rem, 0.25fr) minmax(0, 1fr);
+    align-items: center;
+    gap: 1rem;
+    padding: 0.9rem 0;
+    border-top: 1px solid #d8cde7;
+}
+
+.my-events-body .my-past-event time {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #6a558b;
+}
+
+.my-events-body .my-past-event h3 {
+    margin: 0 0 0.3rem;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 1rem;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+}
+
+.my-events-body .my-past-event p {
+    margin: 0;
+    color: #675d75;
+    font-size: 0.88rem;
+}
+
+.my-events-body button:focus-visible {
+    outline: 2px solid #9c6eda;
+    outline-offset: 2px;
+}
+
+@media (max-width: 950px) {
+    .my-events-body .my-events-calendar-layout {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 580px) {
+
+    .my-events-body .my-calendar-day,
+    .my-events-body .my-calendar-blank {
+        min-height: 3.4rem;
+    }
+
+    .my-events-body .my-calendar-event-count {
+        font-size: 0.54rem;
+    }
+
+    .my-events-body .my-past-event {
+        grid-template-columns: 1fr;
+        gap: 0.3rem;
+    }
+
+    .my-events-body .my-calendar-controls {
+        flex-wrap: wrap;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .my-events-body .my-calendar-day,
+    .my-events-body .my-calendar-controls button {
+        transition: none;
     }
 }
