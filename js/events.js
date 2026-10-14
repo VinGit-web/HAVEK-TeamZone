@@ -177,7 +177,7 @@ let loadedEvents = [];
 let filteredEvents = [];
 
 // EVENT DISPLAY PAGINATION
-const EVENTS_PER_PAGE = 8;
+const EVENTS_PER_PAGE = 9;
 let visibleEventCount = EVENTS_PER_PAGE;
 
 const showMoreButton = document.getElementById("showMoreButton");
