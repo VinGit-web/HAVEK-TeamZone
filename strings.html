@@ -51,12 +51,73 @@
     <main class="strings-page">
 
         <div class="strings-heading">
-            <h1>Strings</h1>
+                <h1>Strings</h1>
 
-            <button id="openPostForm" class="add-post-button" type="button" aria-label="Create post">
-                +
-            </button>
+        <div class="strings-heading-actions">
+                <button id="openAddUser" class="add-user-button" type="button">
+                    <span aria-hidden="true">+</span>
+                        Add User
+                </button>
+
+                <button id="openPostForm" class="add-post-button" type="button" aria-label="Create post">
+            +
+                </button>
         </div>
+        </div>
+
+<section id="addUserPanel" class="add-user-panel hidden" aria-labelledby="addUserHeading">
+    <div class="add-user-panel-heading">
+        <div>
+            <h2 id="addUserHeading">Your Connections</h2>
+            <p>Find other members and manage your connection requests.</p>
+        </div>
+
+        <button id="closeAddUser" class="close-add-user" type="button" aria-label="Close connections">
+            &times;
+        </button>
+    </div>
+
+    <div class="connection-tabs" role="group" aria-label="Connection views">
+        <button type="button" class="connection-tab active" data-connection-tab="find">
+            Find People
+        </button>
+
+        <button type="button" class="connection-tab" data-connection-tab="requests">
+            Requests
+            <span id="requestCount" class="request-count" hidden>0</span>
+        </button>
+
+        <button type="button" class="connection-tab" data-connection-tab="connected">
+            Connected
+        </button>
+    </div>
+
+    <div id="findPeopleView" class="connection-view">
+        <label for="connectionSearch">Search registered members</label>
+        <input
+            id="connectionSearch"
+            type="search"
+            placeholder="Search by name..."
+            maxlength="60"
+            autocomplete="off"
+        >
+        <div id="connectionSearchResults" class="connection-user-list"></div>
+    </div>
+
+    <div id="requestsView" class="connection-view hidden">
+        <h3>Incoming Requests</h3>
+        <div id="incomingRequests" class="connection-user-list"></div>
+
+        <h3>Sent Requests</h3>
+        <div id="outgoingRequests" class="connection-user-list"></div>
+    </div>
+
+    <div id="connectedView" class="connection-view hidden">
+        <div id="connectedUsers" class="connection-user-list"></div>
+    </div>
+
+    <p id="connectionStatus" class="connection-status" role="status" aria-live="polite"></p>
+</section>
 
         <section id="postFormContainer" class="post-form-container hidden">
             <form id="postForm">
@@ -106,6 +167,7 @@
     </footer>
 
     <script type="module" src="js/strings.js"></script>
+    <script type="module" src="js/strings-connections.js"></script>
 
 </body>
 
