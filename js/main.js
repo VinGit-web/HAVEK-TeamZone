@@ -1,6 +1,18 @@
 import * as THREE from "three";
 
 
+import { svgAvatar } from "./avatar-renderer.js";
+
+import {
+  subscribeToSphere,
+  getSphereRequest,
+  isSphereConnected,
+  sendSphereRequest,
+  respondToSphereRequest
+} from "./sphere-firebase.js";
+
+
+
 const backupUsers = [
     {
         id: "samuel",
@@ -305,60 +317,29 @@ function mergeUsersWithBackup(loadedUsers) {
 }
 
 
-async function loadUsers() {
-    try {
-        const response =
-            await fetch(
-                "data/userpersona.json"
-            );
 
-        if (!response.ok) {
-            throw new Error(
-                "Could not load userpersona.json"
-            );
-        }
-
-        const data =
-            await response.json();
-
-        const loadedUsers =
-            normaliseUsers(data);
-
-        if (
-            loadedUsers.length > 0
-        ) {
-            users =
-                mergeUsersWithBackup(
-                    loadedUsers
-                );
-        }
-
-    } catch (error) {
-        users =
-            [...backupUsers];
-    }
-
-    setupCurrentUser();
+function loadUsers() {
+  // Home now receives its users from Firebase.
+  // The local JSON file is no longer an account database.
 }
 
+function setupCurrentUser(me) {
+  if (!me) {
+    currentUserName.textContent = "Loading...";
+    currentAvatar.textContent = "?";
+    return;
+  }
 
-function setupCurrentUser() {
-    const samuel =
-        findUserExact(
-            "Samuel Smith"
-        ) ||
-        backupUsers[0];
+  const name = getUserName(me);
 
-    const name =
-        getUserName(samuel);
+  currentUserName.textContent = getFirstName(me);
 
-    currentAvatar.textContent =
-        getInitials(name);
-
-    currentUserName.textContent =
-        getFirstName(samuel);
+  if (me.avatar) {
+    currentAvatar.innerHTML = svgAvatar(me.avatar);
+  } else {
+    currentAvatar.textContent = getInitials(name);
+  }
 }
-
 
 function findUserExact(value) {
     const searchValue =
@@ -516,38 +497,17 @@ function displayEvents(user) {
 }
 
 
+
 function getConnections() {
-    try {
-        const saved =
-            localStorage.getItem(
-                "introspheerConnections"
-            );
-
-        if (!saved) {
-            return [
-                "zach",
-                "mike",
-                "sally",
-                "holly",
-                "priya"
-            ];
-        }
-
-        return (
-            JSON.parse(saved) ||
-            []
-        );
-
-    } catch (error) {
-        return [
-            "zach",
-            "mike",
-            "sally",
-            "holly",
-            "priya"
-        ];
-    }
+  return users
+    .filter(user => isSphereConnected(getUserId(user)))
+    .map(user => getUserId(user));
 }
+
+function isConnected(user) {
+  return Boolean(user && isSphereConnected(getUserId(user)));
+}
+
 
 
 function isConnected(user) {
@@ -578,32 +538,57 @@ function isConnected(user) {
 }
 
 
+
 function updateConnectionStatus(user) {
-    const connected =
-        isConnected(user);
+  const request = getSphereRequest(getUserId(user));
 
-    if (connected) {
-        profileConnection.textContent =
-            "This person is part of your Sphere.";
+  messageButton.disabled = true;
 
-        connectButton.textContent =
-            "Connected";
+  if (!request) {
+    profileConnection.textContent =
+      "You have not connected with this person yet.";
 
-        connectButton.disabled =
-            true;
+    connectButton.textContent = "Connect";
+    connectButton.disabled = false;
+    return;
+  }
 
+  if (request.status === "accepted") {
+    profileConnection.textContent =
+      "This person is part of your Sphere.";
+
+    connectButton.textContent = "Connected";
+    connectButton.disabled = true;
+
+    // Messaging will be enabled when Chat is migrated
+    // from localStorage to Firebase UIDs.
+    return;
+  }
+
+  if (request.status === "pending") {
+    if (request.toUid === sphereMe?.uid) {
+      profileConnection.textContent =
+        "This person sent you a connection request.";
+
+      connectButton.textContent = "Accept Request";
+      connectButton.disabled = false;
     } else {
-        profileConnection.textContent =
-            "You have not connected with this person yet.";
+      profileConnection.textContent =
+        "Waiting for this person to respond.";
 
-        connectButton.textContent =
-            "Connect";
-
-        connectButton.disabled =
-            false;
+      connectButton.textContent = "Request Sent";
+      connectButton.disabled = true;
     }
-}
 
+    return;
+  }
+
+  profileConnection.textContent =
+    "The previous connection request was declined.";
+
+  connectButton.textContent = "Connect";
+  connectButton.disabled = request.fromUid !== sphereMe?.uid;
+}
 
 function openUserProfile(user) {
     if (!user) {
@@ -671,63 +656,41 @@ function closeUserProfile() {
 }
 
 
-connectButton.addEventListener(
-    "click",
-    function () {
-        if (!selectedUser) {
-            return;
-        }
+connectButton.addEventListener("click", async () => {
+  if (!selectedUser || !sphereMe) return;
 
-        const connections =
-            getConnections();
+  const uid = getUserId(selectedUser);
+  const request = getSphereRequest(uid);
 
-        const userId =
-            getUserId(
-                selectedUser
-            );
+  connectButton.disabled = true;
 
-        if (
-            !isConnected(
-                selectedUser
-            )
-        ) {
-            connections.push(
-                userId
-            );
-
-            localStorage.setItem(
-                "introspheerConnections",
-                JSON.stringify(
-                    connections
-                )
-            );
-        }
-
-        updateConnectionStatus(
-            selectedUser
-        );
+  try {
+    if (
+      request?.status === "pending" &&
+      request.toUid === sphereMe.uid
+    ) {
+      await respondToSphereRequest(uid, "accepted");
+    } else if (!request || request.status === "declined") {
+      await sendSphereRequest(uid);
     }
-);
+  } catch (error) {
+    console.error("Sphere connection error:", error);
+    profileConnection.textContent =
+      error.message || "Unable to update this connection.";
+  } finally {
+    updateConnectionStatus(selectedUser);
+  }
+});
 
 
-messageButton.addEventListener(
-    "click",
-    function () {
-        if (!selectedUser) {
-            return;
-        }
+messageButton.addEventListener("click", () => {
+  if (!selectedUser || !isConnected(selectedUser)) return;
 
-        localStorage.setItem(
-            "selectedChatUser",
-            getUserName(
-                selectedUser
-            )
-        );
+  // Do not create a fake connection or write a name-only
+  // localStorage chat record.
+  window.location.href = "chat.html";
+});
 
-        window.location.href =
-            "chat.html";
-    }
-);
 
 
 closeProfile.addEventListener(
@@ -1200,6 +1163,164 @@ function createOrbit(
 }
 
 
+let sphereMe = null;
+let sphereState = null;
+
+const connectionColours = [
+  "#2ce6c2",
+  "#a34fff",
+  "#31bfff",
+  "#42d7ef",
+  "#ff65ae",
+  "#eab95b"
+];
+
+const dynamicSphereObjects = [];
+
+function removeDynamicSphere() {
+  for (const object of dynamicSphereObjects) {
+    networkGroup.remove(object);
+
+    object.geometry?.dispose?.();
+
+    if (Array.isArray(object.material)) {
+      object.material.forEach(material => material.dispose());
+    } else {
+      object.material?.map?.dispose?.();
+      object.material?.dispose?.();
+    }
+  }
+
+  dynamicSphereObjects.length = 0;
+  nodeObjects.clear();
+  clickableNodes.length = 0;
+}
+
+function spherePosition(index, total) {
+  const goldenAngle = Math.PI * (3 - Math.sqrt(5));
+
+  const y = 1 - (index / Math.max(1, total - 1)) * 2;
+  const radius = Math.sqrt(Math.max(0, 1 - y * y));
+  const angle = index * goldenAngle;
+
+  return [
+    Math.cos(angle) * radius * 3.8,
+    y * 3.8,
+    Math.sin(angle) * radius * 3.8
+  ];
+}
+
+function addSphereNode(data) {
+  const sprite = createNode(data);
+  dynamicSphereObjects.push(sprite);
+  return sprite;
+}
+
+function addSphereConnection(from, to, colour, opacity) {
+  const before = networkGroup.children.length;
+
+  createConnection(from, to, colour, opacity);
+
+  const added = networkGroup.children.slice(before);
+  dynamicSphereObjects.push(...added);
+}
+
+function renderLiveSphere(state) {
+  sphereState = state;
+  sphereMe = state.me;
+
+  users = state.connections.map(person => ({
+    ...person,
+    name: person.name
+  }));
+
+  if (state.me) {
+    users.unshift(state.me);
+  }
+
+  setupCurrentUser(state.me);
+  removeDynamicSphere();
+
+  if (!state.me) return;
+
+  const me = state.me;
+  const name = getUserName(me);
+
+  addSphereNode({
+    id: me.uid,
+    user: name,
+    name: "You",
+    initials: getInitials(name),
+    colour: "#a64dff",
+    position: [0, 0, 0],
+    size: 1.9,
+    centre: true
+  });
+
+  const connections = state.connections.slice(0, 30);
+
+  connections.forEach((person, index) => {
+    const colour =
+      connectionColours[index % connectionColours.length];
+
+    const displayName = getUserName(person);
+
+    addSphereNode({
+      id: person.uid,
+      user: displayName,
+      name: displayName.split(" ")[0],
+      initials: getInitials(displayName),
+      colour,
+      position: spherePosition(index, connections.length),
+      size: 1.35
+    });
+
+    addSphereConnection(
+      me.uid,
+      person.uid,
+      Number.parseInt(colour.slice(1), 16),
+      0.85
+    );
+  });
+
+  // Decorative unknown nodes. They do not represent
+  // actual people or disclose private profile data.
+  const unknownPositions = [
+    [-1.3, 3.7, -1.7],
+    [2.5, 2.8, 2.1],
+    [-3.8, -0.1, 1.0],
+    [-0.8, -3.8, -2.0],
+    [3.6, 0.3, -2.1],
+    [0.4, 1.1, -4.0]
+  ];
+
+  unknownPositions.forEach((position, index) => {
+    addSphereNode({
+      id: `unknown-${index}`,
+      locked: true,
+      position,
+      size: 0.85
+    });
+  });
+
+  if (
+    selectedUser &&
+    !users.some(user => getUserId(user) === getUserId(selectedUser))
+  ) {
+    closeUserProfile();
+    selectedUser = null;
+  } else if (selectedUser) {
+    selectedUser = users.find(
+      user => getUserId(user) === getUserId(selectedUser)
+    );
+
+    updateConnectionStatus(selectedUser);
+  }
+}
+
+subscribeToSphere(renderLiveSphere);
+
+
 createOrbit(
     5.08,
     5.08,
@@ -1508,7 +1629,7 @@ function createNodeTexture(
 }
 
 
-const nodeData = [
+let nodeData = [
     {
         id: "samuel",
         user: "Samuel Smith",
@@ -1731,12 +1852,6 @@ function createNode(data) {
     return sprite;
 }
 
-
-nodeData.forEach(
-    createNode
-);
-
-
 function createConnection(
     fromId,
     toId,
@@ -1842,105 +1957,6 @@ function createConnection(
     );
 }
 
-
-createConnection(
-    "samuel",
-    "zach",
-    0x2ce6c2,
-    0.85
-);
-
-createConnection(
-    "samuel",
-    "mike",
-    0xa34fff,
-    0.85
-);
-
-createConnection(
-    "samuel",
-    "sally",
-    0x31bfff,
-    0.85
-);
-
-createConnection(
-    "samuel",
-    "holly",
-    0x42d7ef,
-    0.85
-);
-
-createConnection(
-    "samuel",
-    "priya",
-    0xff65ae,
-    0.85
-);
-
-createConnection(
-    "zach",
-    "mike",
-    0x9865e8,
-    0.55
-);
-
-createConnection(
-    "priya",
-    "mike",
-    0x9865e8,
-    0.55
-);
-
-
-createConnection(
-    "locked1",
-    "zach",
-    0x7445aa,
-    0.2
-);
-
-createConnection(
-    "locked1",
-    "mike",
-    0x7445aa,
-    0.17
-);
-
-createConnection(
-    "locked2",
-    "mike",
-    0x7445aa,
-    0.2
-);
-
-createConnection(
-    "locked3",
-    "holly",
-    0x7445aa,
-    0.18
-);
-
-createConnection(
-    "locked4",
-    "priya",
-    0x7445aa,
-    0.18
-);
-
-createConnection(
-    "locked5",
-    "sally",
-    0x7445aa,
-    0.18
-);
-
-createConnection(
-    "locked6",
-    "zach",
-    0x7445aa,
-    0.16
-);
 
 
 const internalPoints =
@@ -2122,26 +2138,6 @@ sphereCanvas.addEventListener(
     }
 );
 
-sphereCanvas.addEventListener(
-    "wheel",
-    function (event) {
-        event.preventDefault();
-
-        const delta = Math.sign(event.deltaY) *
-            Math.min(Math.abs(event.deltaY), 100);
-
-        targetCameraDistance += delta * 0.006;
-
-        targetCameraDistance = Math.max(
-            8.5,
-            Math.min(21, targetCameraDistance)
-        );
-    },
-    {
-        passive: false
-    }
-);
-
 function stopSphereDrag(
     event
 ) {
@@ -2218,11 +2214,9 @@ sphereCanvas.addEventListener(
         const selected =
             intersections[0]
                 .object;
-
-        const user =
-            findUserExact(
-                selected.userData.user
-            );
+        const user = users.find(
+        person => getUserId(person) === selected.userData.id
+        );  
 
         if (user) {
             openUserProfile(
@@ -2545,4 +2539,3 @@ requestAnimationFrame(
     animateSphere
 );
 
-loadUsers();
