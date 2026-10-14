@@ -1437,3 +1437,79 @@ input {
         line-height: 1.6;
     }
 }
+
+.home-body .home-page {
+    position: relative;
+    isolation: isolate;
+    overflow: visible;
+}
+
+.home-body .home-header {
+    position: relative;
+    z-index: 20;
+    pointer-events: none;
+}
+
+.home-body .current-user,
+.home-body .user-controls button,
+.home-body .sphere-title,
+.home-body .sphere-search,
+.home-body .sphere-search input,
+.home-body .search-suggestions,
+.home-body .search-suggestion {
+    pointer-events: auto;
+}
+
+.home-body .sphere-area {
+    position: relative;
+    z-index: 1;
+    margin-top: -205px;
+    padding-top: 0;
+    width: 100%;
+    overflow: visible;
+}
+
+.home-body .sphere-container {
+    position: relative;
+    width: 100%;
+    max-width: none;
+    min-height: max(800px, calc(100dvh - 100px));
+    overflow: hidden;
+    background: transparent;
+}
+
+.home-body #sphereCanvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    touch-action: none;
+}
+
+.home-body .sphere-search {
+    position: relative;
+    z-index: 320;
+}
+
+.home-body .search-suggestions {
+    z-index: 500;
+}
+
+@media (max-width: 1050px) {
+    .home-body .sphere-area {
+        margin-top: -90px;
+    }
+
+    .home-body .sphere-container {
+        min-height: 680px;
+    }
+}
+
+@media (max-width: 700px) {
+    .home-body .sphere-area {
+        margin-top: -45px;
+    }
+
+    .home-body .sphere-container {
+        min-height: 520px;
+    }
+}
