@@ -1058,7 +1058,7 @@ const camera =
 camera.position.set(
     0,
     0,
-    13.5
+    15
 );
 
 
@@ -2091,7 +2091,7 @@ let currentRotationY =
     targetRotationY;
 
 let cameraDistance =
-    13.5;
+    15;
 
 let targetCameraDistance =
     15;
@@ -2122,56 +2122,25 @@ sphereCanvas.addEventListener(
     }
 );
 
-
 sphereCanvas.addEventListener(
-    "pointermove",
+    "wheel",
     function (event) {
-        if (!dragging) {
-            return;
-        }
+        event.preventDefault();
 
-        const deltaX =
-            event.clientX -
-            previousPointerX;
+        const delta = Math.sign(event.deltaY) *
+            Math.min(Math.abs(event.deltaY), 100);
 
-        const deltaY =
-            event.clientY -
-            previousPointerY;
+        targetCameraDistance += delta * 0.006;
 
-        if (
-            Math.abs(deltaX) +
-            Math.abs(deltaY) >
-            2
-        ) {
-            movedWhileDragging =
-                true;
-        }
-
-        targetRotationY +=
-            deltaX *
-            0.006;
-
-        targetRotationX +=
-            deltaY *
-            0.006;
-
-        targetRotationX =
-            Math.max(
-                -1.35,
-                Math.min(
-                    1.35,
-                    targetRotationX
-                )
-            );
-
-        previousPointerX =
-            event.clientX;
-
-        previousPointerY =
-            event.clientY;
+        targetCameraDistance = Math.max(
+            8.5,
+            Math.min(21, targetCameraDistance)
+        );
+    },
+    {
+        passive: false
     }
 );
-
 
 function stopSphereDrag(
     event
@@ -2359,11 +2328,11 @@ sphereCanvas.addEventListener(
 
         targetCameraDistance -=
             difference *
-            0.015;
+            0.009;
 
         targetCameraDistance =
             Math.max(
-                10,
+                8.5,
                 Math.min(
                     21,
                     targetCameraDistance
@@ -2550,7 +2519,7 @@ function animateSphere(time) {
             targetCameraDistance -
             cameraDistance
         ) *
-        0.09;
+        0.06;
 
     camera.position.z =
         cameraDistance;
