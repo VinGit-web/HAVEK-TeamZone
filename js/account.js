@@ -1,238 +1,153 @@
 
-import { animalPreset, svgAvatar } from "./avatar-renderer.js";
-
-import {
-  mbtiDescriptions,
-  interestCategories
-} from "./profile-options.js";
-
-import { auth, db } from "./firebase.js";
-
-import {
-  onAuthStateChanged,
-  updateProfile
-} from "https://www.gstatic.com/firebasejs/13.0.0/firebase-auth.js";
-
-import {
-  doc,
-  getDoc,
-  setDoc,
-  serverTimestamp
-} from "https://www.gstatic.com/firebasejs/13.0.0/firebase-firestore.js";
+import { animalPreset, svgAvatar } from './avatar-renderer.js';
+import { auth, db } from './firebase.js';
+import { onAuthStateChanged, updateProfile } from 'https://www.gstatic.com/firebasejs/13.0.0/firebase-auth.js';
+import { doc, getDoc, setDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/13.0.0/firebase-firestore.js';
 
 const $ = id => document.getElementById(id);
 
-const categories = {
-  australia: [
-    ["koala", "Koala"],
-    ["kangaroo", "Kangaroo"],
-    ["wombat", "Wombat"],
-    ["quokka", "Quokka"],
-    ["platypus", "Platypus"],
-    ["kookaburra", "Kookaburra"],
-    ["echidna", "Echidna"],
-    ["tasdevil", "Tasmanian devil"],
-    ["emu", "Emu"]
-  ],
-
-  pets: [
-    ["dog", "Dog"],
-    ["cat", "Cat"],
-    ["rabbit", "Rabbit"],
-    ["hamster", "Hamster"],
-    ["guineapig", "Guinea pig"],
-    ["parrot", "Parrot"]
-  ],
-
-  world: [
-    ["redpanda", "Red panda"],
-    ["penguin", "Penguin"],
-    ["fox", "Fox"],
-    ["capybara", "Capybara"],
-    ["panda", "Panda"]
-  ]
+const MBTI = {
+  ISTJ:'Practical, organised and detail-oriented.',
+  ISFJ:'Supportive, thoughtful and dependable.',
+  INFJ:'Reflective, values-driven and insightful.',
+  INTJ:'Independent, strategic and analytical.',
+  ISTP:'Practical, adaptable and observant.',
+  ISFP:'Flexible, gentle and experience-oriented.',
+  INFP:'Imaginative, idealistic and reflective.',
+  INTP:'Curious, analytical and idea-focused.',
+  ESTP:'Action-oriented, adaptable and spontaneous.',
+  ESFP:'Expressive, sociable and experience-oriented.',
+  ENFP:'Enthusiastic, imaginative and possibility-focused.',
+  ENTP:'Exploratory, inventive and debate-oriented.',
+  ESTJ:'Structured, decisive and practical.',
+  ESFJ:'Cooperative, attentive and community-minded.',
+  ENFJ:'Encouraging, people-focused and organised.',
+  ENTJ:'Strategic, decisive and goal-oriented.'
 };
 
-const avatarFields = [
-  "characterName",
-  "primaryColor",
-  "secondaryColor",
-  "expression",
-  "pattern",
-  "headwear",
-  "eyewear",
-  "earrings",
-  "neckwear",
-  "extra",
-  "outfit",
-  "outfitColor",
-  "trimColor",
-  "backgroundPreset"
+const INTERESTS = {
+  'Creative':['Art','Painting','Pottery','Photography','Music','Dance','Ballet'],
+  'Sports & Outdoors':['Running','Walking','Hiking','Cycling','Swimming','Yoga','Boxing','Football','Netball','Fencing','Horse Back Riding'],
+  'Social & Leisure':['Gaming','Board Games','Chess','Anime','Movies','Reading','Museums','Markets','Coffee','Eating','Cooking','Gardening']
+};
+
+const ANIMALS = {
+  australia:[['koala','Koala'],['kangaroo','Kangaroo'],['wombat','Wombat'],['quokka','Quokka'],['platypus','Platypus'],['kookaburra','Kookaburra'],['echidna','Echidna'],['tasdevil','Tasmanian devil'],['emu','Emu']],
+  pets:[['dog','Dog'],['cat','Cat'],['rabbit','Rabbit'],['hamster','Hamster'],['guineapig','Guinea pig'],['parrot','Parrot']],
+  world:[['redpanda','Red panda'],['penguin','Penguin'],['fox','Fox'],['capybara','Capybara'],['panda','Panda']]
+};
+
+const AVATAR_FIELDS = [
+  'characterName','primaryColor','secondaryColor','expression',
+  'pattern','headwear','eyewear','earrings','neckwear','extra',
+  'outfit','outfitColor','trimColor','backgroundPreset'
 ];
 
-let avatar = { ...animalPreset("koala") };
-
-let category = "australia";
 let currentUser = null;
 let savedProfile = null;
+let savedPersona = null;
 let ready = false;
+let avatar = {...animalPreset('koala')};
+let animalCategory = 'australia';
 
 const selectedInterests = new Set();
 
-/* STATUS */
-
-function status(message, isError = false) {
-  const element = $("accountStatus");
-
-  if (!element) return;
-
-  element.textContent = message;
-  element.style.color = isError
-    ? "#a52b22"
-    : "#236c45";
-}
-
-function escapeText(value) {
-  return String(value ?? "").replace(
-    /[&<>"']/g,
-    character => ({
-      "&": "&amp;",
-      "<": "&lt;",
-      ">": "&gt;",
-      '"': "&quot;",
-      "'": "&#39;"
-    }[character])
-  );
-}
-
-/* PERSONALITY */
-
-function describeMbti() {
-  const description = $("accountMbtiDescription");
-  const select = $("mbti");
-
-  if (!description || !select) return;
-
-  description.textContent =
-    mbtiDescriptions[select.value] ||
-    "MBTI is optional. You can update it later.";
+function status(message, error = false) {
+  const el = $('accountStatus');
+  if (el) {
+    el.textContent = message;
+    el.style.color = error ? '#a52b22' : '#236c45';
+  }
 }
 
 function setupMbti() {
-  const select = $("mbti");
-
+  const select = $('mbti');
   if (!select) return;
 
-  const existing = new Set(
-    [...select.options].map(option => option.value)
-  );
-
-  Object.keys(mbtiDescriptions).forEach(type => {
-    if (existing.has(type)) return;
-
-    const option = document.createElement("option");
-
-    option.value = type;
-    option.textContent = type;
-
-    select.append(option);
+  Object.keys(MBTI).forEach(type => {
+    if (![...select.options].some(o => o.value === type)) {
+      select.add(new Option(type, type));
+    }
   });
 
-  select.addEventListener("change", describeMbti);
+  const describe = () => {
+    if ($('accountMbtiDescription')) {
+      $('accountMbtiDescription').textContent =
+        MBTI[select.value] || 'MBTI is optional.';
+    }
+  };
 
-  describeMbti();
-}
-
-/* INTERESTS */
-
-function updateInterestCount() {
-  const count = selectedInterests.size;
-
-  $("accountInterestCount").textContent =
-    `${count} interest${count === 1 ? "" : "s"} selected`;
+  select.addEventListener('change', describe);
+  describe();
 }
 
 function renderInterests() {
-  const container = $("accountInterestOptions");
-  const searchInput = $("accountInterestSearch");
+  const container = $('accountInterestOptions');
+  if (!container) return;
 
-  if (!container || !searchInput) {
-    console.error(
-      "Missing Account interest HTML elements."
-    );
-    return;
-  }
-
-  const search = searchInput.value
+  const search = ($('accountInterestSearch')?.value || '')
     .trim()
     .toLowerCase();
 
   container.replaceChildren();
 
-  Object.entries(interestCategories).forEach(
-    ([groupName, interests]) => {
-      const matches = interests.filter(interest =>
-        interest.toLowerCase().includes(search)
+  for (const [groupName, interests] of Object.entries(INTERESTS)) {
+    const matches = interests.filter(i =>
+      i.toLowerCase().includes(search)
+    );
+
+    if (!matches.length) continue;
+
+    const group = document.createElement('div');
+    group.className = 'interest-group';
+
+    const title = document.createElement('h3');
+    title.textContent = groupName;
+    group.append(title);
+
+    const options = document.createElement('div');
+    options.className = 'interest-group-options';
+
+    matches.forEach(interest => {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'interest-chip';
+      button.dataset.interest = interest;
+      button.textContent = interest;
+
+      button.classList.toggle(
+        'selected',
+        selectedInterests.has(interest)
       );
 
-      if (!matches.length) return;
+      button.setAttribute(
+        'aria-pressed',
+        String(selectedInterests.has(interest))
+      );
 
-      const group = document.createElement("div");
-      group.className = "interest-group";
+      options.append(button);
+    });
 
-      const heading = document.createElement("h3");
-      heading.textContent = groupName;
+    group.append(options);
+    container.append(group);
+  }
 
-      const options = document.createElement("div");
-      options.className = "interest-group-options";
-
-      matches.forEach(interest => {
-        const button = document.createElement("button");
-
-        button.type = "button";
-        button.className = "interest-chip";
-        button.dataset.interest = interest;
-        button.textContent = interest;
-
-        const selected = selectedInterests.has(interest);
-
-        button.classList.toggle("selected", selected);
-
-        button.setAttribute(
-          "aria-pressed",
-          String(selected)
-        );
-
-        options.append(button);
-      });
-
-      group.append(heading, options);
-      container.append(group);
-    }
-  );
-
-  updateInterestCount();
+  if ($('accountInterestCount')) {
+    const count = selectedInterests.size;
+    $('accountInterestCount').textContent =
+      `${count} interest${count === 1 ? '' : 's'} selected`;
+  }
 }
 
 function setupInterests() {
-  const container = $("accountInterestOptions");
-  const search = $("accountInterestSearch");
+  $('accountInterestSearch')?.addEventListener(
+    'input',
+    renderInterests
+  );
 
-  if (!container || !search) {
-    console.error("Interest selector cannot initialise.");
-    return;
-  }
-
-  search.addEventListener("input", renderInterests);
-
-  container.addEventListener("click", event => {
-    const button = event.target.closest(
-      "button.interest-chip[data-interest]"
-    );
-
-    if (!button || !container.contains(button)) return;
-
-    event.preventDefault();
+  $('accountInterestOptions')?.addEventListener('click', event => {
+    const button = event.target.closest('button[data-interest]');
+    if (!button) return;
 
     const interest = button.dataset.interest;
 
@@ -242,374 +157,215 @@ function setupInterests() {
       selectedInterests.add(interest);
     }
 
-    const selected = selectedInterests.has(interest);
-
-    button.classList.toggle("selected", selected);
-
-    button.setAttribute(
-      "aria-pressed",
-      String(selected)
-    );
-
-    updateInterestCount();
-
-    console.log(
-      "Selected interests:",
-      [...selectedInterests]
-    );
+    renderInterests();
   });
 
   renderInterests();
 }
 
-/* AVATAR */
-
 function renderAvatar() {
   const markup = svgAvatar(avatar);
 
-  if ($("avatarPreview")) {
-    $("avatarPreview").innerHTML = markup;
+  if ($('avatarPreview')) {
+    $('avatarPreview').innerHTML = markup;
   }
 
-  if ($("profileAvatar")) {
-    $("profileAvatar").innerHTML = markup;
+  if ($('profileAvatar')) {
+    $('profileAvatar').innerHTML = markup;
   }
 }
 
-function renderAnimalGrid() {
-  const container = $("animalGrid");
+function renderAnimals() {
+  const grid = $('animalGrid');
+  if (!grid) return;
 
-  if (!container) return;
+  grid.replaceChildren();
 
-  container.replaceChildren();
+  (ANIMALS[animalCategory] || []).forEach(([id, label]) => {
+    const button = document.createElement('button');
+    button.type = 'button';
 
-  for (const [id, label] of categories[category]) {
-    const button = document.createElement("button");
+    button.classList.toggle('selected', avatar.animal === id);
 
-    button.type = "button";
+    const image = document.createElement('span');
+    image.innerHTML = svgAvatar(animalPreset(id));
 
-    button.className =
-      avatar.animal === id ? "selected" : "";
+    const name = document.createElement('span');
+    name.textContent = label;
 
-    button.setAttribute(
-      "aria-pressed",
-      String(avatar.animal === id)
-    );
+    button.append(image, name);
 
-    button.innerHTML =
-      svgAvatar(animalPreset(id)) +
-      `<span>${escapeText(label)}</span>`;
-
-    button.addEventListener("click", () => {
+    button.addEventListener('click', () => {
       setAvatar(animalPreset(id));
     });
 
-    container.append(button);
-  }
+    grid.append(button);
+  });
 }
 
 function setAvatar(value) {
-  const animal = value?.animal || "koala";
+  const animal = value?.animal || 'koala';
 
   avatar = {
     ...animalPreset(animal),
-    ...value
+    ...value,
+    version: 2,
+    mode: 'animal'
   };
 
   if (value && value.version !== 2) {
     avatar = {
       ...animalPreset(animal),
-
       primaryColor:
-        value.color ||
-        animalPreset(animal).primaryColor,
-
-      headwear: value.hat ? "cap" : "none",
-
-      eyewear:
-        value.glasses ? "sunglasses" : "none",
-
-      earrings:
-        value.earrings ? "studs" : "none"
+        value.color || animalPreset(animal).primaryColor,
+      headwear: value.hat ? 'cap' : 'none',
+      eyewear: value.glasses ? 'sunglasses' : 'none',
+      earrings: value.earrings ? 'studs' : 'none',
+      version: 2,
+      mode: 'animal'
     };
   }
 
-  const defaults = animalPreset(animal);
-
-  avatarFields.forEach(id => {
-    if ($(id)) {
-      $(id).value =
-        avatar[id] ?? defaults[id] ?? "";
-    }
+  AVATAR_FIELDS.forEach(id => {
+    if ($(id)) $(id).value = avatar[id] ?? '';
   });
 
-  category =
-    Object.keys(categories).find(key =>
-      categories[key].some(
-        ([id]) => id === avatar.animal
-      )
-    ) || "australia";
+  animalCategory = Object.keys(ANIMALS).find(key =>
+    ANIMALS[key].some(([id]) => id === animal)
+  ) || 'australia';
 
-  document.querySelectorAll("[data-category]").forEach(button => {
+  document.querySelectorAll('[data-category]').forEach(button => {
     button.classList.toggle(
-      "selected",
-      button.dataset.category === category
+      'selected',
+      button.dataset.category === animalCategory
     );
   });
 
-  renderAnimalGrid();
+  renderAnimals();
   renderAvatar();
 }
 
 function setupAvatar() {
-  avatarFields.forEach(id => {
-    const input = $(id);
-
-    if (!input) return;
-
-    input.addEventListener("input", () => {
-      avatar[id] = input.value;
+  AVATAR_FIELDS.forEach(id => {
+    $(id)?.addEventListener('input', () => {
+      avatar[id] = $(id).value;
       renderAvatar();
     });
   });
 
-  document.querySelectorAll("[data-category]").forEach(button => {
-    button.addEventListener("click", () => {
-      category = button.dataset.category;
+  document.querySelectorAll('[data-category]').forEach(button => {
+    button.addEventListener('click', () => {
+      animalCategory = button.dataset.category;
 
-      document.querySelectorAll("[data-category]").forEach(item => {
-        item.classList.toggle(
-          "selected",
-          item === button
-        );
+      document.querySelectorAll('[data-category]').forEach(b => {
+        b.classList.toggle('selected', b === button);
       });
 
-      renderAnimalGrid();
+      renderAnimals();
     });
   });
 
-  $("randomAvatar")?.addEventListener("click", () => {
-    const random = values =>
-      values[Math.floor(Math.random() * values.length)];
-
-    const animals = Object.values(categories).flat();
-
-    const animal = random(animals)[0];
-
-    setAvatar({
-      ...animalPreset(animal),
-
-      primaryColor: random([
-        "#b88860",
-        "#9aaacb",
-        "#e2a6b7",
-        "#94b99b",
-        "#d5a46d",
-        "#a58cbf"
-      ]),
-
-      secondaryColor: random([
-        "#f2d6b3",
-        "#f8e7d8",
-        "#d9e9ee"
-      ]),
-
-      expression: random([
-        "happy",
-        "curious",
-        "sleepy",
-        "excited",
-        "cheeky"
-      ]),
-
-      headwear: random([
-        "none",
-        "beanie",
-        "cap",
-        "bucket",
-        "crown",
-        "bow",
-        "headphones",
-        "flower",
-        "party"
-      ]),
-
-      eyewear: random([
-        "none",
-        "round",
-        "square",
-        "sunglasses",
-        "heart",
-        "star"
-      ]),
-
-      outfit: random([
-        "hoodie",
-        "tshirt",
-        "sweater",
-        "denim",
-        "suit",
-        "jersey",
-        "coat",
-        "astronaut",
-        "wizard"
-      ])
-    });
+  $('randomAvatar')?.addEventListener('click', () => {
+    const all = Object.values(ANIMALS).flat();
+    const id = all[Math.floor(Math.random() * all.length)][0];
+    setAvatar(animalPreset(id));
   });
 
-  $("resetAvatar")?.addEventListener("click", () => {
+  $('resetAvatar')?.addEventListener('click', () => {
     setAvatar(animalPreset(avatar.animal));
   });
 
-  setAvatar(animalPreset("koala"));
+  setAvatar(animalPreset('koala'));
 }
 
-/* TABS */
-
 function setupTabs() {
-  document.querySelectorAll("[data-tab]").forEach(button => {
-    button.addEventListener("click", () => {
-      document.querySelectorAll("[data-tab]").forEach(item => {
-        const active = item === button;
-
-        item.classList.toggle("active", active);
-
-        item.setAttribute(
-          "aria-selected",
-          String(active)
-        );
+  document.querySelectorAll('[data-tab]').forEach(button => {
+    button.addEventListener('click', () => {
+      document.querySelectorAll('[data-tab]').forEach(b => {
+        b.classList.toggle('active', b === button);
+        b.setAttribute('aria-selected', String(b === button));
       });
 
-      document.querySelectorAll(".account-panel").forEach(panel => {
+      document.querySelectorAll('.account-panel').forEach(panel => {
         panel.hidden =
           panel.id !== `panel-${button.dataset.tab}`;
 
-        panel.classList.toggle(
-          "active",
-          !panel.hidden
-        );
+        panel.classList.toggle('active', !panel.hidden);
       });
     });
   });
 }
 
-/* BIRTH YEAR */
-
 function setupBirthYears() {
-  const select = $("birthYear");
-
+  const select = $('birthYear');
   if (!select) return;
 
-  const latestYear = new Date().getFullYear() - 18;
+  select.replaceChildren(new Option('Select birth year', ''));
 
-  select.replaceChildren();
-
-  const placeholder = document.createElement("option");
-
-  placeholder.value = "";
-  placeholder.textContent = "Select birth year";
-
-  select.append(placeholder);
-
-  for (let year = latestYear; year >= 1900; year--) {
-    const option = document.createElement("option");
-
-    option.value = String(year);
-    option.textContent = String(year);
-
-    select.append(option);
+  for (let year = 2008; year >= 1900; year--) {
+    select.add(new Option(String(year), String(year)));
   }
 
-  select.addEventListener("change", () => {
-    const year = Number(select.value);
-
-    if ($("age")) {
-      $("age").textContent = year
-        ? String(new Date().getFullYear() - year)
-        : "--";
+  select.addEventListener('change', () => {
+    if ($('age')) {
+      $('age').textContent = select.value
+        ? String(new Date().getFullYear() - Number(select.value))
+        : '--';
     }
   });
 }
 
-/* DEFAULT PROFILE */
-
-function profileDefault(user) {
+function defaults(user) {
   return {
     uid: user.uid,
-
-    username: user.displayName || "",
-    fullName: "",
+    username: user.displayName || '',
+    fullName: '',
     birthYear: 0,
-    gender: "",
-
-    persona: "",
-    mbti: "",
-    interests: [],
-
-    suburb: "",
-    preference: "none",
-    showSuburb: false,
-
-    visibility: "private",
-
+    gender: '',
+    visibility: 'private',
     showEmail: false,
     allowMessages: true,
     searchVisible: true,
     emailNotifications: true,
-
-    avatar: animalPreset("koala")
+    avatar: animalPreset('koala')
   };
 }
 
-/* POPULATE FORM */
+function populate(profile, persona) {
+  $('username').value = profile.username || '';
+  $('name').value = profile.fullName || '';
+  $('email').value = currentUser?.email || '';
 
-function populate(profile) {
-  $("username").value = profile.username || "";
-
-  $("name").value = profile.fullName || "";
-
-  $("email").value = currentUser?.email || "";
-
-  $("birthYear").value = profile.birthYear
+  $('birthYear').value = profile.birthYear
     ? String(profile.birthYear)
-    : "";
+    : '';
 
-  $("birthYear").dispatchEvent(new Event("change"));
+  $('birthYear').dispatchEvent(new Event('change'));
 
-  $("gender").value = profile.gender || "";
-
-  $("persona").value = profile.persona || "";
-
-  $("mbti").value = profile.mbti || "";
-
-  describeMbti();
+  $('gender').value = profile.gender || '';
+  $('persona').value = persona?.persona || '';
+  $('mbti').value = persona?.mbti || '';
+  $('mbti').dispatchEvent(new Event('change'));
 
   selectedInterests.clear();
 
-  if (Array.isArray(profile.interests)) {
-    profile.interests.forEach(interest => {
-      if (typeof interest === "string") {
-        selectedInterests.add(interest);
-      }
-    });
-  }
+  (persona?.interests || []).forEach(interest => {
+    selectedInterests.add(interest);
+  });
 
-  $("accountInterestSearch").value = "";
+  if ($('accountInterestSearch')) {
+    $('accountInterestSearch').value = '';
+  }
 
   renderInterests();
 
-  $("suburb").value = profile.suburb || "";
+  $('suburb').value = persona?.suburb || '';
+  $('preference').value = persona?.preference || 'none';
+  $('showSuburb').checked = persona?.showSuburb === true;
 
-  $("preference").value =
-    profile.preference || "none";
-
-  $("showSuburb").checked =
-    profile.showSuburb === true;
-
-  const visibility =
-    profile.visibility === "public"
-      ? "public"
-      : "private";
+  const visibility = profile.visibility === 'public'
+    ? 'public'
+    : 'private';
 
   const radio = document.querySelector(
     `input[name="visibility"][value="${visibility}"]`
@@ -617,357 +373,243 @@ function populate(profile) {
 
   if (radio) radio.checked = true;
 
-  const checkboxFields = [
-    ["show_email", "showEmail", false],
-    ["allow_messages", "allowMessages", true],
-    ["search_visible", "searchVisible", true],
-    ["email_notifications", "emailNotifications", true]
+  const checkboxes = [
+    ['show_email', 'showEmail', false],
+    ['allow_messages', 'allowMessages', true],
+    ['search_visible', 'searchVisible', true],
+    ['email_notifications', 'emailNotifications', true]
   ];
 
-  checkboxFields.forEach(([id, key, defaultValue]) => {
-    if (!$(id)) return;
+  for (const [id, field, fallback] of checkboxes) {
+    if ($(id)) {
+      $(id).checked = typeof profile[field] === 'boolean'
+        ? profile[field]
+        : fallback;
+    }
+  }
 
-    $(id).checked =
-      typeof profile[key] === "boolean"
-        ? profile[key]
-        : defaultValue;
-  });
-
-  setAvatar(
-    profile.avatar || animalPreset("koala")
-  );
+  setAvatar(profile.avatar || animalPreset('koala'));
 }
-
-/* LOAD ACCOUNT */
 
 async function loadAccount(user) {
   currentUser = user;
   savedProfile = null;
+  savedPersona = null;
   ready = false;
 
-  $("saveAccount").disabled = true;
+  if ($('saveAccount')) $('saveAccount').disabled = true;
 
   if (!user) {
-    location.replace("login.html");
+    location.replace('login.html');
     return;
   }
 
-  $("email").value = user.email || "";
-
-  console.log("Firebase account authenticated.");
-  console.log("Loading private account document...");
+  status('Loading profile...');
 
   try {
-    const snapshot = await getDoc(
-      doc(db, "users", user.uid)
-    );
+    const [privateSnap, personaSnap] = await Promise.all([
+      getDoc(doc(db, 'users', user.uid)),
+      getDoc(doc(db, 'userPersonas', user.uid))
+    ]);
 
     if (auth.currentUser?.uid !== user.uid) return;
 
-    console.log("PRIVATE PROFILE LOADED SUCCESSFULLY");
+    savedProfile = privateSnap.exists()
+      ? {...defaults(user), ...privateSnap.data()}
+      : defaults(user);
 
-    savedProfile = snapshot.exists()
-      ? {
-          ...profileDefault(user),
-          ...snapshot.data()
-        }
-      : profileDefault(user);
+    savedPersona = personaSnap.exists()
+      ? personaSnap.data()
+      : null;
 
-    populate(savedProfile);
+    populate(savedProfile, savedPersona);
 
     ready = true;
-
-    $("saveAccount").disabled = false;
+    $('saveAccount').disabled = false;
 
     status(
-      snapshot.exists()
-        ? ""
-        : "Complete your profile and click Save Changes."
+      privateSnap.exists()
+        ? ''
+        : 'Complete your profile and click Save Changes.'
     );
 
   } catch (error) {
-    console.error(
-      "PRIVATE PROFILE LOAD FAILED:",
-      error
-    );
-
-    status(
-      `Unable to load private profile: ${error.message}`,
-      true
-    );
+    console.error('Account load failed:', error);
+    status(`Load failed: ${error.message}`, true);
   }
 }
-
-/* SAVE ACCOUNT */
 
 async function saveAccount(event) {
   event.preventDefault();
 
   if (!ready || !currentUser || !savedProfile) {
-    status("Your account is still loading.", true);
+    status('Your account is still loading.', true);
     return;
   }
 
   const user = currentUser;
-
-  const username = $("username").value.trim();
-
-  const birthYear = Number($("birthYear").value);
-
-  const latestYear = new Date().getFullYear() - 18;
+  const username = $('username').value.trim();
+  const birthYear = Number($('birthYear').value);
 
   if (!username || username.length > 30) {
-    status(
-      "Enter a username of up to 30 characters.",
-      true
-    );
+    status('Enter a username of up to 30 characters.', true);
     return;
   }
 
   if (
     !Number.isInteger(birthYear) ||
     birthYear < 1900 ||
-    birthYear > latestYear
+    birthYear > 2008
   ) {
-    status("Select a valid birth year.", true);
+    status('Select a valid birth year.', true);
     return;
   }
 
-  if (!$("persona").value) {
-    status(
-      "Select a personality description.",
-      true
-    );
+  if (!$('persona').value || $('persona').value.length > 100) {
+    status('Select a valid personality description.', true);
     return;
   }
 
-  if (selectedInterests.size === 0) {
-    status(
-      "Select at least one interest.",
-      true
-    );
+  if (selectedInterests.size < 1 || selectedInterests.size > 35) {
+    status('Select between 1 and 35 interests.', true);
     return;
   }
 
-  const suburb = $("suburb").value.trim();
+  const suburb = $('suburb').value.trim();
 
-  if (!suburb) {
-    status(
-      "Enter your suburb or locality.",
-      true
-    );
+  if (!suburb || suburb.length > 100) {
+    status('Enter a valid suburb or locality.', true);
     return;
   }
 
-  const visibilityRadio = document.querySelector(
-    'input[name="visibility"]:checked'
-  );
-
-  const profile = {
-    ...savedProfile,
-
+  const privateProfile = {
     uid: user.uid,
-
     username,
-
-    fullName: $("name").value.trim(),
-
+    fullName: $('name').value.trim(),
     birthYear,
-
-    gender: $("gender").value,
-
-    persona: $("persona").value,
-
-    mbti: $("mbti").value,
-
-    interests: [...selectedInterests],
-
-    suburb,
-
-    preference: $("preference").value,
-
-    showSuburb: $("showSuburb").checked,
+    gender: $('gender').value,
 
     visibility:
-      visibilityRadio?.value || "private",
+      document.querySelector('input[name="visibility"]:checked')
+        ?.value || 'private',
 
-    showEmail: $("show_email").checked,
-
-    allowMessages: $("allow_messages").checked,
-
-    searchVisible: $("search_visible").checked,
-
-    emailNotifications:
-      $("email_notifications").checked,
+    showEmail: $('show_email').checked,
+    allowMessages: $('allow_messages').checked,
+    searchVisible: $('search_visible').checked,
+    emailNotifications: $('email_notifications').checked,
 
     avatar: {
       ...avatar,
       version: 2,
-      mode: "animal"
+      mode: 'animal'
     },
 
     createdAt:
-      savedProfile.createdAt ||
-      serverTimestamp(),
+      savedProfile.createdAt || serverTimestamp(),
 
     updatedAt: serverTimestamp()
   };
 
-  const saveButton = $("saveAccount");
+  const personaProfile = {
+    uid: user.uid,
+    persona: $('persona').value,
+    mbti: $('mbti').value,
+    interests: [...selectedInterests],
+    suburb,
+    state: 'QLD',
+    preference: $('preference').value,
+    showSuburb: $('showSuburb').checked,
 
-  saveButton.disabled = true;
+    createdAt:
+      savedPersona?.createdAt || serverTimestamp(),
 
-  let saveStage = "private profile";
+    updatedAt: serverTimestamp()
+  };
+
+  const publicProfile = {
+    uid: user.uid,
+    username,
+    avatar: privateProfile.avatar
+  };
+
+  const button = $('saveAccount');
+  button.disabled = true;
+
+  let stage = 'private profile';
 
   try {
     if (auth.currentUser?.uid !== user.uid) {
-      throw new Error(
-        "Your sign-in session has changed."
-      );
+      throw new Error('Your sign-in session has changed.');
     }
 
-    /* FIRST WRITE */
-
-    status("Saving private profile...");
-
-    console.log(
-      "STEP 1: Saving users/{uid}..."
-    );
+    status('Saving account details...');
 
     await setDoc(
-      doc(db, "users", user.uid),
-      profile,
-      { merge: true }
+      doc(db, 'users', user.uid),
+      privateProfile
     );
 
-    console.log(
-      "STEP 1 SUCCESS: Private profile saved."
-    );
+    savedProfile = privateProfile;
 
-    // The private profile is already saved at this point.
-    savedProfile = profile;
-
-    /* SECOND WRITE */
-
-    saveStage = "public profile";
-
-    const publicProfile = {
-      uid: user.uid,
-
-      username: profile.username,
-
-      avatar: profile.avatar,
-
-      persona: profile.persona,
-
-      mbti: profile.mbti,
-
-      interests: profile.interests,
-
-      preference: profile.preference,
-
-      visibility: profile.visibility,
-
-      searchVisible: profile.searchVisible,
-
-      showSuburb: profile.showSuburb,
-
-      updatedAt: serverTimestamp()
-    };
-
-    if (profile.showSuburb) {
-      publicProfile.suburb = profile.suburb;
-    }
-
-    status("Saving public profile...");
-
-    console.log(
-      "STEP 2: Saving publicProfiles/{uid}..."
-    );
+    stage = 'personality and interests';
+    status('Saving personality and interests...');
 
     await setDoc(
-      doc(db, "publicProfiles", user.uid),
+      doc(db, 'userPersonas', user.uid),
+      personaProfile
+    );
+
+    savedPersona = personaProfile;
+
+    stage = 'public profile';
+    status('Updating public profile...');
+
+    await setDoc(
+      doc(db, 'publicProfiles', user.uid),
       publicProfile
     );
 
-    console.log(
-      "STEP 2 SUCCESS: Public profile saved."
-    );
-
-    /* AUTH DISPLAY NAME */
-
-    saveStage = "Firebase Auth display name";
-
-    status("Updating display name...");
-
-    console.log(
-      "STEP 3: Updating Firebase Auth display name..."
-    );
+    stage = 'Firebase Auth display name';
 
     await updateProfile(user, {
       displayName: username
     });
 
-    console.log(
-      "STEP 3 SUCCESS: Auth display name updated."
-    );
-
-    status(
-      "Your profile and interests have been saved."
-    );
+    status('Your profile and interests have been saved.');
 
   } catch (error) {
-    console.error(
-      `SAVE FAILED AT: ${saveStage}`,
-      error
-    );
+    console.error(`Account save failed at ${stage}:`, error);
 
     status(
-      `Save failed at ${saveStage}: ${error.message}`,
+      `Save failed at ${stage}: ${error.message}`,
       true
     );
 
   } finally {
-    saveButton.disabled = false;
+    button.disabled = false;
   }
 }
-
-/* CANCEL CHANGES */
 
 function resetAccount(event) {
   event.preventDefault();
 
-  if (!savedProfile) return;
-
-  populate(savedProfile);
-
-  status("Unsaved changes discarded.");
+  if (savedProfile) {
+    populate(savedProfile, savedPersona);
+    status('Unsaved changes discarded.');
+  }
 }
-
-/* INITIALISE */
 
 function initialise() {
   setupMbti();
-
   setupInterests();
-
   setupAvatar();
-
   setupTabs();
-
   setupBirthYears();
 
-  $("accountForm").addEventListener(
-    "submit",
-    saveAccount
-  );
+  $('accountForm').addEventListener('submit', saveAccount);
+  $('accountForm').addEventListener('reset', resetAccount);
 
-  $("accountForm").addEventListener(
-    "reset",
-    resetAccount
-  );
-
-  $("saveAccount").disabled = true;
+  $('saveAccount').disabled = true;
 
   onAuthStateChanged(auth, loadAccount);
 }
