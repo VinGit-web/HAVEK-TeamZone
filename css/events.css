@@ -9,7 +9,7 @@
     top: 0;
     left: 0;
 
-    background: rgba(255, 255, 255, 0.8) url("../images/sphere_spinner.gif") center center no-repeat;
+    background: rgba(255, 255, 255, 0.8) url("../images/loading_spinner.gif") center center no-repeat;
 
     z-index: 2000;
 
