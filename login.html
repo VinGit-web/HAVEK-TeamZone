@@ -1,62 +1,107 @@
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login | INTROSPHEER</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Login | INTROSPHEER</title>
+
+    <link rel="stylesheet" href="css/app.css">
+    <link rel="stylesheet" href="css/theme.css">
+    <link rel="stylesheet" href="css/login.css">
 </head>
-<body>
 
-  <h1>Welcome Back</h1>
+<body class="login-body">
 
-  <form id="loginForm">
-    <input
-      type="email"
-      id="email"
-      placeholder="Email"
-      autocomplete="email"
-      required
-    >
+    <main class="login-page">
 
-    <input
-      type="password"
-      id="password"
-      placeholder="Password"
-      autocomplete="current-password"
-      required
-    >
+        <a href="index.html" class="login-logo">
+            <img src="images/logowhite.png" alt="INTROSPHEER Logo">
+            <span>INTROSPHEER</span>
+        </a>
 
-    <button type="submit">Log In</button>
-  </form>
+        <section class="login-card">
 
-  <p id="message" role="status"></p>
+            <div class="login-intro">
+                <span class="login-eyebrow">WELCOME BACK</span>
 
-  <p>
-    Don't have an account?
-    <a href="register.html">Register</a>
-  </p>
+                <h1>Log in to your Sphere.</h1>
 
-  <script type="module">
-    import { loginUser } from "./js/auth.js";
+                <p>
+                    Your connections, conversations and upcoming events
+                    are waiting for you.
+                </p>
+            </div>
 
-    const form = document.getElementById("loginForm");
-    const message = document.getElementById("message");
+            <form id="loginForm">
 
-    form.addEventListener("submit", async (event) => {
-      event.preventDefault();
+                <div class="login-field">
+                    <label for="email">Email address</label>
 
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
+                    <input
+                        type="email"
+                        id="email"
+                        placeholder="Enter your email"
+                        autocomplete="email"
+                        required
+                    >
+                </div>
 
-      try {
-        await loginUser(email, password);
-        window.location.href = "index.html";
-      } catch (error) {
-        message.textContent = "Unable to log in. Check your details and try again.";
-      }
-    });
-  </script>
+                <div class="login-field">
+                    <div class="password-heading">
+                        <label for="password">Password</label>
+                    </div>
+
+                    <div class="password-wrapper">
+                        <input
+                            type="password"
+                            id="password"
+                            placeholder="Enter your password"
+                            autocomplete="current-password"
+                            required
+                        >
+
+                        <button
+                            type="button"
+                            id="togglePassword"
+                            class="toggle-password"
+                            aria-label="Show password"
+                            aria-pressed="false"
+                        >
+                            Show
+                        </button>
+                    </div>
+                </div>
+
+                <p id="message" class="login-message" role="status" aria-live="polite"></p>
+
+                <button type="submit" id="loginButton" class="login-submit">
+                    Log In
+                    <span aria-hidden="true">→</span>
+                </button>
+
+            </form>
+
+            <div class="login-divider">
+                <span>New to INTROSPHEER?</span>
+            </div>
+
+            <a href="register.html" class="register-link">
+                Create an Account
+            </a>
+
+        </section>
+
+        <p class="login-footer">
+            Connect through shared interests. Meet through real experiences.
+        </p>
+
+    </main>
+
+    <script type="module" src="js/login.js"></script>
 
 </body>
+
 </html>
