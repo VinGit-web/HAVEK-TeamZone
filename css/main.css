@@ -40,11 +40,9 @@ input {
     overflow: hidden;
 
     background:
-        radial-gradient(
-            circle at 50% 45%,
+        radial-gradient(circle at 50% 45%,
             rgba(104, 58, 171, 0.22),
-            transparent 48%
-        ),
+            transparent 48%),
         #071126;
 }
 
@@ -59,11 +57,9 @@ input {
     opacity: 0.55;
 
     background-image:
-        radial-gradient(
-            circle,
+        radial-gradient(circle,
             rgba(157, 95, 255, 0.7) 1.3px,
-            transparent 1.5px
-        );
+            transparent 1.5px);
 
     background-size: 170px 150px;
 }
@@ -85,9 +81,7 @@ input {
     display: grid;
 
     grid-template-columns:
-        340px
-        1fr
-        340px;
+        340px 1fr 340px;
 
     align-items: start;
 }
@@ -117,8 +111,7 @@ input {
     cursor: pointer;
 
     box-shadow:
-        0 0 14px
-        rgba(155, 77, 255, 0.4);
+        0 0 14px rgba(155, 77, 255, 0.4);
 }
 
 .current-avatar {
@@ -157,8 +150,7 @@ input {
     padding: 0 17px;
 
     border:
-        1px solid
-        rgba(255, 255, 255, 0.6);
+        1px solid rgba(255, 255, 255, 0.6);
 
     border-radius: 8px;
 
@@ -181,8 +173,7 @@ input {
     border-color: #9b4dff;
 
     box-shadow:
-        0 0 0 2px
-        rgba(155, 77, 255, 0.18);
+        0 0 0 2px rgba(155, 77, 255, 0.18);
 }
 
 .search-suggestions {
@@ -197,16 +188,14 @@ input {
     overflow: hidden;
 
     border:
-        1px solid
-        rgba(255, 255, 255, 0.2);
+        1px solid rgba(255, 255, 255, 0.2);
 
     border-radius: 9px;
 
     background: #101a35;
 
     box-shadow:
-        0 12px 35px
-        rgba(0, 0, 0, 0.45);
+        0 12px 35px rgba(0, 0, 0, 0.45);
 }
 
 .search-suggestions[hidden] {
@@ -226,8 +215,7 @@ input {
     border: 0;
 
     border-bottom:
-        1px solid
-        rgba(255, 255, 255, 0.08);
+        1px solid rgba(255, 255, 255, 0.08);
 
     background: transparent;
 
@@ -314,12 +302,10 @@ input {
     margin: 14px auto 12px;
 
     background:
-        linear-gradient(
-            90deg,
+        linear-gradient(90deg,
             transparent,
             #9b4dff,
-            transparent
-        );
+            transparent);
 }
 
 .sphere-title p {
@@ -353,11 +339,9 @@ input {
     touch-action: none;
 
     background:
-        radial-gradient(
-            circle at center,
+        radial-gradient(circle at center,
             rgba(102, 48, 171, 0.15),
-            transparent 57%
-        );
+            transparent 57%);
 }
 
 #sphereCanvas {
@@ -384,8 +368,7 @@ input {
     padding: 9px 20px;
 
     border:
-        1px solid
-        rgba(255, 255, 255, 0.7);
+        1px solid rgba(255, 255, 255, 0.7);
 
     border-radius: 25px;
 
@@ -483,21 +466,17 @@ input {
     overflow-y: auto;
 
     padding:
-        35px
-        28px
-        50px;
+        35px 28px 50px;
 
     background: #10182e;
 
     color: white;
 
     border-left:
-        1px solid
-        rgba(255, 255, 255, 0.15);
+        1px solid rgba(255, 255, 255, 0.15);
 
     box-shadow:
-        -10px 0 40px
-        rgba(0, 0, 0, 0.4);
+        -10px 0 40px rgba(0, 0, 0, 0.4);
 
     transition:
         right 0.3s ease;
@@ -597,8 +576,7 @@ input {
 
 .secondary-button {
     border:
-        1px solid
-        rgba(255, 255, 255, 0.4);
+        1px solid rgba(255, 255, 255, 0.4);
 
     background: transparent;
 
@@ -619,8 +597,7 @@ input {
     padding-top: 20px;
 
     border-top:
-        1px solid
-        rgba(255, 255, 255, 0.1);
+        1px solid rgba(255, 255, 255, 0.1);
 }
 
 .profile-section h3 {
@@ -657,8 +634,7 @@ input {
     padding: 7px 11px;
 
     border:
-        1px solid
-        rgba(155, 77, 255, 0.5);
+        1px solid rgba(155, 77, 255, 0.5);
 
     border-radius: 20px;
 
@@ -713,16 +689,14 @@ input {
     padding: 50px;
 
     border:
-        1px solid
-        rgba(255, 255, 255, 0.16);
+        1px solid rgba(255, 255, 255, 0.16);
 
     border-radius: 20px;
 
     background: #10182e;
 
     box-shadow:
-        0 25px 80px
-        rgba(0, 0, 0, 0.6);
+        0 25px 80px rgba(0, 0, 0, 0.6);
 }
 
 .close-about {
@@ -786,8 +760,7 @@ input {
     padding-top: 40px;
 
     border-top:
-        1px solid
-        rgba(255, 255, 255, 0.1);
+        1px solid rgba(255, 255, 255, 0.1);
 }
 
 .team-photo {
@@ -813,8 +786,7 @@ input {
     padding-top: 35px;
 
     border-top:
-        1px solid
-        rgba(255, 255, 255, 0.1);
+        1px solid rgba(255, 255, 255, 0.1);
 }
 
 .about-references h3 {
@@ -950,231 +922,231 @@ input {
 
 
 .page-container {
-  width: min(100% - 40px, 1050px);
-  margin: 36px auto 80px;
+    width: min(100% - 40px, 1050px);
+    margin: 36px auto 80px;
 }
 
 .page-heading {
-  margin-bottom: 28px;
+    margin-bottom: 28px;
 }
 
 .page-heading h1 {
-  margin: 0 0 6px;
-  font-size: clamp(26px, 4vw, 36px);
-  line-height: 1.25;
+    margin: 0 0 6px;
+    font-size: clamp(26px, 4vw, 36px);
+    line-height: 1.25;
 }
 
 .page-heading p {
-  margin: 0;
-  color: #73758a;
+    margin: 0;
+    color: #73758a;
 }
 
 .account-section {
-  padding: 26px;
-  margin-bottom: 22px;
-  background: #ffffff;
-  border: 1px solid #e6e7ef;
-  border-radius: 16px;
+    padding: 26px;
+    margin-bottom: 22px;
+    background: #ffffff;
+    border: 1px solid #e6e7ef;
+    border-radius: 16px;
 }
 
 .account-section h2 {
-  margin: 0 0 8px;
-  font-size: 20px;
+    margin: 0 0 8px;
+    font-size: 20px;
 }
 
 .account-section p {
-  color: #73758a;
+    color: #73758a;
 }
 
 .account-section-header {
-  margin-bottom: 20px;
+    margin-bottom: 20px;
 }
 
 .account-section-header p {
-  margin: 4px 0 0;
+    margin: 4px 0 0;
 }
 
 .account-profile {
-  display: flex;
-  align-items: center;
-  gap: 22px;
+    display: flex;
+    align-items: center;
+    gap: 22px;
 }
 
 .account-avatar {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 90px;
-  height: 90px;
-  flex-shrink: 0;
-  overflow: hidden;
-  border-radius: 50%;
-  background: #eeeafd;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 90px;
+    height: 90px;
+    flex-shrink: 0;
+    overflow: hidden;
+    border-radius: 50%;
+    background: #eeeafd;
 }
 
 .account-avatar img,
 .account-avatar svg {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
 .account-profile h2 {
-  margin: 0;
+    margin: 0;
 }
 
 .account-profile p {
-  margin: 3px 0;
+    margin: 3px 0;
 }
 
 .photo-preview {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 180px;
-  height: 180px;
-  overflow: hidden;
-  border: 1px dashed #cbcce0;
-  border-radius: 14px;
-  background: #f6f6fa;
-  color: #73758a;
-  text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 180px;
+    height: 180px;
+    overflow: hidden;
+    border: 1px dashed #cbcce0;
+    border-radius: 14px;
+    background: #f6f6fa;
+    color: #73758a;
+    text-align: center;
 }
 
 .photo-preview img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
 .photo-controls {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 12px;
-  margin-top: 18px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    margin-top: 18px;
 }
 
 .photo-controls input[type="file"] {
-  max-width: 100%;
+    max-width: 100%;
 }
 
 .photo-controls button {
-  min-height: 44px;
-  padding: 11px 20px;
-  border-radius: 10px;
-  font: inherit;
-  font-weight: 600;
-  cursor: pointer;
+    min-height: 44px;
+    padding: 11px 20px;
+    border-radius: 10px;
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
 }
 
 .photo-controls button:disabled {
-  opacity: 0.55;
-  cursor: not-allowed;
+    opacity: 0.55;
+    cursor: not-allowed;
 }
 
 .photo-controls .primary-button {
-  border: 1px solid #635bce;
-  background: #635bce;
-  color: #ffffff;
+    border: 1px solid #635bce;
+    background: #635bce;
+    color: #ffffff;
 }
 
 .photo-controls .primary-button:hover {
-  background: #5149b8;
+    background: #5149b8;
 }
 
 .photo-controls .secondary-button {
-  border: 1px solid #e6e7ef;
-  background: #ffffff;
-  color: #24243a;
+    border: 1px solid #e6e7ef;
+    background: #ffffff;
+    color: #24243a;
 }
 
 .photo-controls .secondary-button:hover {
-  background: #f1f1f7;
+    background: #f1f1f7;
 }
 
 .setting-row {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  margin-top: 22px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-top: 22px;
 }
 
 .setting-row input[type="checkbox"] {
-  width: 18px;
-  height: 18px;
-  margin-top: 4px;
-  accent-color: #635bce;
+    width: 18px;
+    height: 18px;
+    margin-top: 4px;
+    accent-color: #635bce;
 }
 
 .setting-row label {
-  cursor: pointer;
+    cursor: pointer;
 }
 
 .status-message {
-  margin-top: 14px;
-  color: #73758a;
-  font-size: 14px;
+    margin-top: 14px;
+    color: #73758a;
+    font-size: 14px;
 }
 
 /* Account logout */
 
 .account-logout {
-  margin-top: 32px;
-  border-color: #f0d5d5;
+    margin-top: 32px;
+    border-color: #f0d5d5;
 }
 
 .account-logout h2 {
-  color: #c44545;
+    color: #c44545;
 }
 
 .logout-button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 44px;
-  padding: 12px 24px;
-  background: #c44545;
-  color: #ffffff;
-  border: none;
-  border-radius: 10px;
-  font: inherit;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 12px 24px;
+    background: #c44545;
+    color: #ffffff;
+    border: none;
+    border-radius: 10px;
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease;
 }
 
 .logout-button:hover {
-  background: #a93434;
+    background: #a93434;
 }
 
 .logout-button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
+    opacity: 0.6;
+    cursor: not-allowed;
 }
 
 /* Account mobile layout */
 
 @media (max-width: 700px) {
-  .page-container {
-    width: min(100% - 28px, 1050px);
-    margin-top: 24px;
-  }
+    .page-container {
+        width: min(100% - 28px, 1050px);
+        margin-top: 24px;
+    }
 
-  .account-section {
-    padding: 20px;
-  }
+    .account-section {
+        padding: 20px;
+    }
 
-  .account-profile {
-    align-items: flex-start;
-  }
+    .account-profile {
+        align-items: flex-start;
+    }
 
-  .photo-controls {
-    flex-direction: column;
-    align-items: stretch;
-  }
+    .photo-controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
 
-  .photo-controls button {
-    width: 100%;
-  }
+    .photo-controls button {
+        width: 100%;
+    }
 }
