@@ -1242,9 +1242,6 @@ input {
         font-size: 1.65rem;
     }
 }
-
-/* HOME / SPHERE LAYOUT FIX */
-
 .home-body {
     min-height: 100vh;
     min-height: 100dvh;
@@ -1254,57 +1251,114 @@ input {
 .home-body .home-page {
     display: flex;
     flex-direction: column;
-
-    height: calc(100vh - 4.75rem);
-    height: calc(100dvh - 4.75rem);
-    min-height: 0;
-
-    overflow: hidden;
+    width: 100%;
+    min-height: calc(100dvh - 4.75rem);
+    height: auto;
+    overflow: visible;
+    padding-bottom: 0;
 }
 
 .home-body .home-header {
+    flex: 0 0 auto;
+    width: min(94%, 1450px);
+    padding-top: 18px;
+    align-items: center;
+}
+
+.home-body .user-controls {
+    gap: 9px;
+    flex-wrap: nowrap;
+}
+
+.home-body .current-user {
+    gap: 8px;
+    padding: 4px 12px 4px 4px;
+    border-radius: 19px;
+    font-size: 14px;
+    white-space: nowrap;
+}
+
+.home-body .current-avatar {
+    width: 34px;
+    height: 34px;
     flex-shrink: 0;
+    font-size: 11px;
+}
+
+.home-body .user-controls .logout-button {
+    min-height: 36px;
+    padding: 7px 12px;
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+.home-body .sphere-title h1 {
+    font-size: clamp(28px, 3vw, 40px);
+    line-height: 1.1;
+}
+
+.home-body .title-line {
+    width: min(230px, 85%);
+    margin: 9px auto;
+}
+
+.home-body .sphere-title p {
+    font-size: 13px;
 }
 
 .home-body .sphere-search {
-    flex-shrink: 0;
+    flex: 0 0 auto;
+    width: min(440px, 90%);
+    margin: 12px auto 0;
 }
+
+.home-body .sphere-search label {
+    margin-bottom: 7px;
+    font-size: 13px;
+}
+
+.home-body #userSearch {
+    height: 39px;
+    font-size: 13px;
+}
+
+.home-body .search-wrapper {
+    margin-top: 0;
+}
+
+.home-body .search-message {
+    min-height: 0;
+    margin: 3px 0 0;
+}
+
+/* Larger, full-width interactive sphere */
 
 .home-body .sphere-area {
     display: flex;
     flex-direction: column;
-    flex: 1 1 auto;
-
+    flex: 1 0 auto;
     width: 100%;
-    min-width: 0;
     min-height: 0;
-
-    padding: 0;
     margin: 0;
+    padding: 0;
 }
 
 .home-body .sphere-container {
     position: relative;
-
-    flex: 1 1 auto;
-
+    flex: 1 0 auto;
     width: 100%;
     max-width: none;
     height: auto;
-    min-height: 0;
-
+    min-height: max(580px, calc(100dvh - 315px));
     margin: 0;
     overflow: hidden;
-
     touch-action: none;
 }
 
 .home-body #sphereCanvas {
     display: block;
-
     width: 100%;
     height: 100%;
-
     touch-action: none;
     cursor: grab;
 }
@@ -1315,46 +1369,71 @@ input {
 
 .home-body .sphere-instructions {
     position: relative;
-    z-index: 10;
-
-    flex-shrink: 0;
-
-    margin: 0 auto 14px;
+    flex: 0 0 auto;
+    margin: 0 auto 12px;
 }
 
-/* Keep the original responsive header layout */
+/* Browser zoom / shorter desktop screens */
+
+@media (max-height: 750px) and (min-width: 1051px) {
+    .home-body .home-header {
+        padding-top: 10px;
+    }
+
+    .home-body .sphere-search {
+        margin-top: 8px;
+    }
+
+    .home-body .sphere-container {
+        min-height: 540px;
+    }
+}
+
+/* Tablet */
 
 @media (max-width: 1050px) {
-    .home-body .home-page {
-        height: auto;
-        min-height: calc(100dvh - 4.75rem);
+    .home-body .home-header {
+        width: 94%;
+        gap: 12px;
     }
 
-    .home-body .sphere-area {
-        flex: 1 0 auto;
+    .home-body .sphere-title {
+        order: -1;
+    }
+
+    .home-body .user-area {
+        width: auto;
     }
 
     .home-body .sphere-container {
-        flex: none;
-        height: max(420px, 55dvh);
+        min-height: 560px;
     }
 }
 
+/* Mobile */
+
 @media (max-width: 700px) {
-    .home-body .home-page {
-        height: auto;
-        min-height: calc(100dvh - 4.75rem);
-        overflow: hidden;
+    .home-body .home-header {
+        padding-top: 14px;
+    }
+
+    .home-body .sphere-title h1 {
+        font-size: 30px;
+    }
+
+    .home-body .sphere-search {
+        width: calc(100% - 32px);
     }
 
     .home-body .sphere-container {
-        height: max(360px, 48dvh);
+        min-height: 440px;
     }
 
     .home-body .sphere-instructions {
         width: calc(100% - 24px);
         max-width: 100%;
-        margin-bottom: 16px;
+        padding: 8px 10px;
+        font-size: 11px;
         line-height: 1.6;
     }
 }

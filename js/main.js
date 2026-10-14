@@ -1058,7 +1058,7 @@ const camera =
 camera.position.set(
     0,
     0,
-    15
+    13.5
 );
 
 
@@ -2091,7 +2091,7 @@ let currentRotationY =
     targetRotationY;
 
 let cameraDistance =
-    15;
+    13.5;
 
 let targetCameraDistance =
     15;
