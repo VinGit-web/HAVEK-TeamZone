@@ -20,41 +20,17 @@ export const mbtiDescriptions = {
 
 export const interestCategories = {
   Creative: [
-    "Art",
-    "Painting",
-    "Pottery",
-    "Photography",
-    "Music",
-    "Dance",
-    "Ballet"
+    "Art", "Painting", "Pottery", "Photography",
+    "Music", "Dance", "Ballet"
   ],
-
   "Sports & Outdoors": [
-    "Running",
-    "Walking",
-    "Hiking",
-    "Cycling",
-    "Swimming",
-    "Yoga",
-    "Boxing",
-    "Football",
-    "Netball",
-    "Fencing",
-    "Horse Back Riding"
+    "Running", "Walking", "Hiking", "Cycling",
+    "Swimming", "Yoga", "Boxing", "Football",
+    "Netball", "Fencing", "Horse Back Riding"
   ],
-
   "Social & Leisure": [
-    "Gaming",
-    "Board Games",
-    "Chess",
-    "Anime",
-    "Movies",
-    "Reading",
-    "Museums",
-    "Markets",
-    "Coffee",
-    "Eating",
-    "Cooking",
-    "Gardening"
+    "Gaming", "Board Games", "Chess", "Anime",
+    "Movies", "Reading", "Museums", "Markets",
+    "Coffee", "Eating", "Cooking", "Gardening"
   ]
 };
