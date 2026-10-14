@@ -132,13 +132,12 @@ function eventPopup(event) {
         element("p", "", event.venue || "Venue unavailable")
     );
     const actions = element("div", "event-popup-actions");
+
     const details = element("button", "", "View details");
     details.type = "button";
     details.addEventListener("click", () => openEventDetails(event));
-    const book = element("button", "", "Book event");
-    book.type = "button";
-    book.addEventListener("click", () => openEventDetails(event, { focusBooking: true }));
-    actions.append(details, book);
+
+    actions.append(details);
     container.append(actions);
     return container;
 }
