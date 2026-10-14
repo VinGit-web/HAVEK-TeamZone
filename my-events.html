@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="css/theme.css">
 </head>
 
-<body>
+<body class="my-events-body">
 
     <nav>
         <a href="index.html" class="nav-logo">
@@ -40,17 +40,55 @@
             <a href="events.html">Discover Events</a>
         </div>
 
-        <div class="view-toggle">
-            <button id="upcomingEventsButton" type="button">
+        <!-- UPCOMING / PAST VIEW TOGGLE -->
+        <div class="view-toggle my-events-view-toggle" role="group" aria-label="My Events view">
+            <button id="upcomingEventsButton" type="button" aria-pressed="true">
                 Upcoming Events
             </button>
 
-            <button id="pastEventsButton" type="button">
+            <button id="pastEventsButton" type="button" aria-pressed="false">
                 Past Events
             </button>
         </div>
 
-        <section id="myEventsList" class="event-list"></section>
+        <!-- UPCOMING EVENTS CALENDAR -->
+        <div id="upcomingCalendar" class="my-events-calendar-layout">
+            <section class="my-calendar-panel" aria-labelledby="calendarMonthLabel">
+                <div class="my-calendar-heading">
+                    <div>
+                        <p class="my-calendar-label">YOUR CALENDAR</p>
+                        <h2 id="calendarMonthLabel" aria-live="polite"></h2>
+                        <p id="calendarSummary" class="my-calendar-summary"></p>
+                        <button id="calendarNextBookingButton" class="my-calendar-jump" type="button" hidden>
+                            Jump to next booking
+                        </button>
+                    </div>
+
+                    <div class="my-calendar-controls">
+                        <button id="calendarTodayButton" type="button">Today</button>
+                        <button id="calendarPreviousButton" type="button" aria-label="Previous month">&#8249;</button>
+                        <button id="calendarNextButton" type="button" aria-label="Next month">&#8250;</button>
+                    </div>
+                </div>
+
+                <div class="my-calendar-weekdays" aria-hidden="true">
+                    <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span>
+                    <span>Fri</span><span>Sat</span><span>Sun</span>
+                </div>
+
+                <div id="calendarDays" class="my-calendar-days" aria-label="Select a date to view booked events"></div>
+                <p class="my-calendar-help">Select a highlighted date to view your events.</p>
+            </section>
+
+            <section class="my-selected-events" aria-labelledby="selectedDateHeading">
+                <p class="my-calendar-label">SELECTED DAY</p>
+                <h2 id="selectedDateHeading"></h2>
+                <div id="selectedDayEvents" aria-live="polite"></div>
+            </section>
+        </div>
+
+        <!-- PAST EVENTS: COMPACT LIST -->
+        <section id="myEventsList" class="my-events-past-list" aria-label="Past events" hidden></section>
 
     </main>
 
