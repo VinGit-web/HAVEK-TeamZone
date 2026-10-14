@@ -1242,3 +1242,119 @@ input {
         font-size: 1.65rem;
     }
 }
+
+/* HOME / SPHERE LAYOUT FIX */
+
+.home-body {
+    min-height: 100vh;
+    min-height: 100dvh;
+    overflow-x: hidden;
+}
+
+.home-body .home-page {
+    display: flex;
+    flex-direction: column;
+
+    height: calc(100vh - 4.75rem);
+    height: calc(100dvh - 4.75rem);
+    min-height: 0;
+
+    overflow: hidden;
+}
+
+.home-body .home-header {
+    flex-shrink: 0;
+}
+
+.home-body .sphere-search {
+    flex-shrink: 0;
+}
+
+.home-body .sphere-area {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+
+    width: 100%;
+    min-width: 0;
+    min-height: 0;
+
+    padding: 0;
+    margin: 0;
+}
+
+.home-body .sphere-container {
+    position: relative;
+
+    flex: 1 1 auto;
+
+    width: 100%;
+    max-width: none;
+    height: auto;
+    min-height: 0;
+
+    margin: 0;
+    overflow: hidden;
+
+    touch-action: none;
+}
+
+.home-body #sphereCanvas {
+    display: block;
+
+    width: 100%;
+    height: 100%;
+
+    touch-action: none;
+    cursor: grab;
+}
+
+.home-body #sphereCanvas:active {
+    cursor: grabbing;
+}
+
+.home-body .sphere-instructions {
+    position: relative;
+    z-index: 10;
+
+    flex-shrink: 0;
+
+    margin: 0 auto 14px;
+}
+
+/* Keep the original responsive header layout */
+
+@media (max-width: 1050px) {
+    .home-body .home-page {
+        height: auto;
+        min-height: calc(100dvh - 4.75rem);
+    }
+
+    .home-body .sphere-area {
+        flex: 1 0 auto;
+    }
+
+    .home-body .sphere-container {
+        flex: none;
+        height: max(420px, 55dvh);
+    }
+}
+
+@media (max-width: 700px) {
+    .home-body .home-page {
+        height: auto;
+        min-height: calc(100dvh - 4.75rem);
+        overflow: hidden;
+    }
+
+    .home-body .sphere-container {
+        height: max(360px, 48dvh);
+    }
+
+    .home-body .sphere-instructions {
+        width: calc(100% - 24px);
+        max-width: 100%;
+        margin-bottom: 16px;
+        line-height: 1.6;
+    }
+}
