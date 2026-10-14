@@ -65,6 +65,7 @@ function getName(member) {
         member.fullName ||
         member.full_name ||
         combined ||
+        member.username ||
         "INTROSPHEER User"
     );
 }
