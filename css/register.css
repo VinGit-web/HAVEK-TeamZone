@@ -1,0 +1,257 @@
+
+.register-body {
+  min-height: 100vh;
+  margin: 0;
+  color: #fff;
+  background:
+    radial-gradient(circle at 12% 22%, rgba(137, 99, 217, .16), transparent 28%),
+    radial-gradient(circle at 88% 78%, rgba(103, 77, 177, .13), transparent 30%),
+    #080e23;
+  font-family: Arial, sans-serif;
+}
+
+.register-body * {
+  box-sizing: border-box;
+}
+
+.register-page {
+  width: min(680px, 92%);
+  margin: 0 auto;
+  padding: 35px 0 65px;
+}
+
+.register-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 30px;
+  color: #fff;
+  text-decoration: none;
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.register-logo img {
+  width: 35px;
+  height: 35px;
+  object-fit: contain;
+}
+
+.register-card {
+  padding: 35px;
+  border: 1px solid rgba(188, 161, 255, .38);
+  border-radius: 22px;
+  background: rgba(21, 30, 60, .96);
+}
+
+.register-eyebrow {
+  color: #c3a8ff;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+
+.register-intro h1 {
+  margin: 12px 0;
+  font-size: 32px;
+  font-weight: 500;
+}
+
+.register-intro p,
+.field-help {
+  color: #bfc8df;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.register-progress {
+  display: flex;
+  align-items: center;
+  margin: 30px 0;
+}
+
+.progress-step {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 32px;
+  height: 32px;
+  border: 1px solid #63708f;
+  border-radius: 50%;
+  color: #aab5d1;
+  font-size: 12px;
+}
+
+.progress-step.active {
+  border-color: #c5aaff;
+  background: #7953bb;
+  color: #fff;
+}
+
+.progress-line {
+  flex: 1;
+  height: 1px;
+  background: #63708f;
+}
+
+.register-step h2 {
+  margin: 0 0 24px;
+  font-size: 21px;
+}
+
+.register-step > label:not(.register-check) {
+  display: block;
+  margin: 17px 0 8px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.register-step > input,
+.register-step > select {
+  width: 100%;
+  min-height: 45px;
+  padding: 11px 13px;
+  border: 1px solid #7683a2;
+  border-radius: 9px;
+  background: #fff;
+  color: #172039;
+  font: inherit;
+  font-size: 14px;
+}
+
+.register-step > input:focus,
+.register-step > select:focus {
+  outline: 2px solid #bca0ff;
+  outline-offset: 2px;
+}
+
+.mbti-guide {
+  margin-top: 22px;
+  padding: 14px;
+  border: 1px solid #4a5879;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, .04);
+}
+
+.mbti-guide p {
+  margin: 7px 0;
+  color: #d1d9eb;
+  font-size: 12px;
+}
+
+.interest-options {
+  display: flex;
+  flex-direction: column;
+  gap: 19px;
+  margin-top: 22px;
+}
+
+.interest-group h3 {
+  margin: 0 0 12px;
+  font-size: 14px;
+}
+
+.interest-group-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+}
+
+.interest-chip {
+  padding: 9px 13px;
+  border: 1px solid #7683a2;
+  border-radius: 25px;
+  background: transparent;
+  color: #e2e7f5;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.interest-chip.selected {
+  border-color: #c3a6ff;
+  background: #7650b6;
+  color: #fff;
+}
+
+.register-check {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 20px;
+  color: #d5dded;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.register-check input {
+  margin-top: 2px;
+  accent-color: #a17add;
+}
+
+.register-message {
+  margin: 18px 0;
+  color: #ffb9bf;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.register-message:empty {
+  display: none;
+}
+
+.register-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 27px;
+}
+
+.register-actions button {
+  min-height: 43px;
+  padding: 0 22px;
+  border: 1px solid #bda3ff;
+  border-radius: 9px;
+  background: #7953bb;
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.register-actions .secondary-button {
+  background: transparent;
+}
+
+.register-actions button:disabled {
+  opacity: .55;
+  cursor: default;
+}
+
+.register-login {
+  margin: 27px 0 0;
+  color: #bfc8df;
+  text-align: center;
+  font-size: 13px;
+}
+
+.register-login a {
+  color: #d2baff;
+}
+
+.register-body .hidden {
+  display: none !important;
+}
+
+@media (max-width: 600px) {
+  .register-page {
+    padding-top: 23px;
+  }
+
+  .register-card {
+    padding: 22px 18px;
+  }
+
+  .register-intro h1 {
+    font-size: 27px;
+  }
+}

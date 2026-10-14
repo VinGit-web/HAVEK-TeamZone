@@ -5,59 +5,172 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Register | INTROSPHEER</title>
+
+  <link rel="stylesheet" href="css/app.css">
+  <link rel="stylesheet" href="css/theme.css">
+  <link rel="stylesheet" href="css/register.css">
 </head>
-<body>
 
-  <h1>Create an Account</h1>
+<body class="register-body">
+  <main class="register-page">
+    <a href="index.html" class="register-logo">
+      <img src="images/logowhite.png" alt="">
+      INTROSPHEER
+    </a>
 
-  <form id="registerForm">
-    <input
-      type="email"
-      id="email"
-      placeholder="Email"
-      autocomplete="email"
-      required
-    >
+    <div class="register-card">
+      <div class="register-intro">
+        <span class="register-eyebrow">YOUR SPACE STARTS HERE</span>
+        <h1>Create your account</h1>
+        <p>Tell us a little about yourself to personalise your experience.</p>
+      </div>
 
-    <input
-      type="password"
-      id="password"
-      placeholder="Password (minimum 6 characters)"
-      autocomplete="new-password"
-      minlength="6"
-      required
-    >
+      <div class="register-progress" aria-label="Registration progress">
+        <span class="progress-step active">1</span>
+        <span class="progress-line"></span>
+        <span class="progress-step">2</span>
+        <span class="progress-line"></span>
+        <span class="progress-step">3</span>
+        <span class="progress-line"></span>
+        <span class="progress-step">4</span>
+      </div>
 
-    <button type="submit">Register</button>
-  </form>
+      <form id="registerForm">
+        <section class="register-step" data-step="0">
+          <h2>Account details</h2>
 
-  <p id="message" role="status"></p>
+          <label for="email">Email address</label>
+          <input id="email" type="email" autocomplete="email" required>
 
-  <p>
-    Already have an account?
-    <a href="login.html">Log in</a>
-  </p>
+          <label for="password">Password</label>
+          <input id="password" type="password"
+            autocomplete="new-password" minlength="12" required>
 
-  <script type="module">
-    import { registerUser } from "./js/auth.js";
+          <p class="field-help">Use a unique password with at least 12 characters.</p>
 
-    const form = document.getElementById("registerForm");
-    const message = document.getElementById("message");
+          <label for="confirmPassword">Confirm password</label>
+          <input id="confirmPassword" type="password"
+            autocomplete="new-password" minlength="12" required>
 
-    form.addEventListener("submit", async (event) => {
-      event.preventDefault();
+          <label for="username">Username</label>
+          <input id="username" maxlength="30" required>
 
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
+          <label for="fullName">Display name</label>
+          <input id="fullName" maxlength="80">
 
-      try {
-        await registerUser(email, password);
-        window.location.href = "index.html";
-      } catch (error) {
-        message.textContent = error.message;
-      }
-    });
-  </script>
+          <label for="birthYear">Birth year</label>
+          <input id="birthYear" type="number" min="1900" max="2008" required>
 
+          <label for="gender">Gender</label>
+          <select id="gender" required>
+            <option value="">Select an option</option>
+            <option value="female">Female</option>
+            <option value="male">Male</option>
+            <option value="nonbinary">Non-binary</option>
+            <option value="other">Other</option>
+            <option value="prefer_not">Prefer not to say</option>
+          </select>
+        </section>
+
+        <section class="register-step hidden" data-step="1">
+          <h2>Your personality</h2>
+
+          <label for="persona">Which description suits you best?</label>
+          <select id="persona" required>
+            <option value="">Choose a description</option>
+            <option>Introvert that wants to connect</option>
+            <option>Quiet socialiser looking for shared-interest connections</option>
+            <option>Prefers small-group social activities</option>
+            <option>Looking to meet people through hobbies and local events</option>
+            <option value="Prefer not to say">Prefer not to say</option>
+          </select>
+
+          <label for="mbti">MBTI (optional)</label>
+          <select id="mbti">
+            <option value="">I'm not sure / Skip</option>
+          </select>
+
+          <p id="mbtiDescription" class="field-help">
+            MBTI describes personality preferences. It is not a clinical assessment.
+          </p>
+
+          <div class="mbti-guide">
+            <p><strong>E / I:</strong> Extraversion / Introversion</p>
+            <p><strong>S / N:</strong> Sensing / Intuition</p>
+            <p><strong>T / F:</strong> Thinking / Feeling</p>
+            <p><strong>J / P:</strong> Judging / Perceiving</p>
+          </div>
+        </section>
+
+        <section class="register-step hidden" data-step="2">
+          <h2>What interests you?</h2>
+          <p class="field-help">Select at least one interest. You can choose several.</p>
+
+          <input id="interestSearch" type="search"
+            placeholder="Search activities..."
+            aria-label="Search interests">
+
+          <div id="interestOptions" class="interest-options"></div>
+          <p id="interestCount" class="field-help">0 interests selected</p>
+        </section>
+
+        <section class="register-step hidden" data-step="3">
+          <h2>Location and preferences</h2>
+
+          <label for="suburb">Queensland suburb or locality</label>
+          <input id="suburb" maxlength="100"
+            placeholder="e.g. South Bank" required>
+
+          <p class="field-help">
+            Enter your Queensland suburb only. Do not enter your street address.
+          </p>
+
+          <label for="preference">Connection preference</label>
+          <select id="preference" required>
+            <option value="none">No preferences</option>
+            <option value="same">Same gender</option>
+            <option value="private">Prefer not to specify</option>
+          </select>
+
+          <label for="visibility">Profile visibility</label>
+          <select id="visibility">
+            <option value="public">Public to signed-in members</option>
+            <option value="private">Private</option>
+          </select>
+
+          <label class="register-check">
+            <input id="searchVisible" type="checkbox" checked>
+            Allow other members to find me through Add User
+          </label>
+
+          <label class="register-check">
+            <input id="showSuburb" type="checkbox">
+            Show my suburb on my profile
+          </label>
+        </section>
+
+        <p id="message" class="register-message" role="status" aria-live="polite"></p>
+
+        <div class="register-actions">
+          <button id="previousStep" type="button" class="secondary-button hidden">
+            Back
+          </button>
+
+          <button id="nextStep" type="button">Continue</button>
+
+          <button id="submitRegistration" type="submit" class="hidden">
+            Create Account
+          </button>
+        </div>
+      </form>
+
+      <p class="register-login">
+        Already have an account?
+        <a href="login.html">Log in</a>
+      </p>
+    </div>
+  </main>
+
+  <script type="module" src="js/register.js"></script>
 </body>
 </html>
