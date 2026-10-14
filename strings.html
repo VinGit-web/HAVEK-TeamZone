@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -35,11 +34,7 @@
 
     <nav>
         <a href="index.html" class="nav-logo">
-            <img
-                src="images/logowhite.png"
-                alt="INTROSPHEER Logo"
-                class="logo-image"
-            >
+            <img src="images/logowhite.png" alt="INTROSPHEER Logo" class="logo-image">
             <span>INTROSPHEER</span>
         </a>
 
@@ -49,7 +44,7 @@
             <a href="strings.html" class="active">Strings</a>
             <a href="chat.html">Chat</a>
             <a href="account.html">Account</a>
-            <a href="about.html">About</a>
+
         </div>
     </nav>
 
@@ -58,52 +53,22 @@
         <div class="strings-heading">
             <h1>Strings</h1>
 
-            <button
-                id="openPostForm"
-                class="add-post-button"
-                type="button"
-                aria-label="Create post"
-            >
+            <button id="openPostForm" class="add-post-button" type="button" aria-label="Create post">
                 +
             </button>
         </div>
 
-        <section
-            id="postFormContainer"
-            class="post-form-container hidden"
-        >
+        <section id="postFormContainer" class="post-form-container hidden">
             <form id="postForm">
 
-                <input
-                    type="text"
-                    id="postName"
-                    placeholder="Your display name"
-                    maxlength="60"
-                    required
-                >
+                <input type="text" id="postName" placeholder="Your display name" maxlength="60" required>
 
-                <textarea
-                    id="postText"
-                    placeholder="What event are you thinking about?"
-                    maxlength="1000"
-                    required
-                ></textarea>
+                <textarea id="postText" placeholder="What event are you thinking about?" maxlength="1000"
+                    required></textarea>
 
-                <input
-                    type="text"
-                    id="postEvent"
-                    placeholder="Event name"
-                    maxlength="120"
-                    required
-                >
+                <input type="text" id="postEvent" placeholder="Event name" maxlength="120" required>
 
-                <input
-                    type="text"
-                    id="postLocation"
-                    placeholder="Location"
-                    maxlength="120"
-                    required
-                >
+                <input type="text" id="postLocation" placeholder="Location" maxlength="120" required>
 
                 <div class="form-buttons">
                     <button type="button" id="cancelPost">
@@ -123,20 +88,11 @@
             It does not book you automatically.
         </p>
 
-        <p
-            id="stringsStatus"
-            class="strings-status"
-            role="status"
-            aria-live="polite"
-        >
+        <p id="stringsStatus" class="strings-status" role="status" aria-live="polite">
             Loading posts...
         </p>
 
-        <section
-            id="stringsFeed"
-            class="strings-feed"
-            aria-label="Strings posts"
-        ></section>
+        <section id="stringsFeed" class="strings-feed" aria-label="Strings posts"></section>
 
     </main>
 
@@ -152,4 +108,5 @@
     <script type="module" src="js/strings.js"></script>
 
 </body>
+
 </html>
