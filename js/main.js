@@ -255,14 +255,16 @@ function getInitials(name) {
 
 
 function getUserId(user) {
+    if (!user) return "";
+
     return (
+        user.uid ||
         user.id ||
         user.userId ||
         user.user_id ||
         getUserName(user)
     );
 }
-
 
 function normaliseUsers(data) {
     if (Array.isArray(data)) {
@@ -507,37 +509,6 @@ function getConnections() {
 function isConnected(user) {
   return Boolean(user && isSphereConnected(getUserId(user)));
 }
-
-
-
-function isConnected(user) {
-    const connections =
-        getConnections();
-
-    const userId =
-        getUserId(user);
-
-    const userName =
-        getUserName(user);
-
-    return connections.some(
-        function (connection) {
-            return (
-                String(connection)
-                    .toLowerCase() ===
-                String(userId)
-                    .toLowerCase() ||
-
-                String(connection)
-                    .toLowerCase() ===
-                userName
-                    .toLowerCase()
-            );
-        }
-    );
-}
-
-
 
 function updateConnectionStatus(user) {
   const request = getSphereRequest(getUserId(user));
@@ -1161,165 +1132,6 @@ function createOrbit(
         line
     );
 }
-
-
-let sphereMe = null;
-let sphereState = null;
-
-const connectionColours = [
-  "#2ce6c2",
-  "#a34fff",
-  "#31bfff",
-  "#42d7ef",
-  "#ff65ae",
-  "#eab95b"
-];
-
-const dynamicSphereObjects = [];
-
-function removeDynamicSphere() {
-  for (const object of dynamicSphereObjects) {
-    networkGroup.remove(object);
-
-    object.geometry?.dispose?.();
-
-    if (Array.isArray(object.material)) {
-      object.material.forEach(material => material.dispose());
-    } else {
-      object.material?.map?.dispose?.();
-      object.material?.dispose?.();
-    }
-  }
-
-  dynamicSphereObjects.length = 0;
-  nodeObjects.clear();
-  clickableNodes.length = 0;
-}
-
-function spherePosition(index, total) {
-  const goldenAngle = Math.PI * (3 - Math.sqrt(5));
-
-  const y = 1 - (index / Math.max(1, total - 1)) * 2;
-  const radius = Math.sqrt(Math.max(0, 1 - y * y));
-  const angle = index * goldenAngle;
-
-  return [
-    Math.cos(angle) * radius * 3.8,
-    y * 3.8,
-    Math.sin(angle) * radius * 3.8
-  ];
-}
-
-function addSphereNode(data) {
-  const sprite = createNode(data);
-  dynamicSphereObjects.push(sprite);
-  return sprite;
-}
-
-function addSphereConnection(from, to, colour, opacity) {
-  const before = networkGroup.children.length;
-
-  createConnection(from, to, colour, opacity);
-
-  const added = networkGroup.children.slice(before);
-  dynamicSphereObjects.push(...added);
-}
-
-function renderLiveSphere(state) {
-  sphereState = state;
-  sphereMe = state.me;
-
-  users = state.connections.map(person => ({
-    ...person,
-    name: person.name
-  }));
-
-  if (state.me) {
-    users.unshift(state.me);
-  }
-
-  setupCurrentUser(state.me);
-  removeDynamicSphere();
-
-  if (!state.me) return;
-
-  const me = state.me;
-  const name = getUserName(me);
-
-  addSphereNode({
-    id: me.uid,
-    user: name,
-    name: "You",
-    initials: getInitials(name),
-    colour: "#a64dff",
-    position: [0, 0, 0],
-    size: 1.9,
-    centre: true
-  });
-
-  const connections = state.connections.slice(0, 30);
-
-  connections.forEach((person, index) => {
-    const colour =
-      connectionColours[index % connectionColours.length];
-
-    const displayName = getUserName(person);
-
-    addSphereNode({
-      id: person.uid,
-      user: displayName,
-      name: displayName.split(" ")[0],
-      initials: getInitials(displayName),
-      colour,
-      position: spherePosition(index, connections.length),
-      size: 1.35
-    });
-
-    addSphereConnection(
-      me.uid,
-      person.uid,
-      Number.parseInt(colour.slice(1), 16),
-      0.85
-    );
-  });
-
-  // Decorative unknown nodes. They do not represent
-  // actual people or disclose private profile data.
-  const unknownPositions = [
-    [-1.3, 3.7, -1.7],
-    [2.5, 2.8, 2.1],
-    [-3.8, -0.1, 1.0],
-    [-0.8, -3.8, -2.0],
-    [3.6, 0.3, -2.1],
-    [0.4, 1.1, -4.0]
-  ];
-
-  unknownPositions.forEach((position, index) => {
-    addSphereNode({
-      id: `unknown-${index}`,
-      locked: true,
-      position,
-      size: 0.85
-    });
-  });
-
-  if (
-    selectedUser &&
-    !users.some(user => getUserId(user) === getUserId(selectedUser))
-  ) {
-    closeUserProfile();
-    selectedUser = null;
-  } else if (selectedUser) {
-    selectedUser = users.find(
-      user => getUserId(user) === getUserId(selectedUser)
-    );
-
-    updateConnectionStatus(selectedUser);
-  }
-}
-
-subscribeToSphere(renderLiveSphere);
-
 
 createOrbit(
     5.08,
@@ -1958,6 +1770,167 @@ function createConnection(
 }
 
 
+let sphereMe = null;
+let sphereState = null;
+
+const connectionColours = [
+  "#2ce6c2",
+  "#a34fff",
+  "#31bfff",
+  "#42d7ef",
+  "#ff65ae",
+  "#eab95b"
+];
+
+const dynamicSphereObjects = [];
+
+
+function removeDynamicSphere() {
+    for (const object of dynamicSphereObjects) {
+        networkGroup.remove(object);
+
+        object.geometry?.dispose?.();
+
+        const materials = Array.isArray(object.material)
+            ? object.material
+            : object.material
+                ? [object.material]
+                : [];
+
+        materials.forEach(material => {
+            material.map?.dispose?.();
+            material.dispose();
+        });
+    }
+
+    dynamicSphereObjects.length = 0;
+    nodeObjects.clear();
+    clickableNodes.length = 0;
+}
+
+function spherePosition(index, total) {
+  const goldenAngle = Math.PI * (3 - Math.sqrt(5));
+
+  const y = 1 - (index / Math.max(1, total - 1)) * 2;
+  const radius = Math.sqrt(Math.max(0, 1 - y * y));
+  const angle = index * goldenAngle;
+
+  return [
+    Math.cos(angle) * radius * 3.8,
+    y * 3.8,
+    Math.sin(angle) * radius * 3.8
+  ];
+}
+
+function addSphereNode(data) {
+  const sprite = createNode(data);
+  dynamicSphereObjects.push(sprite);
+  return sprite;
+}
+
+function addSphereConnection(from, to, colour, opacity) {
+  const before = networkGroup.children.length;
+
+  createConnection(from, to, colour, opacity);
+
+  const added = networkGroup.children.slice(before);
+  dynamicSphereObjects.push(...added);
+}
+
+function renderLiveSphere(state) {
+  sphereState = state;
+  sphereMe = state.me;
+
+  users = state.connections.map(person => ({
+    ...person,
+    name: person.name
+  }));
+
+  if (state.me) {
+    users.unshift(state.me);
+  }
+
+  setupCurrentUser(state.me);
+  removeDynamicSphere();
+
+  if (!state.me) return;
+
+  const me = state.me;
+  const name = getUserName(me);
+
+  addSphereNode({
+    id: me.uid,
+    user: name,
+    name: "You",
+    initials: getInitials(name),
+    colour: "#a64dff",
+    position: [0, 0, 0],
+    size: 1.9,
+    centre: true
+  });
+
+  const connections = state.connections.slice(0, 30);
+
+  connections.forEach((person, index) => {
+    const colour =
+      connectionColours[index % connectionColours.length];
+
+    const displayName = getUserName(person);
+
+    addSphereNode({
+      id: person.uid,
+      user: displayName,
+      name: displayName.split(" ")[0],
+      initials: getInitials(displayName),
+      colour,
+      position: spherePosition(index, connections.length),
+      size: 1.35
+    });
+
+    addSphereConnection(
+      me.uid,
+      person.uid,
+      Number.parseInt(colour.slice(1), 16),
+      0.85
+    );
+  });
+
+  // Decorative unknown nodes. They do not represent
+  // actual people or disclose private profile data.
+  const unknownPositions = [
+    [-1.3, 3.7, -1.7],
+    [2.5, 2.8, 2.1],
+    [-3.8, -0.1, 1.0],
+    [-0.8, -3.8, -2.0],
+    [3.6, 0.3, -2.1],
+    [0.4, 1.1, -4.0]
+  ];
+
+  unknownPositions.forEach((position, index) => {
+    addSphereNode({
+      id: `unknown-${index}`,
+      locked: true,
+      position,
+      size: 0.85
+    });
+  });
+
+  if (
+    selectedUser &&
+    !users.some(user => getUserId(user) === getUserId(selectedUser))
+  ) {
+    closeUserProfile();
+    selectedUser = null;
+  } else if (selectedUser) {
+    selectedUser = users.find(
+      user => getUserId(user) === getUserId(selectedUser)
+    );
+
+    updateConnectionStatus(selectedUser);
+  }
+}
+
+subscribeToSphere(renderLiveSphere);
 
 const internalPoints =
     [];
@@ -2231,31 +2204,6 @@ sphereCanvas.addEventListener(
     "pointercancel",
     stopSphereDrag
 );
-
-
-sphereCanvas.addEventListener(
-    "wheel",
-    function (event) {
-        event.preventDefault();
-
-        targetCameraDistance +=
-            event.deltaY *
-            0.008;
-
-        targetCameraDistance =
-            Math.max(
-                10,
-                Math.min(
-                    21,
-                    targetCameraDistance
-                )
-            );
-    },
-    {
-        passive: false
-    }
-);
-
 
 let pinchDistance =
     null;
