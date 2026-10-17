@@ -513,7 +513,7 @@ function isConnected(user) {
 function updateConnectionStatus(user) {
   const request = getSphereRequest(getUserId(user));
 
-  messageButton.disabled = true;
+  messageButton.disabled = !isSphereConnected(getUserId(user));
 
   if (!request) {
     profileConnection.textContent =
