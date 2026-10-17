@@ -656,10 +656,15 @@ connectButton.addEventListener("click", async () => {
 
 messageButton.addEventListener("click", () => {
   if (!selectedUser || !isConnected(selectedUser)) return;
+  const targetUid = getUserId(selectedUser);
 
-  // Do not create a fake connection or write a name-only
-  // localStorage chat record.
-  window.location.href = "chat.html";
+if (!targetUid || !isSphereConnected(targetUid)) {
+    alert("You must be connected before messaging this person.");
+    return;
+}
+
+window.location.href =
+    `chat.html?uid=${encodeURIComponent(targetUid)}`;
 });
 
 

@@ -34,28 +34,9 @@
 
     <main id="chat-list-page" class="chat-page">
       <h1>Chats</h1>
-
-      <div class="chat-list">
-        <button class="chat-card" data-name="Zach T" type="button">
-          <span class="profile-image">ZT</span>
-          <span>Zach T</span>
-        </button>
-
-        <button class="chat-card" data-name="Mike S" type="button">
-          <span class="profile-image">MS</span>
-          <span>Mike S</span>
-        </button>
-
-        <button class="chat-card" data-name="Sally S" type="button">
-          <span class="profile-image">SS</span>
-          <span>Sally S</span>
-        </button>
-
-        <button class="chat-card" data-name="Holly M" type="button">
-          <span class="profile-image">HM</span>
-          <span>Holly M</span>
-        </button>
-      </div>
+      <div class="chat-list" id="chat-list">
+            <p class="empty-chat">Loading your connections...</p>
+    </div>
     </main>
 
     <main id="conversation-page" class="conversation-page" aria-label="Conversation">
@@ -158,7 +139,7 @@
     </p>
   </footer>
 
-  <script src="js/chat.js"></script>
+ <script type="module" src="js/chat.js"></script>
 </body>
 
 </html>
