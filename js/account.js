@@ -2,7 +2,7 @@
 import { animalPreset, svgAvatar } from './avatar-renderer.js';
 import { auth, db } from './firebase.js';
 import { onAuthStateChanged, updateProfile } from 'https://www.gstatic.com/firebasejs/13.0.0/firebase-auth.js';
-import { doc, getDoc, setDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/13.0.0/firebase-firestore.js';
+import { doc, getDoc, setDoc, writeBatch, serverTimestamp } from 'https://www.gstatic.com/firebasejs/13.0.0/firebase-firestore.js';
 
 const $ = id => document.getElementById(id);
 
@@ -51,6 +51,41 @@ let avatar = {...animalPreset('koala')};
 let animalCategory = 'australia';
 
 const selectedInterests = new Set();
+const PRIVACY_FIELDS = ['age', 'gender', 'mbti', 'interests', 'suburb', 'about'];
+const PRIVACY_LABELS = {age:'Age', gender:'Gender', mbti:'MBTI', interests:'Interests', suburb:'Suburb / Location', about:'About Me'};
+let savedPublicVisibility = null;
+let publicVisibility = Object.fromEntries(PRIVACY_FIELDS.map(field => [field, false]));
+function setupPrivacy() {
+  const rows = $('privacyFieldRows');
+  for (const field of PRIVACY_FIELDS) {
+    const row = document.createElement('div'); row.className = 'privacy-field';
+    const label = document.createElement('label'); label.htmlFor = `privacy-${field}`; label.textContent = PRIVACY_LABELS[field];
+    const select = document.createElement('select'); select.id = `privacy-${field}`;
+    select.add(new Option('Private', 'private')); select.add(new Option('Public', 'public'));
+    select.addEventListener('change', () => { publicVisibility[field] = select.value === 'public'; });
+    row.append(label,select); rows.append(row);
+  }
+  const setAll = value => { for(const field of PRIVACY_FIELDS) { publicVisibility[field] = value; $(`privacy-${field}`).value = value ? 'public':'private'; } };
+  $('privacyAllPublic').addEventListener('click', () => setAll(true));
+  $('privacyAllPrivate').addEventListener('click', () => setAll(false));
+}
+function populatePrivacy(data, persona) {
+  for(const field of PRIVACY_FIELDS) {
+    publicVisibility[field] = data && typeof data[field] === 'boolean' ? data[field] : (field === 'suburb' && persona?.showSuburb === true);
+    $(`privacy-${field}`).value = publicVisibility[field] ? 'public' : 'private';
+  }
+}
+function shareableData(profile, persona) {
+  return {
+    age: profile.birthYear ? new Date().getFullYear() - profile.birthYear : null,
+    gender: profile.gender || null,
+    mbti: persona.mbti || null,
+    interests: [...persona.interests],
+    suburb: persona.suburb || null,
+    about: persona.persona || null
+  };
+}
+
 
 function status(message, error = false) {
   const el = $('accountStatus');
@@ -407,9 +442,10 @@ async function loadAccount(user) {
   status('Loading profile...');
 
   try {
-    const [privateSnap, personaSnap] = await Promise.all([
+    const [privateSnap, personaSnap, visibilitySnap] = await Promise.all([
       getDoc(doc(db, 'users', user.uid)),
-      getDoc(doc(db, 'userPersonas', user.uid))
+      getDoc(doc(db, 'userPersonas', user.uid)),
+      getDoc(doc(db, 'publicDetails', user.uid))
     ]);
 
     if (auth.currentUser?.uid !== user.uid) return;
@@ -423,6 +459,8 @@ async function loadAccount(user) {
       : null;
 
     populate(savedProfile, savedPersona);
+    savedPublicVisibility = visibilitySnap.exists() ? visibilitySnap.data().visibility : null;
+    populatePrivacy(savedPublicVisibility, savedPersona);
 
     ready = true;
     $('saveAccount').disabled = false;
@@ -489,9 +527,7 @@ async function saveAccount(event) {
     birthYear,
     gender: $('gender').value,
 
-    visibility:
-      document.querySelector('input[name="visibility"]:checked')
-        ?.value || 'private',
+    visibility: Object.values(publicVisibility).some(Boolean) ? 'public' : 'private',
 
     showEmail: $('show_email').checked,
     allowMessages: $('allow_messages').checked,
@@ -518,7 +554,7 @@ async function saveAccount(event) {
     suburb,
     state: 'QLD',
     preference: $('preference').value,
-    showSuburb: $('showSuburb').checked,
+    showSuburb: publicVisibility.suburb,
 
     createdAt:
       savedPersona?.createdAt || serverTimestamp(),
@@ -532,62 +568,28 @@ async function saveAccount(event) {
     avatar: privateProfile.avatar
   };
 
-  const button = $('saveAccount');
-  button.disabled = true;
-
-  let stage = 'private profile';
-
+  const shared = shareableData(privateProfile, personaProfile);
+  const publicFields = Object.fromEntries(
+    PRIVACY_FIELDS.filter(field => publicVisibility[field]).map(field => [field, shared[field]])
+  );
+  const button = $('saveAccount'); button.disabled = true;
   try {
-    if (auth.currentUser?.uid !== user.uid) {
-      throw new Error('Your sign-in session has changed.');
-    }
-
-    status('Saving account details...');
-
-    await setDoc(
-      doc(db, 'users', user.uid),
-      privateProfile
-    );
-
-    savedProfile = privateProfile;
-
-    stage = 'personality and interests';
-    status('Saving personality and interests...');
-
-    await setDoc(
-      doc(db, 'userPersonas', user.uid),
-      personaProfile
-    );
-
-    savedPersona = personaProfile;
-
-    stage = 'public profile';
-    status('Updating public profile...');
-
-    await setDoc(
-      doc(db, 'publicProfiles', user.uid),
-      publicProfile
-    );
-
-    stage = 'Firebase Auth display name';
-
-    await updateProfile(user, {
-      displayName: username
-    });
-
-    status('Your profile and interests have been saved.');
-
-  } catch (error) {
-    console.error(`Account save failed at ${stage}:`, error);
-
-    status(
-      `Save failed at ${stage}: ${error.message}`,
-      true
-    );
-
-  } finally {
-    button.disabled = false;
-  }
+    if (auth.currentUser?.uid !== user.uid) throw new Error('Your sign-in session has changed.');
+    status('Saving account and privacy settings...');
+    const batch = writeBatch(db);
+    batch.set(doc(db, 'users', user.uid), privateProfile);
+    batch.set(doc(db, 'userPersonas', user.uid), personaProfile);
+    batch.set(doc(db, 'publicProfiles', user.uid), publicProfile);
+    batch.set(doc(db, 'sharedProfiles', user.uid), {uid:user.uid, ...shared});
+    batch.set(doc(db, 'publicDetails', user.uid), {uid:user.uid, visibility:{...publicVisibility}, fields:publicFields});
+    await batch.commit();
+    savedProfile = privateProfile; savedPersona = personaProfile; savedPublicVisibility = {...publicVisibility};
+    await updateProfile(user, {displayName:username});
+    status('Profile and visibility settings saved.');
+  } catch(error) {
+    console.error('Account save failed:', error);
+    status(`Save failed: ${error.message}`, true);
+  } finally {button.disabled = false;}
 }
 
 function resetAccount(event) {
@@ -595,6 +597,7 @@ function resetAccount(event) {
 
   if (savedProfile) {
     populate(savedProfile, savedPersona);
+    populatePrivacy(savedPublicVisibility, savedPersona);
     status('Unsaved changes discarded.');
   }
 }
@@ -605,6 +608,7 @@ function initialise() {
   setupAvatar();
   setupTabs();
   setupBirthYears();
+  setupPrivacy();
 
   $('accountForm').addEventListener('submit', saveAccount);
   $('accountForm').addEventListener('reset', resetAccount);

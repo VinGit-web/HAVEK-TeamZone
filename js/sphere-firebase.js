@@ -1,350 +1,51 @@
-
-import { auth, db } from "./firebase.js";
-
-import {
-  onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/13.0.0/firebase-auth.js";
-
-import {
-  collection,
-  doc,
-  getDoc,
-  onSnapshot,
-  query,
-  where,
-  runTransaction,
-  serverTimestamp
-} from "https://www.gstatic.com/firebasejs/13.0.0/firebase-firestore.js";
-
-const requestCollection = collection(db, "connectionRequests");
-const publicCollection = collection(db, "publicProfiles");
-
-let activeUser = null;
-let privateProfile = null;
-let privatePersona = null;
-let publicMembers = new Map();
-let incoming = new Map();
-let outgoing = new Map();
-
-let unsubscribe = [];
-let authGeneration = 0;
-
-const subscribers = new Set();
-
-function notify() {
-  const state = getSphereState();
-
-  for (const callback of subscribers) {
-    try {
-      callback(state);
-    } catch (error) {
-      console.error("Sphere subscriber failed:", error);
-    }
-  }
+import { auth, db } from './firebase.js';
+import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/13.0.0/firebase-auth.js';
+import { collection, doc, getDoc, onSnapshot, query, where, runTransaction, serverTimestamp } from 'https://www.gstatic.com/firebasejs/13.0.0/firebase-firestore.js';
+const requestsRef = collection(db,'connectionRequests');
+let activeUser=null, privateProfile=null, privatePersona=null;
+let publicMembers=new Map(), publicDetails=new Map(), sharedProfiles=new Map(), incoming=new Map(), outgoing=new Map();
+let unsubscribers=[], sharedUnsubscribers=new Map(), generation=0;
+const subscribers=new Set();
+const pairId=(a,b)=>[a,b].sort().join('_');
+const nameOf=(p,fallback='INTROSPHEER User')=>p?.username||p?.displayName||fallback;
+const allRequests=()=>[...new Map([...incoming.values(),...outgoing.values()].map(r=>[r.id,r])).values()];
+function getRequestFor(uid){return activeUser ? allRequests().find(r=>r.id===pairId(activeUser.uid,uid))||null:null;}
+export const getSphereRequest=getRequestFor;
+export const isSphereConnected=uid=>getRequestFor(uid)?.status==='accepted';
+function notify(){const state=getSphereState();for(const callback of subscribers){try{callback(state);}catch(e){console.error('Sphere subscriber failed:',e);}}}
+function profileFields(uid,connected){return connected ? (sharedProfiles.get(uid)||{}) : (publicDetails.get(uid)?.fields||{});}
+export function getSphereState(){
+ const uid=activeUser?.uid||null;
+ const me=uid?{id:uid,uid,name:nameOf(privateProfile,activeUser.displayName||activeUser.email?.split('@')[0]||'You'),avatar:privateProfile?.avatar||null,age:privateProfile?.birthYear?new Date().getFullYear()-privateProfile.birthYear:null,gender:privateProfile?.gender||null,mbti:privatePersona?.mbti||null,interests:privatePersona?.interests||[],suburb:privatePersona?.suburb||null,about:privatePersona?.persona||null,centre:true}:null;
+ const toMember=(profile,connected)=>{const uid=profile.uid;const data=profileFields(uid,connected);return {id:uid,uid,name:nameOf(profile),avatar:profile.avatar||null,connected,age:data.age??null,gender:data.gender??null,mbti:data.mbti??null,interests:data.interests||[],suburb:data.suburb??null,about:data.about??null};};
+ const connections=allRequests().filter(r=>r.status==='accepted').map(r=>{const id=r.fromUid===uid?r.toUid:r.fromUid;return publicMembers.has(id)?toMember(publicMembers.get(id),true):null;}).filter(Boolean);
+ return {uid,me,connections,requests:allRequests(),publicMembers:[...publicMembers.values()].filter(p=>p.uid!==uid).map(p=>toMember(p,isSphereConnected(p.uid)))};
 }
-
-function clearListeners() {
-  unsubscribe.forEach(stop => stop());
-  unsubscribe = [];
+export function subscribeToSphere(callback){subscribers.add(callback);callback(getSphereState());return()=>subscribers.delete(callback);}
+export async function sendSphereRequest(targetUid){
+ if(!activeUser)throw Error('You must be signed in.');
+ if(!targetUid||targetUid===activeUser.uid)throw Error('Choose another user.');
+ const target=publicMembers.get(targetUid);if(!target)throw Error('This user does not have a public profile.');
+ const myUid=activeUser.uid,ref=doc(db,'connectionRequests',pairId(myUid,targetUid));
+ await runTransaction(db,async tx=>{const existing=await tx.get(ref);if(existing.exists()){const data=existing.data();if(data.status!=='declined')throw Error('A connection request already exists.');if(data.fromUid!==myUid)throw Error('You cannot resend a request initiated by the other user.');tx.update(ref,{status:'pending',updatedAt:serverTimestamp()});return;}
+ tx.set(ref,{fromUid:myUid,toUid:targetUid,fromName:nameOf(privateProfile,activeUser.displayName),toName:nameOf(target),status:'pending',createdAt:serverTimestamp(),updatedAt:serverTimestamp()});});
 }
-
-function requestId(a, b) {
-  return [a, b].sort().join("_");
+export async function respondToSphereRequest(targetUid,decision){
+ if(!activeUser)throw Error('You must be signed in.');if(!['accepted','declined'].includes(decision))throw Error('Invalid response.');
+ const ref=doc(db,'connectionRequests',pairId(activeUser.uid,targetUid));
+ await runTransaction(db,async tx=>{const snap=await tx.get(ref);if(!snap.exists())throw Error('Request not found.');const r=snap.data();if(r.toUid!==activeUser.uid||r.status!=='pending')throw Error('This request cannot be updated.');tx.update(ref,{status:decision,updatedAt:serverTimestamp()});});
 }
-
-function nameOf(profile, fallback = "INTROSPHEER User") {
-  return profile?.username ||
-    profile?.displayName ||
-    fallback;
+function syncShared(g){
+ if(g!==generation||!activeUser)return;
+ const ids=new Set(allRequests().filter(r=>r.status==='accepted').map(r=>r.fromUid===activeUser.uid?r.toUid:r.fromUid));
+ for(const [uid,stop] of sharedUnsubscribers){if(!ids.has(uid)){stop();sharedUnsubscribers.delete(uid);sharedProfiles.delete(uid);}}
+ for(const uid of ids){if(sharedUnsubscribers.has(uid))continue;sharedUnsubscribers.set(uid,onSnapshot(doc(db,'sharedProfiles',uid),snap=>{if(g!==generation)return;if(snap.exists())sharedProfiles.set(uid,snap.data());else sharedProfiles.delete(uid);notify();},error=>console.error('Shared profile listener:',error)));}
+ notify();
 }
-
-function allRequests() {
-  const result = new Map();
-
-  for (const request of incoming.values()) {
-    result.set(request.id, request);
-  }
-
-  for (const request of outgoing.values()) {
-    result.set(request.id, request);
-  }
-
-  return [...result.values()];
+async function loadMyProfile(user,g){try{const [p,s]=await Promise.all([getDoc(doc(db,'users',user.uid)),getDoc(doc(db,'userPersonas',user.uid))]);if(g!==generation)return;privateProfile=p.exists()?p.data():null;privatePersona=s.exists()?s.data():null;notify();}catch(e){console.error('Unable to load Sphere account:',e);}}
+function startListening(user){const g=++generation;for(const stop of unsubscribers)stop();unsubscribers=[];for(const stop of sharedUnsubscribers.values())stop();sharedUnsubscribers.clear();activeUser=user;privateProfile=null;privatePersona=null;publicMembers.clear();publicDetails.clear();sharedProfiles.clear();incoming.clear();outgoing.clear();notify();if(!user)return;loadMyProfile(user,g);
+ unsubscribers.push(onSnapshot(collection(db,'publicProfiles'),snap=>{if(g!==generation)return;publicMembers=new Map(snap.docs.map(d=>[d.id,{...d.data(),id:d.id,uid:d.id}]));notify();},e=>console.error('Public profile listener:',e)));
+ unsubscribers.push(onSnapshot(collection(db,'publicDetails'),snap=>{if(g!==generation)return;publicDetails=new Map(snap.docs.map(d=>[d.id,d.data()]));notify();},e=>console.error('Public details listener:',e)));
+ for(const [direction,field] of [['incoming','toUid'],['outgoing','fromUid']])unsubscribers.push(onSnapshot(query(requestsRef,where(field,'==',user.uid)),snap=>{if(g!==generation)return;const map=new Map(snap.docs.map(d=>[d.id,{...d.data(),id:d.id}]));if(direction==='incoming')incoming=map;else outgoing=map;syncShared(g);},e=>console.error(`${direction} Sphere requests:`,e)));
 }
-
-function otherUid(request) {
-  if (!activeUser) return null;
-
-  return request.fromUid === activeUser.uid
-    ? request.toUid
-    : request.fromUid;
-}
-
-function getRequestFor(uid) {
-  if (!activeUser) return null;
-
-  return allRequests().find(request =>
-    request.id === requestId(activeUser.uid, uid)
-  ) || null;
-}
-
-function getSphereState() {
-  const uid = activeUser?.uid || null;
-
-  const me = uid ? {
-    id: uid,
-    uid,
-    name: nameOf(
-      privateProfile,
-      activeUser?.displayName ||
-      activeUser?.email?.split("@")[0] ||
-      "You"
-    ),
-    avatar: privateProfile?.avatar || null,
-    age: privateProfile?.birthYear
-      ? new Date().getFullYear() - privateProfile.birthYear
-      : null,
-    gender: privateProfile?.gender || null,
-    mbti: privatePersona?.mbti || null,
-    interests: privatePersona?.interests || [],
-    suburb: privatePersona?.suburb || null,
-    about: privatePersona?.persona || null,
-    centre: true
-  } : null;
-
-  const connections = allRequests()
-    .filter(request => request.status === "accepted")
-    .map(request => {
-      const id = otherUid(request);
-      const profile = publicMembers.get(id);
-
-      if (!id || !profile) return null;
-
-      return {
-        id,
-        uid: id,
-        name: nameOf(profile),
-        avatar: profile.avatar || null,
-        connected: true,
-
-        // Other users' private information is not readable
-        // under the existing Firestore rules.
-        age: null,
-        gender: null,
-        mbti: null,
-        interests: [],
-        suburb: null,
-        about: null
-      };
-    })
-    .filter(Boolean);
-
-  return {
-    uid,
-    me,
-    connections,
-    requests: allRequests(),
-    publicMembers: [...publicMembers.values()]
-  };
-}
-
-export function subscribeToSphere(callback) {
-  subscribers.add(callback);
-  callback(getSphereState());
-
-  return () => subscribers.delete(callback);
-}
-
-export function getSphereRequest(uid) {
-  return getRequestFor(uid);
-}
-
-export function isSphereConnected(uid) {
-  return getRequestFor(uid)?.status === "accepted";
-}
-
-export async function sendSphereRequest(targetUid) {
-  if (!activeUser) {
-    throw new Error("You must be signed in.");
-  }
-
-  if (!targetUid || targetUid === activeUser.uid) {
-    throw new Error("Choose another user.");
-  }
-
-  const target = publicMembers.get(targetUid);
-
-  if (!target) {
-    throw new Error("This user does not have a public profile.");
-  }
-
-  const myUid = activeUser.uid;
-  const ref = doc(db, "connectionRequests", requestId(myUid, targetUid));
-
-  await runTransaction(db, async transaction => {
-    const existing = await transaction.get(ref);
-
-    if (existing.exists()) {
-      const data = existing.data();
-
-      if (data.status !== "declined") {
-        throw new Error("A connection request already exists.");
-      }
-
-      if (data.fromUid !== myUid) {
-        throw new Error(
-          "You cannot resend a request initiated by the other user."
-        );
-      }
-
-      transaction.update(ref, {
-        status: "pending",
-        updatedAt: serverTimestamp()
-      });
-
-      return;
-    }
-
-    transaction.set(ref, {
-      fromUid: myUid,
-      toUid: targetUid,
-      fromName: nameOf(privateProfile, activeUser.displayName),
-      toName: nameOf(target),
-      status: "pending",
-      createdAt: serverTimestamp(),
-      updatedAt: serverTimestamp()
-    });
-  });
-}
-
-export async function respondToSphereRequest(targetUid, decision) {
-  if (!activeUser) {
-    throw new Error("You must be signed in.");
-  }
-
-  if (!["accepted", "declined"].includes(decision)) {
-    throw new Error("Invalid response.");
-  }
-
-  const ref = doc(
-    db,
-    "connectionRequests",
-    requestId(activeUser.uid, targetUid)
-  );
-
-  await runTransaction(db, async transaction => {
-    const snapshot = await transaction.get(ref);
-
-    if (!snapshot.exists()) {
-      throw new Error("Request not found.");
-    }
-
-    const request = snapshot.data();
-
-    if (
-      request.toUid !== activeUser.uid ||
-      request.status !== "pending"
-    ) {
-      throw new Error("This request cannot be updated.");
-    }
-
-    transaction.update(ref, {
-      status: decision,
-      updatedAt: serverTimestamp()
-    });
-  });
-}
-
-async function loadMyProfile(user, generation) {
-  try {
-    const [profile, persona] = await Promise.all([
-      getDoc(doc(db, "users", user.uid)),
-      getDoc(doc(db, "userPersonas", user.uid))
-    ]);
-
-    if (generation !== authGeneration) return;
-
-    privateProfile = profile.exists() ? profile.data() : null;
-    privatePersona = persona.exists() ? persona.data() : null;
-
-    notify();
-  } catch (error) {
-    console.error("Unable to load Sphere account:", error);
-  }
-}
-
-function startListening(user) {
-  const generation = ++authGeneration;
-
-  clearListeners();
-
-  activeUser = user;
-  privateProfile = null;
-  privatePersona = null;
-  publicMembers.clear();
-  incoming.clear();
-  outgoing.clear();
-
-  notify();
-
-  if (!user) return;
-
-  loadMyProfile(user, generation);
-
-  unsubscribe.push(
-    onSnapshot(publicCollection, snapshot => {
-      if (generation !== authGeneration) return;
-
-      publicMembers = new Map(
-        snapshot.docs.map(item => [
-          item.id,
-          { ...item.data(), id: item.id, uid: item.id }
-        ])
-      );
-
-      notify();
-    }, error => {
-      console.error("Public profile listener:", error);
-    })
-  );
-
-  unsubscribe.push(
-    onSnapshot(
-      query(requestCollection, where("toUid", "==", user.uid)),
-      snapshot => {
-        if (generation !== authGeneration) return;
-
-        incoming = new Map(
-          snapshot.docs.map(item => [
-            item.id,
-            { ...item.data(), id: item.id }
-          ])
-        );
-
-        notify();
-      },
-      error => console.error("Incoming Sphere requests:", error)
-    )
-  );
-
-  unsubscribe.push(
-    onSnapshot(
-      query(requestCollection, where("fromUid", "==", user.uid)),
-      snapshot => {
-        if (generation !== authGeneration) return;
-
-        outgoing = new Map(
-          snapshot.docs.map(item => [
-            item.id,
-            { ...item.data(), id: item.id }
-          ])
-        );
-
-        notify();
-      },
-      error => console.error("Outgoing Sphere requests:", error)
-    )
-  );
-}
-
-onAuthStateChanged(auth, startListening);
+onAuthStateChanged(auth,startListening);

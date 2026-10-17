@@ -344,45 +344,22 @@
             Do not enter your street address.
           </p>
 
-          <label>
-            <input
-              id="showSuburb"
-              type="checkbox"
-            >
-
-            Show my suburb on my profile
-          </label>
+          <input id="showSuburb" type="checkbox" hidden>
+          <p class="field-help">Use Public Profile Visibility below to control whether non-connected members see your suburb.</p>
 
         </section>
 
-        <!-- PROFILE VISIBILITY -->
-
-        <fieldset>
-
-          <legend>Profile visibility</legend>
-
-          <label>
-            <input
-              type="radio"
-              name="visibility"
-              value="public"
-            >
-
-            Public to signed-in members
-          </label>
-
-          <label>
-            <input
-              type="radio"
-              name="visibility"
-              value="private"
-              checked
-            >
-
-            Private
-          </label>
-
-        </fieldset>
+        <!-- PUBLIC PROFILE FIELD CONTROLS -->
+        <section class="account-section" id="publicPrivacySettings">
+          <h2>Public Profile Visibility</h2>
+          <p class="field-help">Accepted connections can see your complete shareable profile. Choose what other signed-in members can see.</p>
+          <div class="privacy-bulk">
+            <button type="button" id="privacyAllPublic">Make All Public</button>
+            <button type="button" id="privacyAllPrivate" class="light-button">Make All Private</button>
+          </div>
+          <div id="privacyFieldRows"></div>
+          <p class="field-help">Username and animal avatar remain visible for member discovery. Click Save Changes below to publish your choices.</p>
+        </section>
 
         <!-- PRIVACY PREFERENCES -->
 

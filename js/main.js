@@ -1846,7 +1846,7 @@ function renderLiveSphere(state) {
   sphereState = state;
   sphereMe = state.me;
 
-  users = state.connections.map(person => ({
+  users = state.publicMembers.map(person => ({
     ...person,
     name: person.name
   }));
@@ -1931,7 +1931,7 @@ function renderLiveSphere(state) {
       user => getUserId(user) === getUserId(selectedUser)
     );
 
-    updateConnectionStatus(selectedUser);
+    openUserProfile(selectedUser);
   }
 }
 
