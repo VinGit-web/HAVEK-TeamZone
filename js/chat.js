@@ -202,7 +202,7 @@ function renderMessages() {
   messages.scrollTop = messages.scrollHeight;
 }
 
-function selectChat(uid) {
+async function selectChat(uid) {
   const person = getContact(uid);
 
   if (!person || !isSphereConnected(uid) || !myUid) return;
@@ -223,9 +223,39 @@ function selectChat(uid) {
   setComposerEnabled(true);
 
   const chatId = conversationId(myUid, uid);
-  const generation = messageGeneration;
+const generation = messageGeneration;
 
-  const messagesQuery = query(
+try {
+  const chatRef = doc(db, "chats", chatId);
+  const existingChat = await getDoc(chatRef);
+
+  if (!existingChat.exists()) {
+    if (!isCurrentConnection()) {
+      throw new Error("This connection is no longer active.");
+    }
+
+    await setDoc(chatRef, {
+      participants: [myUid, uid].sort(),
+      createdAt: serverTimestamp()
+    });
+  }
+} catch (error) {
+  console.error("Unable to initialise conversation:", error);
+
+  if (generation === messageGeneration) {
+    showStatus("Unable to open this conversation.");
+    setComposerEnabled(false);
+  }
+
+  return;
+}
+
+if (
+  generation !== messageGeneration ||
+  currentChatUid !== uid
+) return;
+
+const messagesQuery = query(
     collection(db, "chats", chatId, "messages"),
     orderBy("createdAt", "asc"),
     limit(200)
