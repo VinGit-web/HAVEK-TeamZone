@@ -260,3 +260,44 @@
         display: block;
     }
 }
+
+
+.chat-safety-menu {
+  position: relative;
+}
+
+.safety-options {
+  display: none;
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 150px;
+  z-index: 100;
+}
+
+.safety-options.show {
+  display: flex;
+  flex-direction: column;
+}
+
+.safety-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.65);
+}
+
+.safety-modal.show {
+  display: flex;
+}
+
+.safety-modal-content {
+  position: relative;
+  width: min(100%, 440px);
+  max-height: 90vh;
+  overflow-y: auto;
+}
