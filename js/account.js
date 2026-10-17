@@ -1,3 +1,4 @@
+import { watchMyBlocks, unblockMember } from './safety-firebase.js';
 
 import { animalPreset, svgAvatar } from './avatar-renderer.js';
 import { auth, db } from './firebase.js';
@@ -47,6 +48,7 @@ let currentUser = null;
 let savedProfile = null;
 let savedPersona = null;
 let ready = false;
+let stopBlockedUsers = null;
 let avatar = {...animalPreset('koala')};
 let animalCategory = 'australia';
 
@@ -427,6 +429,24 @@ function populate(profile, persona) {
 }
 
 async function loadAccount(user) {
+  if (stopBlockedUsers) { stopBlockedUsers(); stopBlockedUsers = null; }
+  if (user) stopBlockedUsers = watchMyBlocks(async (excluded,mine) => {
+    const list = $('blockedUsersList'); if (!list) return;
+    list.replaceChildren();
+    if (!mine.length) { list.textContent = 'You have not blocked anyone.'; return; }
+    for (const uid of mine) {
+      const row = document.createElement('div'); row.className = 'blocked-user-row';
+      const label = document.createElement('span'); label.textContent = uid;
+      const button = document.createElement('button'); button.type = 'button'; button.textContent = 'Unblock';
+      button.addEventListener('click',async () => {
+        if (!confirm('Unblock this member? Your previous connection will not be restored.')) return;
+        button.disabled = true;
+        try { await unblockMember(uid); } catch(error) { alert(error.message || 'Unable to unblock.'); button.disabled = false; }
+      });
+      row.append(label,button); list.append(row);
+      getDoc(doc(db,'publicProfiles',uid)).then(snap => { if(snap.exists()) label.textContent = snap.data().username || uid; }).catch(()=>{});
+    }
+  });
   currentUser = user;
   savedProfile = null;
   savedPersona = null;

@@ -1,3 +1,4 @@
+import { blockMember, reportMember } from './safety-firebase.js';
 
 import { auth, db } from "./firebase.js";
 import {
@@ -424,14 +425,6 @@ function closeModal(modal) {
   modal.classList.remove("show");
 }
 
-function readLocal(key, fallback) {
-  try {
-    return JSON.parse(localStorage.getItem(key)) ?? fallback;
-  } catch {
-    return fallback;
-  }
-}
-
 document.getElementById("report-button").addEventListener("click", () => {
   document.getElementById("report-user-name").textContent =
     getContact(currentChatUid)?.name || "this user";
@@ -443,33 +436,13 @@ document.getElementById("close-report").addEventListener("click", () => {
   closeModal(reportModal);
 });
 
-document.getElementById("submit-report").addEventListener("click", () => {
-  const selected = document.querySelector(
-    'input[name="report-reason"]:checked'
-  );
-
-  if (!selected || !currentChatUid) {
-    alert("Please select a reason for reporting.");
-    return;
-  }
-
-  const reports = readLocal("introspheer-reports-demo-v1", []);
-
-  reports.push({
-    contactUid: currentChatUid,
-    reason: selected.value,
-    createdAt: new Date().toISOString()
-  });
-
-  localStorage.setItem(
-    "introspheer-reports-demo-v1",
-    JSON.stringify(reports)
-  );
-
-  selected.checked = false;
-  closeModal(reportModal);
-
-  alert("Report recorded locally. It has not been sent to moderators.");
+document.getElementById("submit-report").addEventListener("click", async () => {
+  const selected = document.querySelector('input[name="report-reason"]:checked');
+  if (!selected || !currentChatUid) { alert("Select a report reason."); return; }
+  const button = document.getElementById('submit-report'); button.disabled = true;
+  try { await reportMember(currentChatUid, selected.value); selected.checked = false; closeModal(reportModal); alert('Report submitted.'); }
+  catch(error) { console.error('Report failed:',error); alert(error.message || 'Unable to submit report.'); }
+  finally { button.disabled = false; }
 });
 
 document.getElementById("block-button").addEventListener("click", () => {
@@ -487,23 +460,12 @@ document.getElementById("cancel-block").addEventListener("click", () => {
   closeModal(blockModal);
 });
 
-document.getElementById("confirm-block").addEventListener("click", () => {
+document.getElementById("confirm-block").addEventListener("click", async () => {
   if (!currentChatUid) return;
-
-  const blocked = readLocal("introspheer-blocked-v1", []);
-
-  if (!blocked.includes(currentChatUid)) {
-    blocked.push(currentChatUid);
-  }
-
-  localStorage.setItem(
-    "introspheer-blocked-v1",
-    JSON.stringify(blocked)
-  );
-
-  closeModal(blockModal);
-  setComposerEnabled(false);
-  showStatus("You blocked this contact in this browser prototype.");
+  const target = currentChatUid, button = document.getElementById('confirm-block'); button.disabled = true;
+  try { await blockMember(target); closeModal(blockModal); resetConversation(); alert('Member blocked. Manage blocked users in Account.'); }
+  catch(error) { console.error('Block failed:',error); alert(error.message || 'Unable to block member.'); }
+  finally { button.disabled = false; }
 });
 
 [reportModal, blockModal].forEach(modal => {
