@@ -2111,6 +2111,34 @@ sphereCanvas.addEventListener(
     }
 );
 
+
+sphereCanvas.addEventListener(
+    "pointermove",
+    function (event) {
+        if (!dragging) return;
+
+        const deltaX = event.clientX - previousPointerX;
+        const deltaY = event.clientY - previousPointerY;
+
+        if (Math.abs(deltaX) > 0 || Math.abs(deltaY) > 0) {
+            movedWhileDragging = true;
+        }
+
+        targetRotationY += deltaX * 0.005;
+        targetRotationX += deltaY * 0.005;
+
+        targetRotationX = THREE.MathUtils.clamp(
+            targetRotationX,
+            -Math.PI / 2,
+            Math.PI / 2
+        );
+
+        previousPointerX = event.clientX;
+        previousPointerY = event.clientY;
+    }
+);
+
+
 function stopSphereDrag(
     event
 ) {
@@ -2203,6 +2231,23 @@ sphereCanvas.addEventListener(
 sphereCanvas.addEventListener(
     "pointercancel",
     stopSphereDrag
+);
+
+
+sphereCanvas.addEventListener(
+    "wheel",
+    function (event) {
+        event.preventDefault();
+
+        targetCameraDistance += event.deltaY * 0.008;
+
+        targetCameraDistance = THREE.MathUtils.clamp(
+            targetCameraDistance,
+            8.5,
+            21
+        );
+    },
+    { passive: false }
 );
 
 let pinchDistance =
