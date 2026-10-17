@@ -629,6 +629,7 @@ function initialise() {
   setupTabs();
   setupBirthYears();
   setupPrivacy();
+  $('openBlockedUsers')?.addEventListener('click', () => $('blockedUsersSection')?.scrollIntoView({behavior:'smooth',block:'start'}));
 
   $('accountForm').addEventListener('submit', saveAccount);
   $('accountForm').addEventListener('reset', resetAccount);
