@@ -1,0 +1,10 @@
+<div class="post-photo-field">
+    <label for="postPhoto" class="post-photo-label">Add a photo (optional)</label>
+    <input type="file" id="postPhoto" accept="image/jpeg,image/png,image/webp,image/gif">
+    <p class="post-photo-help">JPG, PNG, WebP or GIF. Maximum 5 MB.</p>
+    <div id="postPhotoPreview" class="post-photo-preview" hidden>
+        <img id="postPhotoImage" alt="Selected photo preview">
+        <button type="button" id="removePostPhoto">Remove photo</button>
+    </div>
+    <p id="postPhotoStatus" class="post-photo-status" role="status" aria-live="polite"></p>
+</div>

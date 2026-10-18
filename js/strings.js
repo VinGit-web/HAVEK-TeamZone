@@ -1,5 +1,8 @@
 
 import { auth, db } from "./firebase.js";
+import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/13.0.0/firebase-storage.js";
+
+const storage = getStorage(auth.app);
 
 import {
     onAuthStateChanged
@@ -26,6 +29,42 @@ const postName = document.getElementById("postName");
 const postText = document.getElementById("postText");
 const postEvent = document.getElementById("postEvent");
 const postLocation = document.getElementById("postLocation");
+const postPhoto = document.getElementById("postPhoto");
+const postPhotoPreview = document.getElementById("postPhotoPreview");
+const postPhotoImage = document.getElementById("postPhotoImage");
+const removePostPhoto = document.getElementById("removePostPhoto");
+const postPhotoStatus = document.getElementById("postPhotoStatus");
+let selectedPhoto = null;
+const MAX_PHOTO_BYTES = 5 * 1024 * 1024;
+const PHOTO_TYPES = new Set(["image/jpeg", "image/png", "image/webp", "image/gif"]);
+
+function clearPostPhoto() {
+    selectedPhoto = null;
+    postPhoto.value = "";
+    postPhotoImage.removeAttribute("src");
+    postPhotoPreview.hidden = true;
+    postPhotoStatus.textContent = "";
+}
+
+postPhoto.addEventListener("change", () => {
+    const file = postPhoto.files?.[0];
+    clearPostPhoto();
+    if (!file) return;
+    if (!PHOTO_TYPES.has(file.type) || file.size > MAX_PHOTO_BYTES) {
+        postPhotoStatus.textContent = "Choose a JPG, PNG, WebP or GIF image up to 5 MB.";
+        return;
+    }
+    selectedPhoto = file;
+    const reader = new FileReader();
+    reader.onload = () => {
+        if (selectedPhoto === file) {
+            postPhotoImage.src = reader.result;
+            postPhotoPreview.hidden = false;
+        }
+    };
+    reader.readAsDataURL(file);
+});
+removePostPhoto.addEventListener("click", clearPostPhoto);
 
 let currentUser = null;
 let stopPostsListener = null;
@@ -159,6 +198,16 @@ function renderPost(post) {
         "post-message",
         post.content || ""
     );
+
+    let postPhotoElement = null;
+    if (typeof post.photoURL === "string" && /^https:\/\//i.test(post.photoURL)) {
+        const photo = makeElement("img", "string-post-photo");
+        photo.src = post.photoURL;
+        photo.alt = `Photo attached to ${authorName}'s post`;
+        photo.loading = "lazy";
+        photo.decoding = "async";
+        postPhotoElement = photo;
+    }
 
     /* EVENT DETAILS */
 
@@ -371,6 +420,7 @@ function renderPost(post) {
     card.append(
         user,
         message,
+        ...(postPhotoElement ? [postPhotoElement] : []),
         details,
         actions,
         section
@@ -401,6 +451,7 @@ openPostForm.addEventListener("click", () => {
 cancelPost.addEventListener("click", () => {
     postFormContainer.classList.add("hidden");
     postForm.reset();
+    clearPostPhoto();
 
     if (currentUser) {
         postName.value = getDisplayName();
@@ -439,18 +490,37 @@ postForm.addEventListener("submit", async event => {
 
     submitPost.disabled = true;
     submitPost.textContent = "Posting...";
-
+    let uploadedPhotoRef = null;
+    let postSaved = false;
     try {
+        let photoURL = null;
+        let photoPath = null;
+        if (selectedPhoto) {
+            const file = selectedPhoto;
+            if (!PHOTO_TYPES.has(file.type) || file.size > MAX_PHOTO_BYTES) throw new Error("Invalid image. Select JPG, PNG, WebP or GIF up to 5 MB.");
+            const extension = { "image/jpeg": "jpg", "image/png": "png", "image/webp": "webp", "image/gif": "gif" }[file.type];
+            const id = crypto.randomUUID();
+            photoPath = `strings/${currentUser.uid}/${id}.${extension}`;
+            uploadedPhotoRef = ref(storage, photoPath);
+            submitPost.textContent = "Uploading photo...";
+            await uploadBytes(uploadedPhotoRef, file, { contentType: file.type });
+            photoURL = await getDownloadURL(uploadedPhotoRef);
+        }
+        submitPost.textContent = "Posting...";
         await addDoc(collection(db, "posts"), {
             authorId: currentUser.uid,
             authorName: name,
             content: text,
             eventName: eventName,
             location: location,
+            photoURL,
+            photoPath,
             createdAt: serverTimestamp()
         });
 
+        postSaved = true;
         postForm.reset();
+        clearPostPhoto();
         postName.value = getDisplayName();
 
         postFormContainer.classList.add("hidden");
@@ -458,10 +528,10 @@ postForm.addEventListener("submit", async event => {
         showStatus("");
     } catch (error) {
         console.error("Unable to create post:", error);
-
-        alert(
-            "Your post could not be saved. Check your Firestore rules and try again."
-        );
+        if (uploadedPhotoRef && !postSaved) {
+            try { await deleteObject(uploadedPhotoRef); } catch (cleanupError) { console.warn("Unable to clean up uploaded photo:", cleanupError); }
+        }
+        alert(error.message || "Your post could not be saved. Check Firebase Storage and Firestore rules.");
     } finally {
         submitPost.disabled = false;
         submitPost.textContent = "Post";

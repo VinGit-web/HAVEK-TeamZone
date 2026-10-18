@@ -1,0 +1,10 @@
+
+.post-photo-field { margin: 14px 0; }
+.post-photo-label { display: block; font-weight: 650; margin-bottom: 8px; }
+#postPhoto { display: block; max-width: 100%; color: inherit; }
+.post-photo-help, .post-photo-status { font-size: 13px; margin: 7px 0; }
+.post-photo-preview[hidden] { display: none !important; }
+.post-photo-preview { margin-top: 12px; display: flex; align-items: flex-start; flex-direction: column; gap: 10px; }
+.post-photo-preview img { display: block; width: min(100%, 420px); max-height: 320px; object-fit: contain; border-radius: 12px; }
+#removePostPhoto { cursor: pointer; padding: 8px 14px; border-radius: 10px; }
+.string-post-photo { display: block; width: 100%; max-height: 480px; object-fit: contain; border-radius: 14px; margin: 12px 0; }
