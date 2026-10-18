@@ -6,7 +6,8 @@ import {
     doc,
     setDoc,
     deleteDoc,
-    onSnapshot
+    onSnapshot,
+    writeBatch
 } from "https://www.gstatic.com/firebasejs/13.0.0/firebase-firestore.js";
 
 import {
@@ -91,6 +92,23 @@ export function areBookingsLoaded() {
     return bookingsLoaded;
 }
 
+
+function profileBookingDocument(eventId) {
+    const user = auth.currentUser;
+
+    if (!user) {
+        throw new Error("You must be signed in.");
+    }
+
+    return doc(
+        db,
+        "connectionEvents",
+        user.uid,
+        "bookings",
+        encodeURIComponent(String(eventId))
+    );
+}
+
 export async function bookEvent(event) {
     if (!auth.currentUser) {
         throw new Error("Please sign in before booking an event.");
@@ -106,14 +124,26 @@ export async function bookEvent(event) {
         id,
         title: String(event.title || "Brisbane Event"),
         startDate: event.startDate,
-        endDate: validEventDate(event.endDate) ? event.endDate : event.startDate,
+        endDate: validEventDate(event.endDate)
+            ? event.endDate
+            : event.startDate,
         venue: String(event.venue || "Venue unavailable"),
         status: "booked"
     };
 
-    await setDoc(bookingDocument(id), booking);
+    const batch = writeBatch(db);
+
+    batch.set(bookingDocument(id), booking);
+    batch.set(profileBookingDocument(id), booking);
+
+    await batch.commit();
 }
 
 export async function cancelEventBooking(eventId) {
-    await deleteDoc(bookingDocument(eventId));
+    const batch = writeBatch(db);
+
+    batch.delete(bookingDocument(eventId));
+    batch.delete(profileBookingDocument(eventId));
+
+    await batch.commit();
 }

@@ -1,3 +1,4 @@
+import { watchProfileEvents } from "./profile-events.js";
 import * as THREE from "three";
 
 
@@ -453,51 +454,71 @@ function displayInterests(user) {
 }
 
 
+
+let stopProfileEvents = null;
+
 function displayEvents(user) {
-    profileEvents.innerHTML =
-        "";
+    if (stopProfileEvents) {
+        stopProfileEvents();
+        stopProfileEvents = null;
+    }
 
-    const events =
-        Array.isArray(user.events)
-            ? user.events
-            : [];
+    profileEvents.replaceChildren();
 
-    if (
-        events.length === 0
-    ) {
-        profileEvents.innerHTML =
-            '<p class="empty-text">No upcoming events.</p>';
+    if (!user) return;
 
+    const uid = getUserId(user);
+    const isOwnProfile = uid === sphereMe?.uid;
+
+    if (!isOwnProfile && !isSphereConnected(uid)) {
+        const message = document.createElement("p");
+        message.className = "empty-text";
+        message.textContent = "Connect to see this person's upcoming events.";
+        profileEvents.appendChild(message);
         return;
     }
 
-    events.forEach(
-        function (event) {
-            const item =
-                document.createElement(
-                    "p"
-                );
+    const loading = document.createElement("p");
+    loading.className = "empty-text";
+    loading.textContent = "Loading upcoming events...";
+    profileEvents.appendChild(loading);
 
-            if (
-                typeof event ===
-                "string"
-            ) {
-                item.textContent =
-                    event;
-            } else {
-                item.textContent =
-                    event.name ||
-                    event.title ||
-                    "Upcoming event";
-            }
+    stopProfileEvents = watchProfileEvents(uid, events => {
+        if (getUserId(selectedUser) !== uid) return;
 
-            profileEvents.appendChild(
-                item
-            );
+        profileEvents.replaceChildren();
+
+        if (!events.length) {
+            const empty = document.createElement("p");
+            empty.className = "empty-text";
+            empty.textContent = "No upcoming events.";
+            profileEvents.appendChild(empty);
+            return;
         }
-    );
-}
 
+        events.forEach(event => {
+            const item = document.createElement("div");
+            item.className = "profile-event-item";
+
+            const title = document.createElement("strong");
+            title.textContent = event.title;
+
+            const details = document.createElement("p");
+
+            const date = new Date(event.startDate);
+
+            details.textContent =
+                `${date.toLocaleDateString("en-AU", {
+                    day: "numeric",
+                    month: "short",
+                    year: "numeric"
+                })} · ${event.venue || "Venue unavailable"}`;
+
+            item.append(title, details);
+            profileEvents.appendChild(item);
+        });
+    });
+}
 
 
 function getConnections() {
@@ -531,8 +552,6 @@ function updateConnectionStatus(user) {
     connectButton.textContent = "Connected";
     connectButton.disabled = true;
 
-    // Messaging will be enabled when Chat is migrated
-    // from localStorage to Firebase UIDs.
     return;
   }
 
@@ -615,11 +634,13 @@ function openUserProfile(user) {
 
 
 
-
 function closeUserProfile() {
     profilePanel.classList.remove("open");
     profileOverlay.classList.remove("open");
     profilePanel.setAttribute("aria-hidden", "true");
+    if (stopProfileEvents) {
+    stopProfileEvents();
+    stopProfileEvents = null;}
     selectedUser = null;
 }
 
