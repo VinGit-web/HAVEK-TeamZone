@@ -1,4 +1,4 @@
-import {auth,db} from './firebase.js';
+import {auth,db} from '../firebase.js';
 import {onAuthStateChanged,sendEmailVerification,reload} from 'https://www.gstatic.com/firebasejs/13.0.0/firebase-auth.js';
 import {doc,getDoc} from 'https://www.gstatic.com/firebasejs/13.0.0/firebase-firestore.js';
 import {getFunctions,httpsCallable} from 'https://www.gstatic.com/firebasejs/13.0.0/firebase-functions.js';
