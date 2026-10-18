@@ -439,27 +439,9 @@
 
 
 <section class="account-panel" hidden="" id="panel-verification">
-<h2>Age verification</h2>
-<div class="verification-box">
-<h3 id="verificationStatus">
-            Age not verified
-          </h3>
-<p id="verificationDescription">
-            Your age eligibility has not been independently confirmed.
-          </p>
-<p>
-            Verification must be completed through an approved
-            independent provider. INTROSPHEER does not display
-            verification evidence on public profiles.
-          </p>
-<button disabled="" id="startVerification" type="button">
-            Verification provider not connected
-          </button>
-<small>
-            A non-biometric verification alternative will be provided
-            when this service is activated.
-          </small>
-</div>
+<h2>Account verification</h2>
+<div class="verification-box"><h3>Email verification</h3><p id="emailVerificationStatus" role="status">Checking email status...</p><p>Verify the email address attached to your Firebase account. This does not verify your identity.</p><button type="button" id="sendVerificationEmail">Send verification email</button><button type="button" id="refreshEmailVerification" class="light-button">I have verified my email — Refresh</button></div>
+<div class="verification-box"><h3>Identity verification</h3><p id="identityVerificationStatus" role="status">Checking request status...</p><p>Request a manual identity review. An authorised administrator must review and approve it. This form does not collect identity documents, selfies or government ID numbers. Contact your project administrator through your organisation's approved private process if additional evidence is required.</p><label for="verificationNote">Optional message to the reviewer</label><textarea id="verificationNote" maxlength="500" rows="3" placeholder="Optional context for the reviewer"></textarea><button type="button" id="requestIdentityVerification">Request identity review</button><p id="verificationFeedback" role="status" aria-live="polite"></p><small>Email verified and identity verified are separate statuses. A request alone never grants a verified badge.</small></div>
 </section>
 
 
