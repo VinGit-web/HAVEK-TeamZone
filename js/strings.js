@@ -41,6 +41,7 @@ const MAX_BYTES = 5 * 1024 * 1024;
 let selectedPhoto = null;
 let previewURL = null;
 let posting = false;
+let editingPostId = null;
 function clearPostPhoto() {
     selectedPhoto = null;
     postPhoto.value = "";
@@ -278,48 +279,17 @@ if (currentUser && post.authorId === currentUser.uid) {
     actions.append(editButton, deleteButton);
 
 
-/* EDIT POST */
+    editButton.addEventListener("click", () => {
+    editingPostId = post.id;
 
-editButton.addEventListener("click", async () => {
-    if (!currentUser || currentUser.uid !== post.authorId) {
-        return;
-    }
+    postName.value = post.authorName || "";
+    postText.value = post.content || "";
+    postEvent.value = post.eventName || "";
+    postLocation.value = post.location || "";
 
-    const newContent = window.prompt(
-        "Edit your post:",
-        post.content || ""
-    );
+    postFormContainer.classList.remove("hidden");
 
-    if (newContent === null) return;
-
-    const trimmedContent = newContent.trim();
-
-    if (!trimmedContent) {
-        alert("Post cannot be empty.");
-        return;
-    }
-
-    if (trimmedContent.length > 1000) {
-        alert("Post must be 1000 characters or fewer.");
-        return;
-    }
-
-    if (trimmedContent === post.content) return;
-
-    editButton.disabled = true;
-    editButton.textContent = "Saving...";
-
-    try {
-        await updateDoc(doc(db, "posts", post.id), {
-            content: trimmedContent
-        });
-    } catch (error) {
-        console.error("Unable to edit post:", error);
-        alert("Your post could not be edited.");
-    } finally {
-        editButton.disabled = false;
-        editButton.textContent = "Edit";
-    }
+    submitPost.textContent = "Save Changes";
 });
 
     /* DELETE POST */
@@ -577,6 +547,33 @@ postForm.addEventListener("submit", async event => {
     ) {
         alert("One or more fields exceed the character limit.");
         return;
+    }
+
+        if (editingPostId) {
+        try {
+            await updateDoc(
+                doc(db, "posts", editingPostId),
+                {
+                    name: name,
+                    content: text,
+                    eventName: eventName,
+                    location: location
+                }
+            );
+
+            editingPostId = null;
+
+            postForm.reset();
+            postFormContainer.classList.add("hidden");
+
+            submitPost.textContent = "Post";
+
+            return;
+        } catch (error) {
+            console.error("Unable to edit post:", error);
+            alert("Your post could not be edited.");
+            return;
+        }
     }
 
     if (posting) return;
