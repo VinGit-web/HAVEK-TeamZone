@@ -29,6 +29,7 @@ const postName = document.getElementById("postName");
 const postText = document.getElementById("postText");
 const postEvent = document.getElementById("postEvent");
 const postLocation = document.getElementById("postLocation");
+<<<<<<< HEAD
 const postPhoto = document.getElementById("postPhoto");
 const postPhotoPreview = document.getElementById("postPhotoPreview");
 const postPhotoImage = document.getElementById("postPhotoImage");
@@ -65,10 +66,23 @@ postPhoto.addEventListener("change", () => {
     reader.readAsDataURL(file);
 });
 removePostPhoto.addEventListener("click", clearPostPhoto);
+=======
+const eventPickerSearch = document.getElementById("eventPickerSearch");
+const eventPickerStatus = document.getElementById("eventPickerStatus");
+const eventPickerResults = document.getElementById("eventPickerResults");
+const selectedEventPreview = document.getElementById("selectedEventPreview");
+>>>>>>> 9de4ba13531de58bcb2fced1ec7ae8b68057e656
 
 let currentUser = null;
 let stopPostsListener = null;
 let commentListeners = [];
+let availableEvents = [];
+let selectedLinkedEvent = null;
+let eventsLoadPromise = null;
+
+// Use the same BCC dataset and stable record IDs as Discover Events.
+const EVENTS_API =
+    "https://data.brisbane.qld.gov.au/api/explore/v2.1/catalog/datasets/brisbane-city-council-events/records";
 
 /* HELPERS */
 
@@ -105,6 +119,134 @@ function getDisplayName() {
 function stopCommentListeners() {
     commentListeners.forEach(stop => stop());
     commentListeners = [];
+}
+
+/* BCC EVENT PICKER */
+
+function linkedEventId(event) {
+    if (event.recordid != null) return String(event.recordid);
+    return JSON.stringify([event.subject || event.title, event.start_datetime, event.venue]);
+}
+
+function linkedEventLabel(event) {
+    const date = new Date(event.start_datetime || "");
+    const dateText = Number.isNaN(date.getTime())
+        ? "Date unavailable"
+        : date.toLocaleDateString("en-AU", { day: "numeric", month: "short", year: "numeric" });
+    return `${dateText} · ${event.venue || "Venue unavailable"}`;
+}
+
+async function loadLinkedEvents() {
+    if (eventsLoadPromise) return eventsLoadPromise;
+
+    eventPickerStatus.textContent = "Loading available events...";
+    eventsLoadPromise = (async () => {
+        const uniqueEvents = new Map();
+        let fetchedAny = false;
+
+        for (let page = 0; page < 5; page++) {
+            try {
+                const response = await fetch(`${EVENTS_API}?limit=100&offset=${page * 100}`);
+                if (!response.ok) throw new Error(`BCC request failed: ${response.status}`);
+                const data = await response.json();
+                const batch = data.results || [];
+                batch.forEach(event => uniqueEvents.set(linkedEventId(event), event));
+                fetchedAny = true;
+                if (!batch.length || uniqueEvents.size >= data.total_count) break;
+            } catch (error) {
+                if (!fetchedAny) throw error;
+                console.warn("Some event-picker pages could not load:", error);
+                break;
+            }
+        }
+
+        const now = Date.now();
+        availableEvents = [...uniqueEvents.values()].filter(event => {
+            const end = Date.parse(event.end_datetime || event.start_datetime || "");
+            return Number.isFinite(end) && end >= now;
+        });
+        eventPickerStatus.textContent = "Search for an event, then select it below.";
+        renderEventPickerResults();
+    })().catch(error => {
+        eventsLoadPromise = null; // Let the user retry opening the form.
+        eventPickerStatus.textContent = "Couldn't load events. Close and reopen the form to retry.";
+        console.error("Unable to load BCC events for Strings:", error);
+    });
+
+    return eventsLoadPromise;
+}
+
+function chooseLinkedEvent(event) {
+    selectedLinkedEvent = event;
+    postEvent.value = (event.subject || event.title || "Brisbane event").slice(0, 120);
+    postLocation.value = (event.venue || "Venue unavailable").slice(0, 120);
+    eventPickerSearch.value = postEvent.value;
+    selectedEventPreview.textContent = `Selected: ${postEvent.value} · ${linkedEventLabel(event)}`;
+    selectedEventPreview.hidden = false;
+    eventPickerResults.replaceChildren();
+    eventPickerStatus.textContent = "Event linked to your String.";
+}
+
+function renderEventPickerResults() {
+    const search = eventPickerSearch.value.trim().toLowerCase();
+    eventPickerResults.replaceChildren();
+    if (!search || selectedLinkedEvent) return;
+
+    const matches = availableEvents.filter(event =>
+        [event.subject, event.title, event.venue].some(value =>
+            String(value || "").toLowerCase().includes(search)
+        )
+    ).slice(0, 12);
+
+    matches.forEach(event => {
+        const button = makeElement("button", "event-picker-result");
+        button.type = "button";
+        button.append(
+            makeElement("strong", "", event.subject || event.title || "Brisbane event"),
+            makeElement("small", "", linkedEventLabel(event))
+        );
+        button.addEventListener("click", () => chooseLinkedEvent(event));
+        eventPickerResults.appendChild(button);
+    });
+
+    eventPickerStatus.textContent = matches.length
+        ? "Choose an event from these results."
+        : "No matching events in the first 500 records. Try a different search.";
+}
+
+eventPickerSearch.addEventListener("input", () => {
+    selectedLinkedEvent = null;
+    postEvent.value = "";
+    postLocation.value = "";
+    selectedEventPreview.hidden = true;
+    renderEventPickerResults();
+});
+
+function resetLinkedEvent() {
+    selectedLinkedEvent = null;
+    eventPickerResults.replaceChildren();
+    selectedEventPreview.hidden = true;
+    eventPickerSearch.value = "";
+    postEvent.value = "";
+    postLocation.value = "";
+}
+
+// Events page can preselect a record without changing the posting interface.
+async function preselectLinkedEvent() {
+    const id = new URLSearchParams(window.location.search).get("event");
+    if (!id || id.length > 400) return;
+    await loadLinkedEvents();
+    let event = availableEvents.find(item => linkedEventId(item) === id);
+    if (!event && !id.startsWith("[")) {
+        try {
+            const response = await fetch(`${EVENTS_API}/${encodeURIComponent(id)}`);
+            if (response.ok) event = await response.json();
+        } catch (error) {
+            console.warn("Could not preselect linked event:", error);
+        }
+    }
+    if (event) chooseLinkedEvent(event);
+    else eventPickerStatus.textContent = "Linked event unavailable. Search for another event.";
 }
 
 /* AUTHENTICATION */
@@ -228,8 +370,12 @@ function renderPost(post) {
         "",
         post.location || ""
     );
+    const eventDate = post.eventStart
+        ? makeElement("p", "", new Date(post.eventStart).toLocaleDateString("en-AU"))
+        : null;
 
     details.append(eventLine, location);
+    if (eventDate) details.appendChild(eventDate);
 
     /* ACTION BUTTONS */
 
@@ -251,6 +397,9 @@ function renderPost(post) {
 
     joinButton.type = "button";
 
+    // Historical posts may not have an event ID; don't send users to a broken link.
+    joinButton.disabled = !post.eventId;
+    if (!post.eventId) joinButton.title = "This older post has no linked BCC event.";
     actions.append(commentButton, joinButton);
 
     /* COMMENT SECTION */
@@ -407,12 +556,9 @@ function renderPost(post) {
     /* VIEW EVENT */
 
     joinButton.addEventListener("click", () => {
-        const eventName = encodeURIComponent(
-            post.eventName || ""
-        );
-
+        if (!post.eventId) return;
         window.location.href =
-            `events.html?event=${eventName}`;
+            `events.html?event=${encodeURIComponent(post.eventId)}`;
     });
 
     /* ADD POST TO FEED */
@@ -444,6 +590,7 @@ openPostForm.addEventListener("click", () => {
     }
 
     postText.focus();
+    loadLinkedEvents();
 });
 
 /* CANCEL CREATE POST */
@@ -451,7 +598,11 @@ openPostForm.addEventListener("click", () => {
 cancelPost.addEventListener("click", () => {
     postFormContainer.classList.add("hidden");
     postForm.reset();
+<<<<<<< HEAD
     clearPostPhoto();
+=======
+    resetLinkedEvent();
+>>>>>>> 9de4ba13531de58bcb2fced1ec7ae8b68057e656
 
     if (currentUser) {
         postName.value = getDisplayName();
@@ -472,6 +623,11 @@ postForm.addEventListener("submit", async event => {
     const text = postText.value.trim();
     const eventName = postEvent.value.trim();
     const location = postLocation.value.trim();
+
+    if (!selectedLinkedEvent) {
+        alert("Please select a real event from the search results.");
+        return;
+    }
 
     if (!name || !text || !eventName || !location) {
         alert("Please complete every field.");
@@ -513,14 +669,23 @@ postForm.addEventListener("submit", async event => {
             content: text,
             eventName: eventName,
             location: location,
+<<<<<<< HEAD
             photoURL,
             photoPath,
+=======
+            eventId: linkedEventId(selectedLinkedEvent),
+            eventStart: selectedLinkedEvent.start_datetime || "",
+>>>>>>> 9de4ba13531de58bcb2fced1ec7ae8b68057e656
             createdAt: serverTimestamp()
         });
 
         postSaved = true;
         postForm.reset();
+<<<<<<< HEAD
         clearPostPhoto();
+=======
+        resetLinkedEvent();
+>>>>>>> 9de4ba13531de58bcb2fced1ec7ae8b68057e656
         postName.value = getDisplayName();
 
         postFormContainer.classList.add("hidden");
@@ -537,6 +702,12 @@ postForm.addEventListener("submit", async event => {
         submitPost.textContent = "Post";
     }
 });
+
+// Allow an Events detail page to open this form with its event selected.
+if (new URLSearchParams(window.location.search).has("event")) {
+    postFormContainer.classList.remove("hidden");
+    preselectLinkedEvent();
+}
 
 /* CLEAN UP LISTENERS */
 

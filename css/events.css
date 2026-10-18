@@ -1053,3 +1053,23 @@ body.event-dialog-open {
         transition: none;
     }
 }
+
+
+
+/* SHARE AN EVENT THROUGH STRINGS */
+.events-body .create-event-string {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.65rem 1rem;
+    border: 1px solid #9175ba;
+    border-radius: 0.75rem;
+    background: #f9f6ff;
+    color: #34274d;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.events-body .create-event-string:hover {
+    background: #e4d7f7;
+}

@@ -548,3 +548,60 @@
         justify-content: flex-start;
     }
 }
+
+
+
+/* BCC EVENT PICKER - CREATE STRING */
+.strings-body .event-picker-status {
+    margin: 0;
+    color: #4b3c65;
+    font-size: 0.875rem;
+}
+
+.strings-body .event-picker-results {
+    display: grid;
+    gap: 0.4rem;
+    max-height: 15rem;
+    overflow-y: auto;
+}
+
+.strings-body .event-picker-result {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid #c9b8e3;
+    border-radius: 0.65rem;
+    background: #faf8ff;
+    color: #272038;
+    text-align: left;
+    cursor: pointer;
+}
+
+.strings-body .event-picker-result:hover,
+.strings-body .event-picker-result:focus-visible {
+    background: #e8ddfa;
+}
+
+.strings-body .event-picker-result small {
+    color: #5f5474;
+}
+
+.strings-body .selected-event-preview {
+    padding: 0.75rem;
+    border: 1px solid #baa0df;
+    border-radius: 0.65rem;
+    color: #34274d;
+    background: #e8ddfa;
+}
+
+.strings-body .selected-event-preview[hidden] {
+    display: none;
+}
+
+.strings-body #postEvent,
+.strings-body #postLocation {
+    background: #eee9f6;
+}
