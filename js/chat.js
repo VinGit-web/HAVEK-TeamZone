@@ -139,7 +139,7 @@ function calculateUnread(uid, items) {
   )).length;
 }
 
-function watchUnreadConversations() {
+async function watchUnreadConversations() {
   const activeIds = new Set(connections.map(person => person.uid));
   const generation = unreadGeneration;
 
@@ -156,8 +156,39 @@ function watchUnreadConversations() {
   for (const uid of activeIds) {
     if (unreadListeners.has(uid) || !myUid) continue;
 
+    
     const chatId = conversationId(myUid, uid);
+    const listenerUid = myUid;
+
+    unreadListeners.set(uid, []);
+
+    try {
+      const chatRef = doc(db, "chats", chatId);
+      const existingChat = await getDoc(chatRef);
+
+      if (!existingChat.exists()) {
+        await setDoc(chatRef, {
+          participants: [listenerUid, uid].sort(),
+          createdAt: serverTimestamp()
+        });
+      }
+    } catch (error) {
+      console.error("Unable to initialise unread conversation:", error);
+      unreadListeners.delete(uid);
+      continue;
+    }
+
+    if (
+      generation !== unreadGeneration ||
+      myUid !== listenerUid ||
+      !connections.some(person => person.uid === uid)
+    ) {
+      unreadListeners.delete(uid);
+      continue;
+    }
+
     let latestMessages = [];
+
     let messagesLoaded = false;
     let markerLoaded = false;
 
