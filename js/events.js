@@ -1,6 +1,12 @@
 /* EVENTS PAGE JS */
 
-
+import {
+    bookEvent,
+    cancelEventBooking,
+    isEventBooked,
+    subscribeToBookings,
+    areBookingsLoaded
+} from "./storage.js";
 // GET PAGE ELEMENTS
 window.addEventListener("load", function () {
     setTimeout(function () {
@@ -585,17 +591,21 @@ function getEventId(event) {
     ]);
 }
 
+
 function updateBookingButtons() {
     if (!selectedEvent) return;
 
-    const booked = isEventBooked(
-        getEventId(selectedEvent)
-    );
+    const loaded = areBookingsLoaded();
+    const booked = isEventBooked(getEventId(selectedEvent));
 
     bookEventButton.hidden = booked;
     attendanceStatus.hidden = !booked;
     cancelEventButton.hidden = !booked;
+
+    bookEventButton.disabled = !loaded;
+    cancelEventButton.disabled = !loaded;
 }
+
 
 
 // SHOW MORE EVENTS
@@ -625,47 +635,56 @@ mapViewButton.addEventListener("click", function () {
 
 /* BOOK EVENT */
 
-bookEventButton.addEventListener("click", function () {
-    if (!selectedEvent) return;
 
-    const confirmed = confirm(
-        "Would you like to attend this event?"
-    );
+bookEventButton.addEventListener("click", async function () {
+    if (!selectedEvent || !areBookingsLoaded()) return;
 
+    const confirmed = confirm("Would you like to attend this event?");
     if (!confirmed) return;
 
-    bookEvent({
-        id: getEventId(selectedEvent),
-        title: selectedEvent.subject ||
-            selectedEvent.title ||
-            "Brisbane Event",
-        startDate: selectedEvent.start_datetime,
-        endDate: selectedEvent.end_datetime,
-        venue: selectedEvent.venue ||
-            "Venue unavailable"
-    });
+    bookEventButton.disabled = true;
 
-    updateBookingButtons();
+    try {
+        await bookEvent({
+            id: getEventId(selectedEvent),
+            title: selectedEvent.subject || selectedEvent.title || "Brisbane Event",
+            startDate: selectedEvent.start_datetime,
+            endDate: selectedEvent.end_datetime,
+            venue: selectedEvent.venue || "Venue unavailable"
+        });
+
+        updateBookingButtons();
+    } catch (error) {
+        console.error("Booking failed:", error);
+        alert("Unable to book this event. Please try again.");
+    } finally {
+        updateBookingButtons();
+    }
 });
 
 
 /* CANCEL ATTENDANCE */
 
-cancelEventButton.addEventListener("click", function () {
-    if (!selectedEvent) return;
 
-    const confirmed = confirm(
-        "Cancel your attendance for this event?"
-    );
+cancelEventButton.addEventListener("click", async function () {
+    if (!selectedEvent || !areBookingsLoaded()) return;
 
+    const confirmed = confirm("Cancel your attendance for this event?");
     if (!confirmed) return;
 
-    cancelEventBooking(
-        getEventId(selectedEvent)
-    );
+    cancelEventButton.disabled = true;
 
-    updateBookingButtons();
+    try {
+        await cancelEventBooking(getEventId(selectedEvent));
+        updateBookingButtons();
+    } catch (error) {
+        console.error("Cancellation failed:", error);
+        alert("Unable to cancel this booking. Please try again.");
+    } finally {
+        updateBookingButtons();
+    }
 });
+
 
 
 function setActiveView(view) {
@@ -707,3 +726,9 @@ async function openDeepLinkedEvent() {
 // LOAD EVENTS FROM API //
 loadEventLocations();
 loadEventsFromAPI();
+
+
+subscribeToBookings(() => {
+    updateBookingButtons();
+});
+
