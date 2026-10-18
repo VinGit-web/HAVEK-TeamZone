@@ -1,79 +1,119 @@
 
-/* INTROSPHEER EVENT STORAGE */
+import { auth, db } from "./firebase.js";
 
-const BOOKING_KEY = "introspheer_bookings";
+import {
+    collection,
+    doc,
+    setDoc,
+    deleteDoc,
+    onSnapshot
+} from "https://www.gstatic.com/firebasejs/13.0.0/firebase-firestore.js";
 
-// Example bookings for the tradeshow
-const exampleBookings = [
-    {
-        id: "demo-pottery",
-        title: "Pottery Workshop",
-        startDate: "2026-11-20T10:00:00",
-        endDate: "2026-11-20T12:00:00",
-        venue: "Indooroopilly",
-        status: "booked"
-    },
-    {
-        id: "demo-museum",
-        title: "Museum Visit",
-        startDate: "2026-09-12T14:00:00",
-        endDate: "2026-09-12T16:00:00",
-        venue: "Brisbane City",
-        status: "booked"
+import {
+    onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/13.0.0/firebase-auth.js";
+
+let bookings = [];
+let bookingsLoaded = false;
+let unsubscribeBookings = null;
+const listeners = new Set();
+
+function notifyListeners() {
+    listeners.forEach(listener => listener(getUserBookings(), bookingsLoaded));
+}
+
+function bookingCollection() {
+    const user = auth.currentUser;
+
+    if (!user) {
+        throw new Error("You must be signed in to manage bookings.");
     }
-];
 
-// Only add example data on the first visit
-function initialiseBookings() {
-    if (localStorage.getItem(BOOKING_KEY) === null) {
-        localStorage.setItem(
-            BOOKING_KEY,
-            JSON.stringify(exampleBookings)
-        );
+    return collection(db, "users", user.uid, "eventBookings");
+}
+
+function bookingDocument(eventId) {
+    return doc(bookingCollection(), encodeURIComponent(String(eventId)));
+}
+
+function validEventDate(value) {
+    const date = new Date(value);
+    return Number.isFinite(date.getTime());
+}
+
+onAuthStateChanged(auth, user => {
+    if (unsubscribeBookings) {
+        unsubscribeBookings();
+        unsubscribeBookings = null;
     }
-}
 
-function getUserBookings() {
-    return JSON.parse(
-        localStorage.getItem(BOOKING_KEY) || "[]"
-    );
-}
+    bookings = [];
+    bookingsLoaded = false;
+    notifyListeners();
 
-function saveUserBookings(bookings) {
-    localStorage.setItem(
-        BOOKING_KEY,
-        JSON.stringify(bookings)
-    );
-}
-
-function isEventBooked(eventId) {
-    return getUserBookings().some(
-        booking => booking.id === eventId
-    );
-}
-
-function bookEvent(event) {
-    const bookings = getUserBookings();
-
-    if (isEventBooked(event.id)) {
+    if (!user) {
+        bookingsLoaded = true;
+        notifyListeners();
         return;
     }
 
-    bookings.push({
-        ...event,
-        status: "booked"
-    });
-
-    saveUserBookings(bookings);
-}
-
-function cancelEventBooking(eventId) {
-    const bookings = getUserBookings().filter(
-        booking => booking.id !== eventId
+    unsubscribeBookings = onSnapshot(
+        bookingCollection(),
+        snapshot => {
+            bookings = snapshot.docs.map(item => item.data());
+            bookingsLoaded = true;
+            notifyListeners();
+        },
+        error => {
+            console.error("Unable to load event bookings:", error);
+            bookingsLoaded = false;
+            notifyListeners();
+        }
     );
+});
 
-    saveUserBookings(bookings);
+export function subscribeToBookings(listener) {
+    listeners.add(listener);
+    listener(getUserBookings(), bookingsLoaded);
+
+    return () => listeners.delete(listener);
 }
 
-// Run when the file loads
-initialiseBookings();
+export function getUserBookings() {
+    return bookings.map(booking => ({ ...booking }));
+}
+
+export function isEventBooked(eventId) {
+    return bookings.some(booking => booking.id === String(eventId));
+}
+
+export function areBookingsLoaded() {
+    return bookingsLoaded;
+}
+
+export async function bookEvent(event) {
+    if (!auth.currentUser) {
+        throw new Error("Please sign in before booking an event.");
+    }
+
+    const id = String(event.id ?? "");
+
+    if (!id || !validEventDate(event.startDate)) {
+        throw new Error("This event does not have a valid ID or start date.");
+    }
+
+    const booking = {
+        id,
+        title: String(event.title || "Brisbane Event"),
+        startDate: event.startDate,
+        endDate: validEventDate(event.endDate) ? event.endDate : event.startDate,
+        venue: String(event.venue || "Venue unavailable"),
+        status: "booked"
+    };
+
+    await setDoc(bookingDocument(id), booking);
+}
+
+export async function cancelEventBooking(eventId) {
+    await deleteDoc(bookingDocument(eventId));
+}
