@@ -1,3 +1,10 @@
+
+import {
+    getUserBookings,
+    cancelEventBooking,
+    subscribeToBookings
+} from "./storage.js";
+
 /* INTROSPHEER MY EVENTS */
 
 const myEventsList = document.getElementById("myEventsList");
@@ -231,14 +238,19 @@ function renderSelectedDay() {
         cancelButton.className = "my-cancel-event";
         cancelButton.textContent = "Cancel Attendance";
 
-        cancelButton.addEventListener("click", function () {
-            if (!confirm("Cancel attendance for this event?")) {
-                return;
-            }
+        cancelButton.addEventListener("click", async function () {
+    if (!confirm("Cancel attendance for this event?")) return;
 
-            cancelEventBooking(event.id);
-            displayMyEvents();
-        });
+    cancelButton.disabled = true;
+
+    try {
+        await cancelEventBooking(event.id);
+    } catch (error) {
+        console.error("Cancellation failed:", error);
+        alert("Unable to cancel this event. Please try again.");
+        cancelButton.disabled = false;
+    }
+});
 
         card.append(heading, date, venue, cancelButton);
         selectedDayEvents.appendChild(card);
@@ -357,6 +369,20 @@ calendarTodayButton.addEventListener("click", function () {
 });
 
 // Keep the calendar up to date when returning from the Discover Events page.
+
+subscribeToBookings(() => {
+    displayMyEvents();
+});
+
 window.addEventListener("pageshow", displayMyEvents);
 
+window.addEventListener("focus", displayMyEvents);
+
+document.addEventListener("visibilitychange", () => {
+    if (!document.hidden) displayMyEvents();
+});
+
+setInterval(displayMyEvents, 60000);
+
 displayMyEvents();
+
