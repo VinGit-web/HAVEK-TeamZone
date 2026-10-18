@@ -520,6 +520,8 @@ function displayAPIEvents(events) {
 function openEventDetails(event, { focusBooking = false } = {}) {
     returnFocusTo = document.activeElement;
     selectedEvent = event;
+    document.getElementById("createEventString").href =
+        `strings.html?event=${encodeURIComponent(getEventId(event))}`;
     document.getElementById("detailCategory").textContent = getEventCategory(event);
     document.getElementById("detailName").textContent = event.subject || event.title || "Brisbane Event";
     document.getElementById("detailDate").textContent = formatEventDateRange(event);
@@ -731,4 +733,3 @@ loadEventsFromAPI();
 subscribeToBookings(() => {
     updateBookingButtons();
 });
-

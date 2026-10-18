@@ -51,73 +51,68 @@
     <main class="strings-page">
 
         <div class="strings-heading">
-                <h1>Strings</h1>
+            <h1>Strings</h1>
 
-        <div class="strings-heading-actions">
+            <div class="strings-heading-actions">
                 <button id="openAddUser" class="add-user-button" type="button">
                     <span aria-hidden="true">+</span>
-                        Add User
+                    Add User
                 </button>
 
                 <button id="openPostForm" class="add-post-button" type="button" aria-label="Create post">
-            +
+                    +
                 </button>
-        </div>
-        </div>
-
-<section id="addUserPanel" class="add-user-panel hidden" aria-labelledby="addUserHeading">
-    <div class="add-user-panel-heading">
-        <div>
-            <h2 id="addUserHeading">Your Connections</h2>
-            <p>Find other members and manage your connection requests.</p>
+            </div>
         </div>
 
-        <button id="closeAddUser" class="close-add-user" type="button" aria-label="Close connections">
-            &times;
-        </button>
-    </div>
+        <section id="addUserPanel" class="add-user-panel hidden" aria-labelledby="addUserHeading">
+            <div class="add-user-panel-heading">
+                <div>
+                    <h2 id="addUserHeading">Your Connections</h2>
+                    <p>Find other members and manage your connection requests.</p>
+                </div>
 
-    <div class="connection-tabs" role="group" aria-label="Connection views">
-        <button type="button" class="connection-tab active" data-connection-tab="find">
-            Find People
-        </button>
+                <button id="closeAddUser" class="close-add-user" type="button" aria-label="Close connections">
+                    &times;
+                </button>
+            </div>
 
-        <button type="button" class="connection-tab" data-connection-tab="requests">
-            Requests
-            <span id="requestCount" class="request-count" hidden>0</span>
-        </button>
+            <div class="connection-tabs" role="group" aria-label="Connection views">
+                <button type="button" class="connection-tab active" data-connection-tab="find">
+                    Find People
+                </button>
 
-        <button type="button" class="connection-tab" data-connection-tab="connected">
-            Connected
-        </button>
-    </div>
+                <button type="button" class="connection-tab" data-connection-tab="requests">
+                    Requests
+                    <span id="requestCount" class="request-count" hidden>0</span>
+                </button>
 
-    <div id="findPeopleView" class="connection-view">
-        <label for="connectionSearch">Search registered members</label>
-        <input
-            id="connectionSearch"
-            type="search"
-            placeholder="Search by name..."
-            maxlength="60"
-            autocomplete="off"
-        >
-        <div id="connectionSearchResults" class="connection-user-list"></div>
-    </div>
+                <button type="button" class="connection-tab" data-connection-tab="connected">
+                    Connected
+                </button>
+            </div>
 
-    <div id="requestsView" class="connection-view hidden">
-        <h3>Incoming Requests</h3>
-        <div id="incomingRequests" class="connection-user-list"></div>
+            <div id="findPeopleView" class="connection-view">
+                <label for="connectionSearch">Search registered members</label>
+                <input id="connectionSearch" type="search" placeholder="Search by name..." maxlength="60"
+                    autocomplete="off">
+                <div id="connectionSearchResults" class="connection-user-list"></div>
+            </div>
 
-        <h3>Sent Requests</h3>
-        <div id="outgoingRequests" class="connection-user-list"></div>
-    </div>
+            <div id="requestsView" class="connection-view hidden">
+                <h3>Incoming Requests</h3>
+                <div id="incomingRequests" class="connection-user-list"></div>
 
-    <div id="connectedView" class="connection-view hidden">
-        <div id="connectedUsers" class="connection-user-list"></div>
-    </div>
+                <h3>Sent Requests</h3>
+                <div id="outgoingRequests" class="connection-user-list"></div>
+            </div>
 
-    <p id="connectionStatus" class="connection-status" role="status" aria-live="polite"></p>
-</section>
+            <div id="connectedView" class="connection-view hidden">
+                <div id="connectedUsers" class="connection-user-list"></div>
+            </div>
+
+            <p id="connectionStatus" class="connection-status" role="status" aria-live="polite"></p>
+        </section>
 
         <section id="postFormContainer" class="post-form-container hidden">
             <form id="postForm">
@@ -127,9 +122,15 @@
                 <textarea id="postText" placeholder="What event are you thinking about?" maxlength="1000"
                     required></textarea>
 
-                <input type="text" id="postEvent" placeholder="Event name" maxlength="120" required>
+                <!-- Choose an actual BCC event rather than typing an unrelated event name. -->
+                <label for="eventPickerSearch">Link an event</label>
+                <input type="search" id="eventPickerSearch" placeholder="Search Brisbane events..." autocomplete="off">
+                <p id="eventPickerStatus" class="event-picker-status" role="status" aria-live="polite"></p>
+                <div id="eventPickerResults" class="event-picker-results" aria-label="Matching events"></div>
+                <div id="selectedEventPreview" class="selected-event-preview" hidden></div>
 
-                <input type="text" id="postLocation" placeholder="Location" maxlength="120" required>
+                <input type="text" id="postEvent" placeholder="Selected event" maxlength="120" readonly required>
+                <input type="text" id="postLocation" placeholder="Event location" maxlength="120" readonly required>
 
                 <div class="form-buttons">
                     <button type="button" id="cancelPost">
@@ -157,52 +158,28 @@
 
     </main>
 
-    
-<button
-    id="stringsChatButton"
-    class="strings-chat-button"
-    type="button"
-    aria-controls="stringsChatPanel"
-    aria-expanded="false"
-    aria-label="Open Chat"
->
-    <span aria-hidden="true">✉</span>
-    Chat
-    <span id="stringsChatUnread" class="strings-chat-unread" hidden></span>
-</button>
 
-<div
-    id="stringsChatBackdrop"
-    class="strings-chat-backdrop"
-    hidden
-></div>
+    <button id="stringsChatButton" class="strings-chat-button" type="button" aria-controls="stringsChatPanel"
+        aria-expanded="false" aria-label="Open Chat">
+        <span aria-hidden="true">✉</span>
+        Chat
+        <span id="stringsChatUnread" class="strings-chat-unread" hidden></span>
+    </button>
 
-<aside
-    id="stringsChatPanel"
-    class="strings-chat-panel"
-    aria-label="Chat"
-    aria-hidden="true"
->
-    <div class="strings-chat-panel-heading">
-        <h2>Chat</h2>
+    <div id="stringsChatBackdrop" class="strings-chat-backdrop" hidden></div>
 
-        <button
-            id="stringsChatClose"
-            class="strings-chat-close"
-            type="button"
-            aria-label="Close Chat"
-        >
-            &times;
-        </button>
-    </div>
+    <aside id="stringsChatPanel" class="strings-chat-panel" aria-label="Chat" aria-hidden="true">
+        <div class="strings-chat-panel-heading">
+            <h2>Chat</h2>
 
-    <iframe
-        id="stringsChatFrame"
-        class="strings-chat-frame"
-        title="INTROSPHEER conversations"
-        loading="lazy"
-    ></iframe>
-</aside>
+            <button id="stringsChatClose" class="strings-chat-close" type="button" aria-label="Close Chat">
+                &times;
+            </button>
+        </div>
+
+        <iframe id="stringsChatFrame" class="strings-chat-frame" title="INTROSPHEER conversations"
+            loading="lazy"></iframe>
+    </aside>
 
 
     <footer class="site-footer">
