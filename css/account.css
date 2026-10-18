@@ -1,46 +1,105 @@
-.account-tabs,
-.animal-tabs,
-.studio-actions,
-.photo-actions {
+/* ACCOUNT PAGE COMPONENTS */
+
+/* Tab navigation */
+.account-body .account-tabs,
+.account-body .animal-tabs,
+.account-body .studio-actions,
+.account-body .photo-actions {
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
 }
 
-.account-body button {
-  cursor: pointer;
-  padding: 10px 15px;
-  border: 1px solid #25334b;
-  border-radius: 9px;
-  background: #25334b;
-  color: white;
-  font: inherit;
+.account-body .account-tabs .tab {
+  flex: 1 1 150px;
+  min-width: 0;
+  text-align: center;
+  justify-content: center;
+  background: var(--account-card);
+  color: var(--account-text);
+  border: 1px solid var(--account-border);
 }
 
-.account-body button:disabled {
-  opacity: .5;
+/* Buttons: a single baseline, with explicit variants below. */
+.account-body main button {
+  cursor: pointer;
+  padding: 10px 15px;
+  border: 1px solid var(--account-border);
+  border-radius: 9px;
+  background: var(--account-card);
+  color: var(--account-text);
+  font: inherit;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.account-body main button:hover:not(:disabled) {
+  background: var(--account-highlight);
+  border-color: #ac93cd;
+}
+
+.account-body main button:focus-visible,
+.account-body main input:focus-visible,
+.account-body main select:focus-visible,
+.account-body main textarea:focus-visible {
+  outline: 2px solid var(--account-purple);
+  outline-offset: 2px;
+}
+
+.account-body main button:disabled {
+  opacity: 0.6;
   cursor: not-allowed;
 }
 
-.account-body button.active,
-.account-body button.selected {
-  background: #dce9ff;
-  color: #152d55;
-  border-color: #8cb1e7;
+.account-body .account-tabs .tab.active,
+.account-body .account-tabs .tab[aria-selected="true"],
+.account-body .animal-tabs button.selected {
+  background: var(--account-highlight);
+  color: var(--account-text);
+  border-color: #987dbb;
 }
 
-.account-body .light-button {
-  background: #e9e1f7;
-  color: #34274d;
-  border: 1px solid #b7a3d8;
+.account-body main button.light-button,
+.account-body main button[type="reset"] {
+  background: #f8f5fd;
+  color: var(--account-text);
+  border-color: #b7a3d4;
 }
 
-.account-panel {
+.account-body main button.light-button:hover:not(:disabled),
+.account-body main button[type="reset"]:hover:not(:disabled) {
+  background: #e8def8;
+}
+
+.account-body main #saveAccount {
+  background: var(--account-purple);
+  color: #ffffff;
+  border-color: var(--account-purple);
+}
+
+.account-body main #saveAccount:hover:not(:disabled) {
+  background: var(--account-purple-hover);
+}
+
+/* Form controls */
+.account-body .account-panel {
   padding: 22px 0;
 }
 
-.account-panel[hidden] {
+.account-body .account-panel[hidden] {
   display: none !important;
+}
+
+.account-body .account-panel h2,
+.account-body .account-panel h3,
+.account-body .account-panel p,
+.account-body .account-panel label,
+.account-body .account-panel legend {
+  color: var(--account-text);
+}
+
+.account-body .account-panel>p,
+.account-body .account-panel .field-help {
+  color: var(--account-muted);
 }
 
 .account-body label {
@@ -49,164 +108,199 @@
   font-size: 14px;
 }
 
-.account-body input:not([type=checkbox]):not([type=radio]),
-.account-body select {
+.account-body input:not([type="checkbox"]):not([type="radio"]):not([type="color"]):not([type="file"]),
+.account-body select,
+.account-body textarea {
   display: block;
   width: 100%;
-  padding: 10px;
-  border: 1px solid #cdd3dc;
-  border-radius: 8px;
+  max-width: 100%;
+  min-height: 44px;
+  padding: 10px 13px;
   margin-top: 7px;
   box-sizing: border-box;
+  border: 1px solid #c9b9e0;
+  border-radius: 9px;
+  background: var(--account-card);
+  color: var(--account-text);
   font: inherit;
 }
 
-.account-body input[type=color] {
+.account-body textarea {
+  min-height: 110px;
+  resize: vertical;
+}
+
+.account-body input[type="color"] {
+  display: block;
+  width: 100%;
   height: 45px;
   padding: 3px;
+  margin-top: 7px;
+  box-sizing: border-box;
+  background: var(--account-card);
+  border: 1px solid #c9b9e0;
+  border-radius: 9px;
 }
 
-.account-body input[readonly] {
-  background: #eef0f4;
+.account-body input[type="file"] {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  margin-top: 7px;
+  box-sizing: border-box;
+  border: 1px solid #c9b9e0;
+  border-radius: 9px;
+  background: var(--account-card);
+  color: var(--account-text);
 }
 
-.field-grid,
-.control-grid {
+.account-body input[type="file"]::file-selector-button {
+  padding: 7px 12px;
+  margin-right: 10px;
+  border: 1px solid var(--account-border);
+  border-radius: 7px;
+  background: var(--account-highlight);
+  color: var(--account-text);
+  cursor: pointer;
+}
+
+.account-body input[readonly],
+.account-body input:disabled,
+.account-body select:disabled {
+  background: #ebe7f2;
+  color: #5e5670;
+}
+
+.account-body input[type="checkbox"] {
+  accent-color: var(--account-purple);
+}
+
+.account-body .field-grid,
+.account-body .control-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 16px;
 }
 
-.account-body fieldset {
-  border: 1px solid #d5dae3;
-  border-radius: 10px;
-  margin: 20px 0;
-  padding: 15px;
-}
-
-.account-body fieldset label {
-  margin: 10px 0;
-  font-weight: 400;
-}
-
-.profile-summary {
+/* Profile and avatar studio */
+.account-body .profile-summary {
   display: flex;
   align-items: center;
   gap: 16px;
 }
 
-.mini-avatar {
+.account-body .mini-avatar {
   width: 86px;
   height: 86px;
   flex-shrink: 0;
 }
 
-.mini-avatar svg {
+.account-body .mini-avatar svg {
   width: 100%;
   height: 100%;
 }
 
-.studio-layout {
+.account-body .studio-layout {
   display: grid;
   grid-template-columns: 300px minmax(0, 1fr);
   gap: 26px;
   align-items: start;
 }
 
-.studio-preview {
+.account-body .studio-preview {
   position: sticky;
-  top: 20px;
-  background: #293756;
-  color: #f0edff;
-  border: 1px solid #455577;
+  top: 110px;
   padding: 16px;
+  background: var(--account-card);
+  border: 1px solid var(--account-border);
   border-radius: 16px;
 }
 
-.studio-preview #avatarPreview {
+.account-body .studio-preview #avatarPreview {
   width: 100%;
   aspect-ratio: 1;
   max-width: 280px;
-  margin: auto;
+  margin: 12px auto 0;
 }
 
-.studio-preview svg {
+.account-body .studio-preview svg {
   width: 100%;
   height: 100%;
   display: block;
 }
 
-.studio-preview label {
+.account-body .studio-preview label {
   margin: 12px 0;
 }
 
-.studio-controls h3 {
+.account-body .studio-controls h3 {
   margin: 24px 0 12px;
 }
 
-.animal-grid {
+.account-body .animal-grid {
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 8px;
   margin: 12px 0;
 }
 
-.animal-grid button {
-  background: white;
-  color: #25334b;
-  border: 1px solid #d4dbe5;
+.account-body .animal-grid button {
   display: flex;
   align-items: center;
   justify-content: center;
   flex-direction: column;
   gap: 5px;
   min-height: 72px;
+  background: var(--account-card);
+  color: var(--account-text);
+  border: 1px solid var(--account-border);
   font-size: 12px;
 }
 
-.animal-grid button svg {
+.account-body .animal-grid button svg {
   width: 46px;
   height: 46px;
 }
 
-.animal-grid button.selected {
-  border: 2px solid #315b9e;
-  background: #eaf1ff;
+.account-body .animal-grid button.selected {
+  background: var(--account-highlight);
+  color: var(--account-text);
+  border: 2px solid var(--account-purple);
 }
 
-.account-savebar {
-  border-top: 1px solid #dce1e9;
-  padding-top: 18px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
+/* Inner cards: the same soft border and white surface as calendar bookings. */
+.account-body .photo-settings,
+.account-body .verification-box,
+.account-body .account-section,
+.account-body .account-logout,
+.account-body #blockedUsersSection {
+  background: var(--account-card);
+  color: var(--account-text);
+  border: 1px solid var(--account-border);
+  border-radius: 14px;
 }
 
-.account-savebar p {
-  flex: 1;
-  min-width: 200px;
-  font-size: 14px;
-}
-
-.verification-box,
-.photo-settings {
-  max-width: 660px;
+.account-body .photo-settings,
+.account-body .verification-box {
+  width: 100%;
+  max-width: 100%;
   padding: 20px;
-  background: #293756;
-  color: #f0edff;
-  border: 1px solid #455577;
-  border-radius: 12px;
   line-height: 1.6;
   margin: 20px 0;
+  box-sizing: border-box;
 }
 
-.verification-box small {
+.account-body .account-section {
+  margin: 20px 0;
+  padding: 22px;
+}
+
+.account-body .verification-box small {
   display: block;
   margin-top: 12px;
 }
 
-.photo-preview {
+.account-body .photo-preview {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -215,168 +309,140 @@
   margin: 16px 0;
   overflow: hidden;
   border-radius: 14px;
-  background: #e6eaf0;
-  color: #647084;
+  background: #ebe4f5;
+  color: #514267;
+  text-align: center;
 }
 
-.photo-preview img {
+.account-body .photo-preview img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-.photo-checkbox {
-  display: flex !important;
+.account-body .photo-checkbox {
+  display: flex;
   align-items: center;
   gap: 10px;
   margin: 16px 0;
 }
 
-#photoStatus {
+.account-body #photoStatus {
+  font-size: 14px;
+  color: var(--account-muted);
+}
+
+/* Privacy controls and blocked users */
+.account-body main fieldset {
+  margin: 20px 0;
+  padding: 20px;
+  border: 1px solid var(--account-border);
+  border-radius: 14px;
+  background: var(--account-card);
+  color: var(--account-text);
+  text-align: left;
+}
+
+.account-body main legend {
+  padding: 0 8px;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.account-body main fieldset label {
+  margin: 10px 0;
+  font-weight: 400;
+}
+
+.account-body .privacy-bulk {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.account-body #openBlockedUsers {
+  display: inline-flex;
+  margin: 20px 0;
+  padding: 14px 18px;
+  border: 1px solid var(--account-border);
+  border-radius: 10px;
+  font-weight: 700;
+}
+
+.account-body #blockedUsersSection {
+  margin-top: 20px;
+  padding: 22px;
+}
+
+.account-body .blocked-user-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--account-border);
+}
+
+/* Consistent actions and logout card */
+.account-body .account-savebar {
+  border-top: 1px solid var(--account-border);
+  padding-top: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.account-body .account-savebar p {
+  flex: 0 0 100%;
+  min-width: 0;
+  margin: 0;
+  text-align: center;
+  color: var(--account-muted);
   font-size: 14px;
 }
 
-@media (max-width: 760px) {
-  .studio-layout {
-    grid-template-columns: 1fr;
-  }
-
-  .studio-preview {
-    position: static;
-  }
-
-  .animal-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-
-  .field-grid,
-  .control-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .account-body>main {
-    padding: 15px;
-  }
+.account-body .account-savebar p:empty {
+  display: none;
 }
-
-/* Interest selection appearance */
-
-.interest-chip {
-  background: #ffffff;
-  color: #59636f;
-  border: 2px solid #dce4eb;
-  border-radius: 25px;
-  padding: 11px 18px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background 0.2s ease,
-    color 0.2s ease,
-    border-color 0.2s ease,
-    box-shadow 0.2s ease;
-}
-
-.interest-chip:hover {
-  border-color: #91b8d8;
-  background: #eef6fc;
-}
-
-.interest-chip.selected,
-.interest-chip[aria-pressed="true"] {
-  background: #b9d8ef;
-  color: #243e55;
-  border-color: #609cc9;
-  font-weight: 700;
-  box-shadow: 0 0 0 3px rgba(96, 156, 201, 0.18);
-}
-
-
-.interest-chip.selected::before,
-.interest-chip[aria-pressed="true"]::before {
-  content: "✓";
-  margin-right: 7px;
-  font-weight: 800;
-}
-
-
-.interest-chip:focus-visible {
-  outline: 3px solid #609cc9;
-  outline-offset: 3px;
-}
-
-/* ACCOUNT PANEL TEXT */
-
-.account-body>main h2,
-.account-body>main h3,
-.account-body>main p,
-.account-body>main label {
-  color: #f0edff;
-}
-
-/* ACCOUNT INNER PANELS */
-
-.account-body .photo-settings,
-.account-body .studio-preview,
-.account-body .verification-box,
-.account-body .account-section {
-  background: #293756 !important;
-  color: #f0edff !important;
-  border: 1px solid #455577 !important;
-  border-radius: 14px;
-}
-
-/* ACCOUNT INNER PANEL TEXT */
-
-.account-body .photo-settings h3,
-.account-body .photo-settings p,
-.account-body .photo-settings label,
-.account-body .studio-preview h3,
-.account-body .studio-preview p,
-.account-body .studio-preview label,
-.account-body .verification-box h3,
-.account-body .verification-box p,
-.account-body .verification-box label,
-.account-body .account-section h2,
-.account-body .account-section h3,
-.account-body .account-section p,
-.account-body .account-section label {
-  color: #f0edff !important;
-}
-
-/* ACCOUNT ACCESS PANEL */
-
-.account-body .account-logout {
-  background: #293756 !important;
-  color: #f0edff !important;
-  border: 1px solid #455577 !important;
-  border-radius: 14px;
-}
-
-.account-body .account-logout h2,
-.account-body .account-logout p {
-  color: #f0edff !important;
-}
-
-/* ACCOUNT SECONDARY BUTTONS */
-
-.account-body .light-button {
-  background: #e9e1f7;
-  color: #34274d;
-  border: 1px solid #b7a3d8;
-}
-
-.account-body .light-button:disabled {
-  opacity: 0.55;
-  cursor: not-allowed;
-}
-
-/* ACCOUNT ACCESS */
 
 .account-body .account-logout {
   max-width: 1100px;
   margin: 24px auto;
   padding: 22px;
-  background: #293756;
-  color: #f0edff;
-  border: 1px solid #455577;
-  border-radius: 14px;
+}
+
+.account-body .account-logout h2,
+.account-body .account-logout p {
+  color: var(--account-text);
+}
+
+.account-body main #logoutButton {
+  background: #fff4f7;
+  border-color: #d3abbf;
+  color: #8b315b;
+}
+
+.account-body main #logoutButton:hover:not(:disabled) {
+  background: #ffe5ee;
+}
+
+@media (max-width: 760px) {
+  .account-body .studio-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .account-body .studio-preview {
+    position: static;
+  }
+
+  .account-body .animal-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .account-body .field-grid,
+  .account-body .control-grid {
+    grid-template-columns: 1fr;
+  }
 }

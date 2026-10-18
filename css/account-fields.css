@@ -5,10 +5,10 @@
   width: 100%;
   min-height: 44px;
   padding: 11px 13px;
-  border: 1px solid #d8d8e5;
+  border: 1px solid #c9b9e0;
   border-radius: 9px;
-  background: #ffffff;
-  color: #24243a;
+  background: var(--account-card);
+  color: var(--account-text);
   font: inherit;
 }
 
@@ -28,12 +28,12 @@
 .account-section input[type="checkbox"] {
   width: 18px;
   height: 18px;
-  accent-color: #635bce;
+  accent-color: var(--account-purple);
 }
 
 .account-section .field-help {
   margin: 8px 0 14px;
-  color: #d0d8ea;
+  color: var(--account-muted);
   font-size: 13px;
   line-height: 1.5;
 }
@@ -50,7 +50,7 @@
 
 #accountInterestOptions .interest-group h3 {
   margin: 0 0 12px;
-  color: #f0edff;
+  color: var(--account-text);
   font-size: 15px;
   font-weight: 600;
 }
@@ -75,11 +75,11 @@
   margin: 0;
   padding: 9px 15px;
 
-  border: 1px solid #d8d3eb;
+  border: 1px solid var(--account-border);
   border-radius: 22px;
 
-  background: #f7f5fc;
-  color: #41375b;
+  background: var(--account-card-soft);
+  color: var(--account-text);
 
   font: inherit;
   font-size: 13px;
@@ -94,26 +94,26 @@
 }
 
 #accountInterestOptions button.interest-chip:hover {
-  border-color: #635bce;
+  border-color: var(--account-purple);
 }
 
 #accountInterestOptions button.interest-chip.selected,
 #accountInterestOptions button.interest-chip[aria-pressed="true"],
 #accountInterestOptions button.interest-chip.selected:hover {
-  border-color: #635bce;
-  background: #635bce;
+  border-color: var(--account-purple);
+  background: var(--account-purple);
   color: #ffffff;
 }
 
 #accountInterestOptions button.interest-chip:focus-visible {
-  outline: 2px solid #635bce;
+  outline: 2px solid var(--account-purple);
   outline-offset: 3px;
 }
 
 #accountInterestCount {
   margin-top: 12px;
   font-size: 13px;
-  color: #635bce;
+  color: var(--account-purple);
   font-weight: 600;
 }
 
