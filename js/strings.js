@@ -45,18 +45,25 @@ const MAX_BYTES = 5 * 1024 * 1024;
 let selectedPhoto = null;
 let previewURL = null;
 let posting = false;
-function clearPostPhoto() {
+
+function clearPostPhoto(clearInput = true) {
     selectedPhoto = null;
-    postPhoto.value = "";
+
+    if (clearInput) {
+        postPhoto.value = "";
+    }
+
     if (previewURL) URL.revokeObjectURL(previewURL);
     previewURL = null;
+
     postPhotoImage.removeAttribute("src");
     postPhotoPreview.hidden = true;
     postPhotoStatus.textContent = "";
 }
+
 postPhoto.addEventListener("change", () => {
     const file = postPhoto.files?.[0];
-    clearPostPhoto();
+    clearPostPhoto(false);
     if (!file) return;
     if (!TYPES[file.type] || !file.size || file.size > MAX_BYTES) {
         postPhotoStatus.textContent = "Choose a JPG, PNG, WebP or GIF image up to 5 MB.";
