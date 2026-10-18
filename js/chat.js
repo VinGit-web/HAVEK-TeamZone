@@ -160,7 +160,8 @@ async function watchUnreadConversations() {
     const chatId = conversationId(myUid, uid);
     const listenerUid = myUid;
 
-    unreadListeners.set(uid, []);
+    const pendingStops = [];
+unreadListeners.set(uid, pendingStops);
 
     try {
       const chatRef = doc(db, "chats", chatId);
@@ -174,18 +175,25 @@ async function watchUnreadConversations() {
       }
     } catch (error) {
       console.error("Unable to initialise unread conversation:", error);
-      unreadListeners.delete(uid);
-      continue;
+      if (unreadListeners.get(uid) === pendingStops) {
+  unreadListeners.delete(uid);
+}
+continue;
     }
 
-    if (
-      generation !== unreadGeneration ||
-      myUid !== listenerUid ||
-      !connections.some(person => person.uid === uid)
-    ) {
-      unreadListeners.delete(uid);
-      continue;
-    }
+    
+if (
+  generation !== unreadGeneration ||
+  myUid !== listenerUid ||
+  !connections.some(person => person.uid === uid) ||
+  unreadListeners.get(uid) !== pendingStops
+) {
+  if (unreadListeners.get(uid) === pendingStops) {
+    unreadListeners.delete(uid);
+  }
+  continue;
+}
+
 
     let latestMessages = [];
 
@@ -491,8 +499,7 @@ async function selectChat(uid) {
 
   chatLayout.classList.add("mobile-conversation");
   unreadByUid.set(uid, 0);
-updateUnreadNavigation();
-markConversationRead(uid);
+  updateUnreadNavigation();
 
   safetyOptions.classList.remove("show");
   safetyButton.setAttribute("aria-expanded", "false");
@@ -529,12 +536,16 @@ try {
   return;
 }
 
+
 if (
   generation !== messageGeneration ||
   currentChatUid !== uid
 ) return;
 
+markConversationRead(uid);
+
 const messagesQuery = query(
+
     collection(db, "chats", chatId, "messages"),
     orderBy("createdAt", "asc"),
     limit(200)
@@ -591,11 +602,16 @@ function resetConversation() {
   renderContacts();
 }
 
-onAuthStateChanged(auth, user => {
-  myUid = user?.uid || null;
 
-  if (!myUid) {
+onAuthStateChanged(auth, user => {
+  const nextUid = user?.uid || null;
+
+  if (myUid !== nextUid) {
+    clearUnreadListeners();
+    closeMessageListener();
     connections = [];
+    currentChatUid = null;
+    myUid = nextUid;
     resetConversation();
   }
 });
@@ -673,9 +689,11 @@ chatForm.addEventListener("submit", async event => {
   }
 });
 
+
 backButton.addEventListener("click", () => {
-  chatLayout.classList.remove("mobile-conversation");
+  resetConversation();
 });
+
 
 /* SAFETY MENU */
 
