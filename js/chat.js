@@ -26,6 +26,7 @@ import {
 
 const chatLayout = document.querySelector(".chat-layout");
 const chatList = document.getElementById("chat-list");
+const chatSearch = document.getElementById("chatSearch");
 const conversationName = document.getElementById("conversation-name");
 const conversationAvatar = document.getElementById("conversation-avatar");
 const backButton = document.getElementById("back-button");
@@ -90,7 +91,7 @@ function isConversationVisible(uid) {
     currentChatUid === uid &&
     isCurrentConnection() &&
     (
-      window.innerWidth > 768 ||
+      (!document.body.classList.contains("embedded-chat") && window.innerWidth > 820) ||
       chatLayout.classList.contains("mobile-conversation")
     )
   );
@@ -290,12 +291,27 @@ function renderContacts() {
     const note = document.createElement("p");
     note.className = "empty-chat";
     note.textContent =
-      "No connections yet. Connect with someone on Home to start chatting.";
+      "No connections yet. Connect with someone on Strings to start chatting.";
     chatList.appendChild(note);
     return;
   }
 
-  for (const person of connections) {
+  const searchTerm = chatSearch.value.trim().toLowerCase();
+
+  const filteredConnections = connections.filter(person => {
+    const name = person.name || "INTROSPHEER User";
+    return name.toLowerCase().includes(searchTerm);
+  });
+
+  if (filteredConnections.length === 0) {
+    const note = document.createElement("p");
+    note.className = "chat-search-empty";
+    note.textContent = "No matching connections found.";
+    chatList.appendChild(note);
+    return;
+  }
+
+  for (const person of filteredConnections) {
     const card = document.createElement("button");
     card.type = "button";
     card.className = "chat-card";
@@ -312,25 +328,24 @@ function renderContacts() {
     const name = document.createElement("span");
     name.textContent = person.name || "INTROSPHEER User";
 
-    
-card.append(avatar, name);
+    card.append(avatar, name);
 
-const unread = unreadByUid.get(person.uid) || 0;
+    const unread = unreadByUid.get(person.uid) || 0;
 
-if (unread > 0) {
-  card.classList.add("has-unread");
+    if (unread > 0) {
+      card.classList.add("has-unread");
 
-  const badge = document.createElement("span");
-  badge.className = "unread-badge";
-  badge.textContent = unread > 99 ? "99+" : String(unread);
-  badge.setAttribute(
-    "aria-label",
-    `${unread} unread messages`
-  );
+      const badge = document.createElement("span");
+      badge.className = "unread-badge";
+      badge.textContent = unread > 99 ? "99+" : String(unread);
+      badge.setAttribute(
+        "aria-label",
+        `${unread} unread messages`
+      );
 
-  card.appendChild(badge);
-}
-  
+      card.appendChild(badge);
+    }
+
     card.addEventListener("click", () => selectChat(person.uid));
 
     chatList.appendChild(card);
@@ -698,3 +713,4 @@ window.addEventListener("pageshow", () => {
     markConversationRead(currentChatUid);
   }
 });
+chatSearch.addEventListener("input", renderContacts);
