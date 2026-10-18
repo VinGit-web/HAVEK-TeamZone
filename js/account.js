@@ -27,9 +27,12 @@ const MBTI = {
 };
 
 const INTERESTS = {
-  'Creative': ['Art', 'Painting', 'Pottery', 'Photography', 'Music', 'Dance', 'Ballet'],
-  'Sports & Outdoors': ['Running', 'Walking', 'Hiking', 'Cycling', 'Swimming', 'Yoga', 'Boxing', 'Football', 'Netball', 'Fencing', 'Horse Back Riding'],
-  'Social & Leisure': ['Gaming', 'Board Games', 'Chess', 'Anime', 'Movies', 'Reading', 'Museums', 'Markets', 'Coffee', 'Eating', 'Cooking', 'Gardening']
+  'Arts & Creativity': ['Art', 'Painting', 'Pottery', 'Photography', 'Music', 'Dance', 'Ballet', 'Drawing', 'Sketching', 'Crafts', 'DIY', 'Sewing', 'Knitting', 'Sculpture', 'Digital Art', 'Graphic Design', 'Creative Writing', 'Singing', 'Playing Instruments', 'Theatre'],
+  'Sports & Outdoors': ['Running', 'Walking', 'Hiking', 'Cycling', 'Swimming', 'Yoga', 'Boxing', 'Football', 'Netball', 'Fencing', 'Horse Back Riding', 'Basketball', 'Badminton', 'Tennis', 'Volleyball', 'Pilates', 'Gym', 'Dancing', 'Camping', 'Nature', 'Birdwatching', 'Beach Trips', 'Rock Climbing', 'Skateboarding'],
+  'Entertainment & Games': ['Gaming', 'Board Games', 'Chess', 'Anime', 'Movies', 'TV Shows', 'K-pop', 'Concerts', 'Live Music', 'Trivia', 'Puzzles', 'Esports', 'Tabletop RPGs', 'Comics', 'Manga', 'Cosplay'],
+  'Learning & Culture': ['Reading', 'Museums', 'History', 'Languages', 'Science', 'Technology', 'Coding', 'Robotics', 'Astronomy', 'Libraries', 'Exhibitions', 'Architecture', 'Literature', 'Workshops'],
+  'Food & Social': ['Markets', 'Coffee', 'Eating', 'Cooking', 'Baking', 'Cafés', 'Food Festivals', 'Picnics', 'Community Events', 'Volunteering', 'Brunch', 'Tea'],
+  'Lifestyle & Hobbies': ['Gardening', 'Dogs', 'Cats', 'Pets', 'Plants', 'Sustainability', 'Fashion', 'Travel', 'Journaling', 'Meditation', 'Collecting', 'Model Building', 'Aquariums']
 };
 
 const ANIMALS = {
@@ -128,6 +131,28 @@ function renderInterests() {
 
   container.replaceChildren();
 
+  const known = new Set(Object.values(INTERESTS).flat());
+  const previous = [...selectedInterests].filter(i => !known.has(i) && i.toLowerCase().includes(search));
+  if (previous.length) {
+    const group = document.createElement('div');
+    group.className = 'interest-group';
+    const title = document.createElement('h3');
+    title.textContent = 'Previously selected';
+    const options = document.createElement('div');
+    options.className = 'interest-group-options';
+    previous.forEach(interest => {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'interest-chip selected';
+      button.dataset.interest = interest;
+      button.textContent = interest;
+      button.setAttribute('aria-pressed', 'true');
+      options.append(button);
+    });
+    group.append(title, options);
+    container.append(group);
+  }
+
   for (const [groupName, interests] of Object.entries(INTERESTS)) {
     const matches = interests.filter(i =>
       i.toLowerCase().includes(search)
@@ -191,6 +216,10 @@ function setupInterests() {
     if (selectedInterests.has(interest)) {
       selectedInterests.delete(interest);
     } else {
+      if (selectedInterests.size >= 35) {
+        $('accountInterestCount').textContent = 'Maximum 35 interests. Deselect one to add another.';
+        return;
+      }
       selectedInterests.add(interest);
     }
 
