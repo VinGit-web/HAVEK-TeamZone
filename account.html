@@ -481,6 +481,7 @@
         </button>
       </div>
     </form>
+
     <section aria-labelledby="logoutHeading" class="account-logout">
       <h2 id="logoutHeading">
         Account access
@@ -491,6 +492,7 @@
       <button class="light-button" id="logoutButton" type="button">
         Log Out
       </button>
+
       <div class="delete-account-section">
         <h3>Delete account</h3>
         <p>Request permanent deletion of your account and associated data. This action cannot be undone.</p>
@@ -499,6 +501,7 @@
       </div>
     </section>
   </main>
+
   <!-- ACCOUNT DELETION CONFIRMATION -->
   <dialog id="deleteAccountDialog" class="delete-account-dialog" aria-labelledby="deleteDialogTitle">
     <div id="deleteStepOne">
@@ -509,6 +512,7 @@
         <button id="continueDelete" type="button" class="delete-account-button">Continue</button>
       </div>
     </div>
+
     <div id="deleteStepTwo" hidden>
       <h2>Final confirmation</h2>
       <label for="deleteConfirmationText">Type <strong>DELETE</strong> to confirm your request</label>
@@ -520,6 +524,7 @@
       </div>
     </div>
   </dialog>
+
   <footer class="site-footer">
     <p>
       Generative AI tools, including ChatGPT and Claude, were used
@@ -528,6 +533,7 @@
       the development of the final website.
     </p>
   </footer>
+
   <script src="js/account.js" type="module"></script>
   <script src="js/profile-features.js" type="module"></script>
   <script src="js/account-logout.js" type="module"></script>
