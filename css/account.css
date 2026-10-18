@@ -281,3 +281,47 @@
     padding: 15px;
   }
 }
+
+/* Interest selection appearance */
+
+.interest-chip {
+    background: #ffffff;
+    color: #59636f;
+    border: 2px solid #dce4eb;
+    border-radius: 25px;
+    padding: 11px 18px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s ease,
+                color 0.2s ease,
+                border-color 0.2s ease,
+                box-shadow 0.2s ease;
+}
+
+.interest-chip:hover {
+    border-color: #91b8d8;
+    background: #eef6fc;
+}
+
+.interest-chip.selected,
+.interest-chip[aria-pressed="true"] {
+    background: #b9d8ef;
+    color: #243e55;
+    border-color: #609cc9;
+    font-weight: 700;
+    box-shadow: 0 0 0 3px rgba(96, 156, 201, 0.18);
+}
+
+
+.interest-chip.selected::before,
+.interest-chip[aria-pressed="true"]::before {
+    content: "✓";
+    margin-right: 7px;
+    font-weight: 800;
+}
+
+
+.interest-chip:focus-visible {
+    outline: 3px solid #609cc9;
+    outline-offset: 3px;
+}
