@@ -169,7 +169,7 @@
                           maxlength="1000"
                           required></textarea>
 
-                <label for="eventPickerSearch">Link an event</label>
+                <label for="eventPickerSearch">Link an event (optional)</label>
 
                 <input type="search"
                        id="eventPickerSearch"
@@ -188,20 +188,24 @@
                 <div id="selectedEventPreview"
                      class="selected-event-preview"
                      hidden></div>
+                <button
+                    type="button"
+                    id="removeLinkedEvent"
+                    hidden>
+                        Remove linked event
+                    </button>
 
                 <input type="text"
-                       id="postEvent"
-                       placeholder="Selected event"
-                       maxlength="120"
-                       readonly
-                       required>
+                        id="postEvent"
+                        placeholder="Selected event (optional)"
+                        maxlength="120"
+                        readonly>
 
                 <input type="text"
-                       id="postLocation"
-                       placeholder="Event location"
-                       maxlength="120"
-                       readonly
-                       required>
+                        id="postLocation"
+                        placeholder="Event location"
+                        maxlength="120"
+                        readonly>
 
                 <!-- Optional post photo -->
                 <label for="postPhoto">

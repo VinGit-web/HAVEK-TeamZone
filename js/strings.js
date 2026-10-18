@@ -15,6 +15,7 @@ import {
     serverTimestamp,
     doc,
     updateDoc,
+    deleteField,
     deleteDoc
 } from "https://www.gstatic.com/firebasejs/13.0.0/firebase-firestore.js";
 
@@ -34,6 +35,8 @@ const eventPickerSearch = document.getElementById("eventPickerSearch");
 const eventPickerStatus = document.getElementById("eventPickerStatus");
 const eventPickerResults = document.getElementById("eventPickerResults");
 const selectedEventPreview = document.getElementById("selectedEventPreview");
+const removeLinkedEvent = document.getElementById("removeLinkedEvent");
+let eventRemovalRequested = false;
 const postPhoto = document.getElementById("postPhoto");
 const postPhotoPreview = document.getElementById("postPhotoPreview");
 const postPhotoImage = document.getElementById("postPhotoImage");
@@ -115,11 +118,18 @@ function eventDateLabel(value) {
 
 function clearLinkedEvent({ keepSearch = false } = {}) {
     linkedEvent = null;
+
     postEvent.value = "";
     postLocation.value = "";
+
     selectedEventPreview.replaceChildren();
     selectedEventPreview.hidden = true;
-    if (!keepSearch) eventPickerSearch.value = "";
+
+    removeLinkedEvent.hidden = true;
+
+    if (!keepSearch) {
+        eventPickerSearch.value = "";
+    }
 }
 
 function selectBCCEvent(event) {
@@ -134,8 +144,17 @@ function selectBCCEvent(event) {
         `${title} · ${eventDateLabel(event.start_datetime)} · ${venue}`;
     selectedEventPreview.hidden = false;
     eventPickerStatus.textContent = "Event linked to your String.";
+    eventRemovalRequested = false;
+    removeLinkedEvent.hidden = false;
 }
+removeLinkedEvent.addEventListener("click", () => {
+    clearLinkedEvent();
 
+    eventRemovalRequested = true;
+
+    eventPickerStatus.textContent =
+        "Event removed. You can post without linking an event.";
+});
 async function loadPickerEvents() {
     // Fetch once and reuse for subsequent searches; reset the cache if it fails.
     if (!eventPickerPromise) {
@@ -254,6 +273,7 @@ async function prefillEventFromURL() {
         eventPickerStatus.textContent =
             "Could not load that event. Search for it above or choose another upcoming event.";
         eventPickerSearch.focus();
+        removeLinkedEvent.hidden = true;
     }
 }
 
@@ -484,6 +504,7 @@ function renderPost(post) {
             // Reuse the Create String form without losing the existing event link.
             editingPostId = post.id;
             editingOriginalPost = post;
+            eventRemovalRequested = false;
             clearLinkedEvent();
             clearPostPhoto();
             clearTimeout(eventSearchTimer);
@@ -695,6 +716,7 @@ function renderPost(post) {
 
     // Older Strings don't have a BCC record ID; a title alone isn't a reliable link.
     joinButton.disabled = !post.eventId;
+    joinButton.hidden = !post.eventId;
     if (!post.eventId) {
         joinButton.title = "This older String does not have a linked BCC event.";
     }
@@ -708,12 +730,12 @@ function renderPost(post) {
     /* ADD POST TO FEED */
 
     card.append(
-        user,
-        message,
-        ...(photoElement ? [photoElement] : []),
-        details,
-        actions,
-        section
+    user,
+    message,
+    ...(photoElement ? [photoElement] : []),
+    ...(post.eventId ? [details] : []),
+    actions,
+    section
     );
 
     stringsFeed.appendChild(card);
@@ -744,6 +766,7 @@ openPostForm.addEventListener("click", () => {
 function resetPostForm() {
     editingPostId = null;
     editingOriginalPost = null;
+    eventRemovalRequested = false;
     postForm.reset();
     clearPostPhoto();
     clearLinkedEvent();
@@ -778,9 +801,9 @@ postForm.addEventListener("submit", async event => {
     const eventName = postEvent.value.trim();
     const location = postLocation.value.trim();
 
-    if (!name || !text || !eventName || !location) {
-        alert("Please complete every field.");
-        return;
+    if (!name || !text) {
+    alert("Please enter your display name and post content.");
+    return;
     }
 
     if (name.length > 60 || text.length > 1000 ||
@@ -789,14 +812,24 @@ postForm.addEventListener("submit", async event => {
         return;
     }
 
-    // New posts must use an actual selected BCC record. Existing older posts
-    // may be edited without inventing an event ID for their legacy text.
-    if (!editingPostId && (!linkedEvent || !getBCCEventId(linkedEvent) ||
-        eventName !== String(linkedEvent.subject || linkedEvent.title || "Brisbane Event").slice(0, postEvent.maxLength) ||
-        location !== String(linkedEvent.venue || "Venue unavailable").slice(0, postLocation.maxLength))) {
-        alert("Please select a real BCC event from the search results.");
+    
+if (!editingPostId && (linkedEvent || eventName || location)) {
+
+    const validEvent =
+        linkedEvent &&
+        getBCCEventId(linkedEvent) &&
+        eventName === String(
+            linkedEvent.subject || linkedEvent.title || "Brisbane Event"
+        ).slice(0, postEvent.maxLength) &&
+        location === String(
+            linkedEvent.venue || "Venue unavailable"
+        ).slice(0, postLocation.maxLength);
+
+    if (!validEvent) {
+        alert("Please select a valid event or leave the event fields empty.");
         return;
     }
+}
 
     if (editingPostId && !linkedEvent && !editingOriginalPost) return;
 
@@ -815,16 +848,31 @@ postForm.addEventListener("submit", async event => {
                 throw new Error("You can only edit your own String.");
             }
             // Preserve the original event ID when the BCC record cannot be reloaded.
-            const chosenEventId = linkedEvent
-                ? getBCCEventId(linkedEvent)
-                : (original.eventId || null);
-            const changes = {
-                authorName: name,
-                content: text,
-                eventName: linkedEvent ? eventName : (original.eventName || eventName),
-                location: linkedEvent ? location : (original.location || location)
-            };
-            if (chosenEventId) changes.eventId = chosenEventId;
+            
+const changes = {
+    authorName: name,
+    content: text
+};
+
+if (linkedEvent) {
+    // User selected a new event.
+    changes.eventId = getBCCEventId(linkedEvent);
+    changes.eventName = eventName;
+    changes.location = location;
+
+} else if (original.eventId && !eventRemovalRequested) {
+    // Keep the original event if it was not removed.
+    changes.eventId = original.eventId;
+    changes.eventName = original.eventName;
+    changes.location = original.location;
+
+} else {
+    // Save as a normal String without an event.
+    changes.eventId = deleteField();
+    changes.eventName = deleteField();
+    changes.location = deleteField();
+}
+
             await updateDoc(doc(db, "posts", editingPostId), changes);
             saved = true;
             resetPostForm();
@@ -846,16 +894,20 @@ postForm.addEventListener("submit", async event => {
         }
         submitPost.textContent = "Posting...";
         await addDoc(collection(db, "posts"), {
-            authorId: postingUser.uid,
-            authorName: name,
-            content: text,
-            eventName: eventName,
-            location: location,
-            eventId: getBCCEventId(linkedEvent),
-            ...(uploadedPath ? { photoPath: uploadedPath } : {}),
-            createdAt: serverTimestamp()
-        });
+        authorId: postingUser.uid,
+        authorName: name,
+        content: text,
 
+        ...(linkedEvent ? {
+        eventName: eventName,
+        location: location,
+        eventId: getBCCEventId(linkedEvent)
+        } : {}),
+
+        ...(uploadedPath ? { photoPath: uploadedPath } : {}),
+
+        createdAt: serverTimestamp()
+        });
         saved = true;
         resetPostForm();
 
