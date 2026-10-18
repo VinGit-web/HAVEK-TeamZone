@@ -272,40 +272,64 @@ function getRecommendationScore(event) {
     }, 0);
 }
 
-// Conservative matching: only explicit minimum-age admission rules are exclusions.
-// Descriptions mentioning seniors or an age (without a rule) are still eligible.
+// Age suitability affects recommendations only, never normal event browsing.
+// Council descriptions are free text, so only match clear audience restrictions.
 function getMinimumEventAge(event) {
-    const text = [event.subject, event.title, event.description]
-        .filter(value => typeof value === "string")
-        .join(" ")
-        .replace(/<[^>]*>/g, " ")
-        .replace(/&nbsp;/gi, " ");
+    const title = String(event.subject || event.title || "").replace(/<[^>]*>/g, " ");
+    const description = String(event.description || "").replace(/<[^>]*>/g, " ");
+    const text = `${title} ${description}`;
+    const minimums = [];
 
-    const patterns = [
-        /\b(?:ages?\s*|aged\s*|for\s+(?:people|adults|participants|those)\s+aged\s*|suitable\s+for\s+ages?\s*)(\d{2})\s*(?:\+(?!\w)|(?:and|or)\s+(?:over|above|older)\b)/gi,
-        /\b(?:over|above)\s+(\d{2})s?\b/gi,
+    // Event names such as "50 Plus: Latin Dance Fitness" and "Over 50s Yoga".
+    // Keep this match in the title, not the venue (e.g. "Fifty Plus Centre").
+    for (const match of title.matchAll(/\b(\d{2})\s*(?:plus\b|\+(?!\w))|\b(?:over|above)\s+(\d{2})s?\b/gi)) {
+        const age = Number(match[1] || match[2]);
+        if (age >= 18 && age <= 100) minimums.push(age);
+    }
+
+    // Explicit age rules in descriptions, rather than incidental mentions of ages.
+    const admissionRules = [
+        /\b(?:ages?|aged|for\s+(?:people|adults|participants|those)\s+aged|suitable\s+for\s+ages?)\s*(\d{2})\s*(?:\+(?!\w)|plus\b|(?:and|or)\s+(?:over|above|older)\b)/gi,
+        /\b(?:for|suitable\s+for|open\s+to|designed\s+for|aimed\s+at)\s+(?:(?:people|adults|participants|those|visitors)\s+)?(?:over|above)\s+(\d{2})s?\b/gi,
         /\b(\d{2})\s*years?\s*(?:and|or)\s*(?:over|older|above)\b/gi
     ];
-
-    const minimums = [];
-    for (let index = 0; index < patterns.length; index++) {
-        for (const match of text.matchAll(patterns[index])) {
-            const minimum = Number(match[1]);
-            if (minimum >= 18 && minimum <= 100) minimums.push(minimum);
+    for (const pattern of admissionRules) {
+        for (const match of text.matchAll(pattern)) {
+            const age = Number(match[1]);
+            if (age >= 18 && age <= 100) minimums.push(age);
         }
     }
-    // "Seniors only" has no universal age threshold; do not guess an age.
     return minimums.length ? Math.max(...minimums) : null;
+}
+
+function isChildFocusedEvent(event) {
+    const title = String(event.subject || event.title || "").replace(/<[^>]*>/g, " ");
+    const description = String(event.description || "").replace(/<[^>]*>/g, " ");
+    // "Kids' music", "Children's storytime", "toddler play" etc. are not
+    // useful recommendations for a general adult account. "Family-friendly"
+    // by itself is NOT treated as a kids-only event.
+    const childTerms = /\b(?:kids?|children(?:['’]s)?|toddlers?|preschool(?:ers)?|bab(?:y|ies)|teens?|teenagers?)\b/i;
+    if (childTerms.test(title)) return true;
+
+    // Only consider the description when it explicitly specifies a child audience.
+    if (/\b(?:for|aimed\s+at|designed\s+for|suitable\s+for)\s+(?:(?:young|school[- ]age)\s+)?(?:kids?|children|toddlers?|preschoolers?|bab(?:y|ies)|teens?|teenagers?)\b/i.test(description)) {
+        return true;
+    }
+    // Event descriptions with an explicit upper age limit for children.
+    for (const match of description.matchAll(/\b(?:ages?|aged)\s*(\d{1,2})\s*(?:[-–]|to)\s*(\d{1,2})\b/gi)) {
+        if (Number(match[2]) < 18) return true;
+    }
+    return false;
 }
 
 function isAgeEligibleForRecommendation(event) {
     if (!Number.isInteger(recommendationBirthYear)) return true;
+    // Birth year alone cannot establish an exact birthday. Taking the youngest
+    // possible age avoids prematurely recommending age-restricted sessions.
+    const age = new Date().getFullYear() - recommendationBirthYear - 1;
+    if (age >= 18 && isChildFocusedEvent(event)) return false;
     const minimumAge = getMinimumEventAge(event);
-    if (minimumAge === null) return true;
-    // Birth year alone doesn't give a birthday. Use the youngest possible age,
-    // so we don't recommend an age-restricted event before eligibility is certain.
-    const youngestPossibleAge = new Date().getFullYear() - recommendationBirthYear - 1;
-    return youngestPossibleAge >= minimumAge;
+    return minimumAge === null || age >= minimumAge;
 }
 
 // The API uses free-form cost descriptions: don't call missing or ambiguous costs "Free".
@@ -829,18 +853,30 @@ onAuthStateChanged(auth, async user => {
 
     if (user) {
         try {
-            const [personaSnapshot, profileSnapshot] = await Promise.all([
+            const [personaResult, profileResult] = await Promise.allSettled([
                 getDoc(doc(db, "userPersonas", user.uid)),
                 getDoc(doc(db, "users", user.uid))
             ]);
             if (requestId !== interestsRequestId) return;
-            const saved = personaSnapshot.exists() ? personaSnapshot.data().interests : [];
-            recommendationInterests = Array.isArray(saved)
-                ? saved.filter(interest => typeof interest === "string" && interest.trim())
-                : [];
-            const birthYear = profileSnapshot.exists() ? Number(profileSnapshot.data().birthYear) : NaN;
-            recommendationBirthYear = Number.isInteger(birthYear) && birthYear >= 1900 &&
-                birthYear <= new Date().getFullYear() ? birthYear : null;
+
+            if (personaResult.status === "fulfilled") {
+                const snapshot = personaResult.value;
+                const saved = snapshot.exists() ? snapshot.data().interests : [];
+                recommendationInterests = Array.isArray(saved)
+                    ? saved.filter(interest => typeof interest === "string" && interest.trim())
+                    : [];
+            } else {
+                console.warn("Could not load saved interests:", personaResult.reason);
+            }
+
+            if (profileResult.status === "fulfilled") {
+                const snapshot = profileResult.value;
+                const year = snapshot.exists() ? Number(snapshot.data().birthYear) : NaN;
+                recommendationBirthYear = Number.isInteger(year) && year >= 1900 &&
+                    year <= new Date().getFullYear() ? year : null;
+            } else {
+                console.warn("Could not load birth year for age-aware recommendations:", profileResult.reason);
+            }
         } catch (error) {
             if (requestId !== interestsRequestId) return;
             console.warn("Couldn't load saved profile for recommendations; using available events:", error);
