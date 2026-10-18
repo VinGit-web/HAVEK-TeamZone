@@ -1,4 +1,3 @@
-
 /* Chat-specific overrides; loaded after app.css and theme.css */
 
 .chat-body .chat-layout {
@@ -44,11 +43,9 @@
     text-align: left;
     padding: 13px 17px !important;
     color: #111318 !important;
-    background: linear-gradient(
-        180deg,
-        rgba(242, 242, 242, .94),
-        rgba(185, 183, 229, .78)
-    ) !important;
+    background: linear-gradient(180deg,
+            rgba(242, 242, 242, .94),
+            rgba(185, 183, 229, .78)) !important;
     border: 2px solid rgba(255, 255, 255, .82) !important;
     border-radius: 16px !important;
     cursor: pointer;
@@ -84,11 +81,9 @@
     margin: 0 !important;
     flex-direction: column;
     overflow: hidden;
-    background: linear-gradient(
-        180deg,
-        rgba(235, 235, 240, .88),
-        rgba(111, 105, 179, .78)
-    ) !important;
+    background: linear-gradient(180deg,
+            rgba(235, 235, 240, .88),
+            rgba(111, 105, 179, .78)) !important;
     border: 2px solid rgba(255, 255, 255, .78) !important;
     border-radius: 17px !important;
 }
@@ -177,6 +172,11 @@
     font: 12px Arial, sans-serif;
 }
 
+/* Keep Unsend button aligned when hovering over messages */
+.chat-body .sent-message:hover .unsend-btn {
+    display: block;
+}
+
 .chat-body .unsend-btn:hover {
     text-decoration: underline;
 }
@@ -263,80 +263,80 @@
 
 
 .chat-safety-menu {
-  position: relative;
+    position: relative;
 }
 
 .safety-options {
-  display: none;
-  position: absolute;
-  top: calc(100% + 8px);
-  right: 0;
-  min-width: 150px;
-  z-index: 100;
+    display: none;
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    min-width: 150px;
+    z-index: 100;
 }
 
 .safety-options.show {
-  display: flex;
-  flex-direction: column;
+    display: flex;
+    flex-direction: column;
 }
 
 .safety-modal {
-  display: none;
-  position: fixed;
-  inset: 0;
-  z-index: 1000;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-  background: rgba(0, 0, 0, 0.65);
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.65);
 }
 
 .safety-modal.show {
-  display: flex;
+    display: flex;
 }
 
 .safety-modal-content {
-  position: relative;
-  width: min(100%, 440px);
-  max-height: 90vh;
-  overflow-y: auto;
+    position: relative;
+    width: min(100%, 440px);
+    max-height: 90vh;
+    overflow-y: auto;
 }
 
 .unread-badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 19px;
-  height: 19px;
-  padding: 0 5px;
-  border-radius: 999px;
-  background: #e34b65;
-  color: #fff;
-  font-size: 11px;
-  font-weight: 700;
-  line-height: 1;
-  box-sizing: border-box;
-  flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 19px;
+    height: 19px;
+    padding: 0 5px;
+    border-radius: 999px;
+    background: #e34b65;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1;
+    box-sizing: border-box;
+    flex-shrink: 0;
 }
 
 .unread-badge[hidden] {
-  display: none !important;
+    display: none !important;
 }
 
 .chat-card .unread-badge {
-  margin-left: auto;
+    margin-left: auto;
 }
 
 .chat-card.has-unread {
-  font-weight: 700;
+    font-weight: 700;
 }
 
 @media (max-width: 768px) {
-  .unread-badge {
-    min-width: 20px;
-    height: 20px;
-    font-size: 11px;
-  }
+    .unread-badge {
+        min-width: 20px;
+        height: 20px;
+        font-size: 11px;
+    }
 }
 
 .chat-body .chat-search-container {
