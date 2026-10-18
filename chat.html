@@ -24,7 +24,7 @@
       <a href="index.html">Home</a>
       <a href="events.html">Events</a>
       <a href="strings.html">Strings</a>
-      <a href="chat.html" class="active">
+      <button id="openChatNav" class="nav-chat" type="button">
         Chat
         <span id="nav-unread-count" class="unread-badge" hidden></span>
       </a>
@@ -144,5 +144,32 @@
 
  <script type="module" src="js/chat.js"></script>
 </body>
+
+<style>
+    body.embedded-chat > nav,
+    body.embedded-chat > .site-footer {
+        display: none !important;
+    }
+
+    body.embedded-chat {
+        min-height: 100dvh;
+    }
+
+    body.embedded-chat .chat-layout {
+        height: 100dvh;
+        max-height: 100dvh;
+    }
+</style>
+
+<script>
+    if (
+        new URLSearchParams(window.location.search)
+            .get("embedded") === "1"
+    ) {
+        document.addEventListener("DOMContentLoaded", () => {
+            document.body.classList.add("embedded-chat");
+        });
+    }
+</script>
 
 </html>
