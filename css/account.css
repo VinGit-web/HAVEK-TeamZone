@@ -446,3 +446,14 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* PRIVACY PREFERENCES */
+
+.account-body fieldset {
+  padding: 24px 30px;
+}
+
+.account-body fieldset h3 {
+  margin: 0 0 20px;
+  color: #292139;
+}
