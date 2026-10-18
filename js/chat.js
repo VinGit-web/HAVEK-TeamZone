@@ -50,6 +50,7 @@ let sending = false;
 
 
 const unreadByUid = new Map();
+const latestMessageByUid = new Map();
 const unreadListeners = new Map();
 const readMarkers = new Map();
 const pendingReadWrites = new Set();
@@ -64,6 +65,7 @@ function clearUnreadListeners() {
 
   unreadListeners.clear();
   unreadByUid.clear();
+  latestMessageByUid.clear();
   readMarkers.clear();
   pendingReadWrites.clear();
   updateUnreadNavigation();
@@ -140,6 +142,7 @@ function watchUnreadConversations() {
       unreadListeners.delete(uid);
       unreadByUid.delete(uid);
       readMarkers.delete(uid);
+      latestMessageByUid.delete(uid);
     }
   }
 
@@ -189,9 +192,25 @@ function watchUnreadConversations() {
       snapshot => {
         if (generation !== unreadGeneration) return;
 
-        latestMessages = snapshot.docs.map(item => item.data());
-        messagesLoaded = true;
-        refresh();
+       latestMessages = snapshot.docs.map(item => item.data());
+
+const newestMessage = latestMessages.find(
+  message => message.createdAt?.toMillis?.()
+);
+
+if (newestMessage) {
+  latestMessageByUid.set(
+    uid,
+    newestMessage.createdAt.toMillis()
+  );
+} else {
+  latestMessageByUid.delete(uid);
+}
+
+messagesLoaded = true;
+
+refresh();
+renderContacts();
       },
       error => console.error("Unread messages listener:", error)
     );
@@ -298,9 +317,20 @@ function renderContacts() {
 
   const searchTerm = chatSearch.value.trim().toLowerCase();
 
-  const filteredConnections = connections.filter(person => {
+  const filteredConnections = connections
+  .filter(person => {
     const name = person.name || "INTROSPHEER User";
     return name.toLowerCase().includes(searchTerm);
+  })
+  .sort((a, b) => {
+    const aTime = latestMessageByUid.get(a.uid) || 0;
+    const bTime = latestMessageByUid.get(b.uid) || 0;
+
+    if (bTime !== aTime) {
+      return bTime - aTime;
+    }
+
+    return (a.name || "").localeCompare(b.name || "");
   });
 
   if (filteredConnections.length === 0) {
