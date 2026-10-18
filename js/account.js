@@ -8,40 +8,40 @@ import { doc, getDoc, setDoc, writeBatch, serverTimestamp } from 'https://www.gs
 const $ = id => document.getElementById(id);
 
 const MBTI = {
-  ISTJ:'Practical, organised and detail-oriented.',
-  ISFJ:'Supportive, thoughtful and dependable.',
-  INFJ:'Reflective, values-driven and insightful.',
-  INTJ:'Independent, strategic and analytical.',
-  ISTP:'Practical, adaptable and observant.',
-  ISFP:'Flexible, gentle and experience-oriented.',
-  INFP:'Imaginative, idealistic and reflective.',
-  INTP:'Curious, analytical and idea-focused.',
-  ESTP:'Action-oriented, adaptable and spontaneous.',
-  ESFP:'Expressive, sociable and experience-oriented.',
-  ENFP:'Enthusiastic, imaginative and possibility-focused.',
-  ENTP:'Exploratory, inventive and debate-oriented.',
-  ESTJ:'Structured, decisive and practical.',
-  ESFJ:'Cooperative, attentive and community-minded.',
-  ENFJ:'Encouraging, people-focused and organised.',
-  ENTJ:'Strategic, decisive and goal-oriented.'
+  ISTJ: 'Practical, organised and detail-oriented.',
+  ISFJ: 'Supportive, thoughtful and dependable.',
+  INFJ: 'Reflective, values-driven and insightful.',
+  INTJ: 'Independent, strategic and analytical.',
+  ISTP: 'Practical, adaptable and observant.',
+  ISFP: 'Flexible, gentle and experience-oriented.',
+  INFP: 'Imaginative, idealistic and reflective.',
+  INTP: 'Curious, analytical and idea-focused.',
+  ESTP: 'Action-oriented, adaptable and spontaneous.',
+  ESFP: 'Expressive, sociable and experience-oriented.',
+  ENFP: 'Enthusiastic, imaginative and possibility-focused.',
+  ENTP: 'Exploratory, inventive and debate-oriented.',
+  ESTJ: 'Structured, decisive and practical.',
+  ESFJ: 'Cooperative, attentive and community-minded.',
+  ENFJ: 'Encouraging, people-focused and organised.',
+  ENTJ: 'Strategic, decisive and goal-oriented.'
 };
 
 const INTERESTS = {
-  'Creative':['Art','Painting','Pottery','Photography','Music','Dance','Ballet'],
-  'Sports & Outdoors':['Running','Walking','Hiking','Cycling','Swimming','Yoga','Boxing','Football','Netball','Fencing','Horse Back Riding'],
-  'Social & Leisure':['Gaming','Board Games','Chess','Anime','Movies','Reading','Museums','Markets','Coffee','Eating','Cooking','Gardening']
+  'Creative': ['Art', 'Painting', 'Pottery', 'Photography', 'Music', 'Dance', 'Ballet'],
+  'Sports & Outdoors': ['Running', 'Walking', 'Hiking', 'Cycling', 'Swimming', 'Yoga', 'Boxing', 'Football', 'Netball', 'Fencing', 'Horse Back Riding'],
+  'Social & Leisure': ['Gaming', 'Board Games', 'Chess', 'Anime', 'Movies', 'Reading', 'Museums', 'Markets', 'Coffee', 'Eating', 'Cooking', 'Gardening']
 };
 
 const ANIMALS = {
-  australia:[['koala','Koala'],['kangaroo','Kangaroo'],['wombat','Wombat'],['quokka','Quokka'],['platypus','Platypus'],['kookaburra','Kookaburra'],['echidna','Echidna'],['tasdevil','Tasmanian devil'],['emu','Emu']],
-  pets:[['dog','Dog'],['cat','Cat'],['rabbit','Rabbit'],['hamster','Hamster'],['guineapig','Guinea pig'],['parrot','Parrot']],
-  world:[['redpanda','Red panda'],['penguin','Penguin'],['fox','Fox'],['capybara','Capybara'],['panda','Panda']]
+  australia: [['koala', 'Koala'], ['kangaroo', 'Kangaroo'], ['wombat', 'Wombat'], ['quokka', 'Quokka'], ['platypus', 'Platypus'], ['kookaburra', 'Kookaburra'], ['echidna', 'Echidna'], ['tasdevil', 'Tasmanian devil'], ['emu', 'Emu']],
+  pets: [['dog', 'Dog'], ['cat', 'Cat'], ['rabbit', 'Rabbit'], ['hamster', 'Hamster'], ['guineapig', 'Guinea pig'], ['parrot', 'Parrot']],
+  world: [['redpanda', 'Red panda'], ['penguin', 'Penguin'], ['fox', 'Fox'], ['capybara', 'Capybara'], ['panda', 'Panda']]
 };
 
 const AVATAR_FIELDS = [
-  'characterName','primaryColor','secondaryColor','expression',
-  'pattern','headwear','eyewear','earrings','neckwear','extra',
-  'outfit','outfitColor','trimColor','backgroundPreset'
+  'characterName', 'primaryColor', 'secondaryColor', 'expression',
+  'pattern', 'headwear', 'eyewear', 'earrings', 'neckwear', 'extra',
+  'outfit', 'outfitColor', 'trimColor', 'backgroundPreset'
 ];
 
 let currentUser = null;
@@ -49,12 +49,12 @@ let savedProfile = null;
 let savedPersona = null;
 let ready = false;
 let stopBlockedUsers = null;
-let avatar = {...animalPreset('koala')};
+let avatar = { ...animalPreset('koala') };
 let animalCategory = 'australia';
 
 const selectedInterests = new Set();
 const PRIVACY_FIELDS = ['age', 'gender', 'mbti', 'interests', 'suburb', 'about'];
-const PRIVACY_LABELS = {age:'Age', gender:'Gender', mbti:'MBTI', interests:'Interests', suburb:'Suburb / Location', about:'About Me'};
+const PRIVACY_LABELS = { age: 'Age', gender: 'Gender', mbti: 'MBTI', interests: 'Interests', suburb: 'Suburb / Location', about: 'About Me' };
 let savedPublicVisibility = null;
 let publicVisibility = Object.fromEntries(PRIVACY_FIELDS.map(field => [field, false]));
 function setupPrivacy() {
@@ -65,14 +65,14 @@ function setupPrivacy() {
     const select = document.createElement('select'); select.id = `privacy-${field}`;
     select.add(new Option('Private', 'private')); select.add(new Option('Public', 'public'));
     select.addEventListener('change', () => { publicVisibility[field] = select.value === 'public'; });
-    row.append(label,select); rows.append(row);
+    row.append(label, select); rows.append(row);
   }
-  const setAll = value => { for(const field of PRIVACY_FIELDS) { publicVisibility[field] = value; $(`privacy-${field}`).value = value ? 'public':'private'; } };
+  const setAll = value => { for (const field of PRIVACY_FIELDS) { publicVisibility[field] = value; $(`privacy-${field}`).value = value ? 'public' : 'private'; } };
   $('privacyAllPublic').addEventListener('click', () => setAll(true));
   $('privacyAllPrivate').addEventListener('click', () => setAll(false));
 }
 function populatePrivacy(data, persona) {
-  for(const field of PRIVACY_FIELDS) {
+  for (const field of PRIVACY_FIELDS) {
     publicVisibility[field] = data && typeof data[field] === 'boolean' ? data[field] : (field === 'suburb' && persona?.showSuburb === true);
     $(`privacy-${field}`).value = publicVisibility[field] ? 'public' : 'private';
   }
@@ -282,6 +282,8 @@ function setAvatar(value) {
   renderAvatar();
 }
 
+
+
 function setupAvatar() {
   AVATAR_FIELDS.forEach(id => {
     $(id)?.addEventListener('input', () => {
@@ -289,7 +291,7 @@ function setupAvatar() {
       renderAvatar();
     });
   });
-
+  
   document.querySelectorAll('[data-category]').forEach(button => {
     button.addEventListener('click', () => {
       animalCategory = button.dataset.category;
@@ -303,17 +305,80 @@ function setupAvatar() {
   });
 
   $('randomAvatar')?.addEventListener('click', () => {
-    const all = Object.values(ANIMALS).flat();
-    const id = all[Math.floor(Math.random() * all.length)][0];
-    setAvatar(animalPreset(id));
+    const allAnimals = Object.values(ANIMALS).flat();
+
+    const randomAnimal =
+      allAnimals[Math.floor(Math.random() * allAnimals.length)][0];
+
+    const randomFrom = array =>
+      array[Math.floor(Math.random() * array.length)];
+
+   
+    const randomSelectValue = id => {
+      const select = $(id);
+      if (!select || !select.options || select.options.length === 0) {
+        return 'none';
+      }
+
+      const values = Array.from(select.options).map(option => option.value);
+      return randomFrom(values);
+    };
+
+    const colours = [
+      '#92979c',
+      '#d8a48f',
+      '#c78f65',
+      '#8fa98f',
+      '#7d98a1',
+      '#b69acb',
+      '#e3a6a1',
+      '#d6bd78',
+      '#91a8d0',
+      '#a6c7b7'
+    ];
+
+    const randomAvatar = {
+      ...animalPreset(randomAnimal),
+
+      version: 2,
+      mode: 'animal',
+      primaryColor: randomFrom(colours),
+      secondaryColor: randomFrom(colours),
+
+      expression: randomSelectValue('expression'),
+      pattern: randomSelectValue('pattern'),
+      headwear: randomSelectValue('headwear'),
+      eyewear: randomSelectValue('eyewear'),
+      earrings: randomSelectValue('earrings'),
+      neckwear: randomSelectValue('neckwear'),
+      extra: randomSelectValue('extra'),
+      outfit: randomSelectValue('outfit'),
+      outfitColor: randomFrom(colours),
+      trimColor: randomFrom(colours),
+
+      backgroundPreset: randomSelectValue('backgroundPreset'),
+      characterName: avatar.characterName || ''
+    };
+
+    setAvatar(randomAvatar);
   });
 
   $('resetAvatar')?.addEventListener('click', () => {
-    setAvatar(animalPreset(avatar.animal));
+    setAvatar(animalPreset(avatar.animal || 'koala'));
   });
 
-  setAvatar(animalPreset('koala'));
+  renderAnimals();
+
+ 
+  if (avatar && avatar.version === 2) {
+    setAvatar(avatar);
+  } else {
+    setAvatar(animalPreset('koala'));
+  }
 }
+
+
+
 
 function setupTabs() {
   document.querySelectorAll('[data-tab]').forEach(button => {
@@ -430,7 +495,7 @@ function populate(profile, persona) {
 
 async function loadAccount(user) {
   if (stopBlockedUsers) { stopBlockedUsers(); stopBlockedUsers = null; }
-  if (user) stopBlockedUsers = watchMyBlocks(async (excluded,mine) => {
+  if (user) stopBlockedUsers = watchMyBlocks(async (excluded, mine) => {
     const list = $('blockedUsersList'); if (!list) return;
     list.replaceChildren();
     if (!mine.length) { list.textContent = 'You have not blocked anyone.'; return; }
@@ -438,13 +503,13 @@ async function loadAccount(user) {
       const row = document.createElement('div'); row.className = 'blocked-user-row';
       const label = document.createElement('span'); label.textContent = uid;
       const button = document.createElement('button'); button.type = 'button'; button.textContent = 'Unblock';
-      button.addEventListener('click',async () => {
+      button.addEventListener('click', async () => {
         if (!confirm('Unblock this member? Your previous connection will not be restored.')) return;
         button.disabled = true;
-        try { await unblockMember(uid); } catch(error) { alert(error.message || 'Unable to unblock.'); button.disabled = false; }
+        try { await unblockMember(uid); } catch (error) { alert(error.message || 'Unable to unblock.'); button.disabled = false; }
       });
-      row.append(label,button); list.append(row);
-      getDoc(doc(db,'publicProfiles',uid)).then(snap => { if(snap.exists()) label.textContent = snap.data().username || uid; }).catch(()=>{});
+      row.append(label, button); list.append(row);
+      getDoc(doc(db, 'publicProfiles', uid)).then(snap => { if (snap.exists()) label.textContent = snap.data().username || uid; }).catch(() => { });
     }
   });
   currentUser = user;
@@ -471,7 +536,7 @@ async function loadAccount(user) {
     if (auth.currentUser?.uid !== user.uid) return;
 
     savedProfile = privateSnap.exists()
-      ? {...defaults(user), ...privateSnap.data()}
+      ? { ...defaults(user), ...privateSnap.data() }
       : defaults(user);
 
     savedPersona = personaSnap.exists()
@@ -600,16 +665,16 @@ async function saveAccount(event) {
     batch.set(doc(db, 'users', user.uid), privateProfile);
     batch.set(doc(db, 'userPersonas', user.uid), personaProfile);
     batch.set(doc(db, 'publicProfiles', user.uid), publicProfile);
-    batch.set(doc(db, 'sharedProfiles', user.uid), {uid:user.uid, ...shared});
-    batch.set(doc(db, 'publicDetails', user.uid), {uid:user.uid, visibility:{...publicVisibility}, fields:publicFields});
+    batch.set(doc(db, 'sharedProfiles', user.uid), { uid: user.uid, ...shared });
+    batch.set(doc(db, 'publicDetails', user.uid), { uid: user.uid, visibility: { ...publicVisibility }, fields: publicFields });
     await batch.commit();
-    savedProfile = privateProfile; savedPersona = personaProfile; savedPublicVisibility = {...publicVisibility};
-    await updateProfile(user, {displayName:username});
+    savedProfile = privateProfile; savedPersona = personaProfile; savedPublicVisibility = { ...publicVisibility };
+    await updateProfile(user, { displayName: username });
     status('Profile and visibility settings saved.');
-  } catch(error) {
+  } catch (error) {
     console.error('Account save failed:', error);
     status(`Save failed: ${error.message}`, true);
-  } finally {button.disabled = false;}
+  } finally { button.disabled = false; }
 }
 
 function resetAccount(event) {
@@ -629,7 +694,7 @@ function initialise() {
   setupTabs();
   setupBirthYears();
   setupPrivacy();
-  $('openBlockedUsers')?.addEventListener('click', () => $('blockedUsersSection')?.scrollIntoView({behavior:'smooth',block:'start'}));
+  $('openBlockedUsers')?.addEventListener('click', () => $('blockedUsersSection')?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
 
   $('accountForm').addEventListener('submit', saveAccount);
   $('accountForm').addEventListener('reset', resetAccount);
