@@ -1,0 +1,28 @@
+/* Add at the END of css/account.css, after existing rules. */
+.account-body { background: var(--bg, #071126) !important; color: var(--text, #f7f5f1); padding: 0 !important; }
+.account-body > main { width: min(1080px, calc(100% - 32px)); max-width: 1080px; margin: 40px auto 0; padding: clamp(20px, 5vw, 55px); color: var(--ink, #111318); background: linear-gradient(180deg,#f8f5ef 0%,#fbf1d8 65%,#ffe8ad 100%) !important; border-radius: 35px 35px 0 0; box-shadow: none; }
+.account-body > main .account-panel, .account-body > main .account-section { color: #111318; }
+.account-body > main .account-tabs { margin-bottom: 16px; }
+.account-body > main button { background: #071126; color: #fff; border-color: #071126; }
+.account-body > main button:hover:not(:disabled) { background: #382566; }
+.account-body > main button.active, .account-body > main button.selected { background: #4b276c !important; color: #fff !important; border-color: #9b4dff !important; }
+.account-body > main .light-button { background: transparent !important; color: #071126 !important; border: 1px solid #071126 !important; }
+.account-body > main input:not([type=checkbox]):not([type=radio]), .account-body > main select, .account-body > main textarea { background: rgba(255,255,255,.85); color: #111318; border: 1px solid #bcb6ae; }
+.account-body > main input[readonly] { background: #e9e5dd; }
+.account-body > main .studio-preview, .account-body > main .verification-box, .account-body > main .photo-settings { background: rgba(255,255,255,.42); border: 1px solid rgba(75,39,108,.2); }
+.account-body > main .animal-grid button, .account-body > main .interest-chip { background: #fff !important; color: #243e55 !important; border: 1px solid #c5b8d3 !important; }
+.account-body > main .animal-grid button.selected, .account-body > main .interest-chip.selected { background: #e9dbff !important; color: #291b40 !important; border: 2px solid #9b4dff !important; }
+.account-body > main .account-logout { background: rgba(255,255,255,.45) !important; border: 1px solid rgba(75,39,108,.2) !important; }
+.account-danger-zone { margin: 24px auto 0; padding: 22px; border: 1px solid #b64b4b; border-radius: 14px; background: #fff3ed; color: #392020; }
+.account-danger-zone h2 { margin-top: 0; }
+.account-body > main .account-danger-zone .delete-account-trigger, .account-body > main .account-danger-zone .delete-account-final { background: #9b3030 !important; border-color: #9b3030 !important; color: white !important; }
+.account-body > main .account-danger-zone .delete-account-trigger:hover, .account-body > main .account-danger-zone .delete-account-final:hover { background: #792323 !important; }
+.account-delete-dialog { width: min(450px, calc(100% - 32px)); border: 1px solid #a69bb3; border-radius: 18px; padding: 24px; color: #111318; background: #f8f5ef; box-shadow: 0 18px 70px #0007; }
+.account-delete-dialog::backdrop { background: rgba(5,11,25,.8); }
+.account-delete-dialog h2 { margin-top: 0; }
+.account-delete-dialog .dialog-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
+.account-delete-dialog input { width: 100%; padding: 12px; margin-top: 8px; border: 1px solid #9a8da5; border-radius: 8px; }
+.account-delete-dialog button { padding: 10px 15px; border-radius: 8px; cursor: pointer; }
+.account-delete-dialog .delete-account-final { background: #9b3030; color: white; border: 1px solid #9b3030; }
+.account-delete-dialog button:disabled { opacity: .45; cursor: not-allowed; }
+@media (max-width: 760px) { .account-body > main { width: calc(100% - 20px); padding: 20px 15px; border-radius: 24px 24px 0 0; } }
