@@ -59,17 +59,17 @@
 
         <section class="home-header">
 
-            
-            <div class="home-user-actions">
-                    <button id="currentUserButton" class="current-user" type="button">
-                            <span id="currentAvatar" class="current-avatar">SS</span>
-                            <span id="currentUserName">Samuel</span>
-                    </button>
 
-                    <a href="my-events.html" class="my-events-button">
-                         My Events
-                            <span aria-hidden="true">↗</span>
-                    </a>
+            <div class="home-user-actions">
+                <button id="currentUserButton" class="current-user" type="button">
+                    <span id="currentAvatar" class="current-avatar">SS</span>
+                    <span id="currentUserName">Samuel</span>
+                </button>
+
+                <a href="my-events.html" class="my-events-button">
+                    My Events
+                    <span aria-hidden="true">↗</span>
+                </a>
             </div>
 
             <div class="sphere-title">
@@ -100,7 +100,7 @@
 
             </div>
         </div>
-        
+
         <section class="sphere-area">
 
             <div id="sphereContainer" class="sphere-container">
@@ -108,13 +108,13 @@
             </div>
 
 
-<div class="sphere-instructions">
-    <span>Drag to explore</span>
-    <span class="instruction-dot">•</span>
-    <span>Pinch to zoom on mobile</span>
-    <span class="instruction-dot">•</span>
-    <span>Select an unlocked connection to view their profile</span>
-</div>
+            <div class="sphere-instructions">
+                <span>Drag to explore</span>
+                <span class="instruction-dot">•</span>
+                <span>Pinch to zoom on mobile</span>
+                <span class="instruction-dot">•</span>
+                <span>Select an unlocked connection to view their profile</span>
+            </div>
 
 
         </section>
@@ -273,8 +273,31 @@
 
             <section class="about-team">
 
-                <div>
+                <!-- <div>
                     <img src="images/team-photo.jpeg" alt="INTROSPHEER project team" class="team-photo">
+                </div> -->
+
+                <div class="team-photo-container team-slideshow">
+
+                    <img src="images/team-photo.jpeg" alt="The INTROSPHEER team working together"
+                        class="team-photo team-slide active">
+
+                    <img src="images/team-photo2.jpg" alt="The INTROSPHEER team collaborating"
+                        class="team-photo team-slide">
+
+                    <img src="images/team-photo3.jpg" alt="The INTROSPHEER team during development"
+                        class="team-photo team-slide">
+
+                    <button class="slide-arrow slide-prev" type="button" aria-label="Previous photo">&#10094;</button>
+
+                    <button class="slide-arrow slide-next" type="button" aria-label="Next photo">&#10095;</button>
+
+                    <div class="slide-dots">
+                        <button class="slide-dot active" type="button" aria-label="Show photo 1"></button>
+                        <button class="slide-dot" type="button" aria-label="Show photo 2"></button>
+                        <button class="slide-dot" type="button" aria-label="Show photo 3"></button>
+                    </div>
+
                 </div>
 
 
@@ -471,7 +494,11 @@
         }
     </script>
 
+
+    <script src="./js/team-slideshow.js"></script>
     <script type="module" src="./js/main.js"></script>
 
+
 </body>
+
 </html>
