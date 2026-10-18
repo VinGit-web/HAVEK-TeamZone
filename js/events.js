@@ -334,10 +334,15 @@ function createEventCard(event) {
     card.setAttribute("aria-label", `View ${event.subject || event.title || "event"} details`);
     card.append(makeEventMedia(event));
     const content = element("div", "event-card-content");
+    const cost = String(event.cost || "").trim();
+    const isFree = /\bfree\b/i.test(cost) && !/\bnot free\b/i.test(cost);
+    const costLabel = !cost ? "Cost unavailable" : isFree ? "Free" : "Paid";
+
     content.append(
         element("h2", "", event.subject || event.title || "Brisbane Event"),
         element("p", "event-date", formatEventDateRange(event)),
-        element("p", "event-venue", event.venue || "Venue unavailable")
+        element("p", "event-venue", event.venue || "Venue unavailable"),
+        element("span", `event-cost ${isFree ? "event-cost-free" : "event-cost-other"}`, costLabel)
     );
     card.append(content);
     card.addEventListener("click", () => openEventDetails(event));

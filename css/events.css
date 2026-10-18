@@ -1073,3 +1073,24 @@ body.event-dialog-open {
 .events-body .create-event-string:hover {
     background: #e4d7f7;
 }
+
+/* EVENT CARD COST */
+
+.event-card .event-cost {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 5px 12px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.event-card .event-cost-free {
+    background: #dcefe5;
+    color: #245b40;
+}
+
+.event-card .event-cost-other {
+    background: #e5dcf5;
+    color: #513b76;
+}

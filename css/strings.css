@@ -630,3 +630,9 @@
 .strings-body #postLocation {
     background: #eee9f6;
 }
+
+/* SPACING BETWEEN STRING BUTTONS */
+.strings-body .string-card button+button,
+.strings-body .string-card button+a {
+    margin-left: 12px;
+}
