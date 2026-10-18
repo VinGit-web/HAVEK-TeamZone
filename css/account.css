@@ -457,3 +457,34 @@
   margin: 0 0 20px;
   color: #292139;
 }
+
+/* DELETE ACCOUNT */
+
+.account-body .delete-account-section {
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid #ddd1f0;
+}
+
+.account-body .delete-account-section h3 {
+  color: #292139;
+  margin-bottom: 8px;
+}
+
+.account-body .delete-account-section p {
+  color: #625774;
+  margin-bottom: 16px;
+}
+
+.account-body #deleteAccountButton {
+  background: #b63c4a;
+  color: #fff;
+  border: 1px solid #b63c4a;
+  border-radius: 10px;
+  padding: 12px 20px;
+  cursor: pointer;
+}
+
+.account-body #deleteAccountButton:hover {
+  background: #922c39;
+}

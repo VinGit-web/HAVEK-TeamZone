@@ -89,7 +89,7 @@ body>.navbar {
     min-height: 0;
     margin: 0;
 
-    padding: 0.5rem clamp(1.5rem, 4vw, 4rem);
+    padding: 0.20rem clamp(1rem, 2vw, 2rem);
 
     display: flex;
     align-items: center;
@@ -139,10 +139,12 @@ body>.navbar .nav-logo:focus-visible {
 
 body>nav .logo-image,
 body>.navbar .logo-image {
-    width: 2.75rem;
-    height: 2.75rem;
+    width: 65px;
+    height: 65px;
     object-fit: contain;
     display: block;
+    transform: scale(1.4);
+    transform-origin: center;
 }
 
 body>nav .nav-logo span,
