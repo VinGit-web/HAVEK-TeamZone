@@ -1,3 +1,4 @@
+
 /* EVENTS PAGE JS */
 
 import {
@@ -7,6 +8,9 @@ import {
     subscribeToBookings,
     areBookingsLoaded
 } from "./storage.js";
+import { auth, db } from "./firebase.js";
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/13.0.0/firebase-auth.js";
+import { doc, getDoc } from "https://www.gstatic.com/firebasejs/13.0.0/firebase-firestore.js";
 // GET PAGE ELEMENTS
 window.addEventListener("load", function () {
     setTimeout(function () {
@@ -189,14 +193,38 @@ const eventCost = document.getElementById("eventCost");
 const eventDate = document.getElementById("eventDate");
 const eventSort = document.getElementById("eventSort");
 
-// Tradeshow persona interests. Account integration can replace this array later.
-const demoInterests = ["gaming", "pottery", "ballet", "museums", "reading"];
+// Personal recommendations use the interests saved in Account > Personalise.
+// If the user has no saved interests, events fall back to chronological order.
+let recommendationInterests = [];
+let interestsRequestId = 0;
 const interestKeywords = {
-    gaming: ["gaming", "board game", "trivia", "video game"],
-    pottery: ["pottery", "ceramic", "clay", "craft", "art"],
-    ballet: ["ballet", "dance", "performance"],
-    museums: ["museum", "exhibition", "gallery", "history"],
-    reading: ["book", "reading", "library", "literature", "author"]
+    gaming: ["video game", "games night", "trivia", "esports"],
+    "board games": ["board game", "boardgame", "tabletop", "games night"],
+    pottery: ["ceramic", "clay", "pottery"],
+    ballet: ["dance", "ballet", "performance"],
+    museums: ["museum", "exhibition", "gallery"],
+    reading: ["book", "library", "literature", "author", "book club"],
+    libraries: ["library", "book", "reading"],
+    painting: ["paint", "art", "watercolour"],
+    art: ["art", "exhibition", "gallery"],
+    photography: ["photography", "photo", "camera"],
+    "horse back riding": ["horse riding", "horseback", "equestrian"],
+    football: ["football", "soccer"],
+    swimming: ["swim", "aquatic"],
+    cooking: ["cook", "culinary", "food workshop"],
+    baking: ["bake", "baking", "pastry"],
+    eating: ["food", "tasting", "dining"],
+    coffee: ["coffee", "cafe", "café"],
+    "community events": ["community", "meetup", "festival"],
+    "live music": ["live music", "concert", "gig"],
+    music: ["music", "concert", "gig"],
+    theatre: ["theatre", "theater", "play", "performance"],
+    hiking: ["hike", "hiking", "bushwalk", "walking trail"],
+    walking: ["walk", "walking", "bushwalk"],
+    gardening: ["garden", "gardening", "plants"],
+    astronomy: ["astronomy", "stargazing", "planetarium"],
+    markets: ["market", "stall", "bazaar"],
+    "arts & creativity": ["arts", "art", "craft"]
 };
 const categoryKeywords = {
     creative: ["art", "creative", "craft", "pottery", "ceramic", "painting", "music", "dance", "theatre", "exhibition"],
@@ -225,23 +253,39 @@ function getEventCategory(event) {
     return Array.isArray(type) ? type.join(", ") : String(type || "Event");
 }
 
+function containsInterestKeyword(text, keyword) {
+    // Whole-word matching prevents "art" matching unrelated words such as "start".
+    const escaped = keyword.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    return new RegExp(`(?:^|[^a-z0-9])${escaped}(?=$|[^a-z0-9])`, "i").test(text);
+}
+
 function getRecommendationScore(event) {
     const title = String(event.subject || event.title || "").toLowerCase();
     const fullText = getEventText(event);
-    return demoInterests.reduce(function (score, interest) {
-        return score + (interestKeywords[interest] || [interest]).reduce(function (subtotal, keyword) {
-            return subtotal + (title.includes(keyword) ? 10 : fullText.includes(keyword) ? 5 : 0);
-        }, 0);
+    return recommendationInterests.reduce(function (score, interest) {
+        const key = String(interest).trim().toLowerCase();
+        const variants = [key, key.replace(/s$/, ""), ...(interestKeywords[key] || [])];
+        if (variants.some(keyword => keyword && containsInterestKeyword(title, keyword))) return score + 10;
+        if (variants.some(keyword => keyword && containsInterestKeyword(fullText, keyword))) return score + 5;
+        return score;
     }, 0);
+}
+
+// The API uses free-form cost descriptions: don't call missing or ambiguous costs "Free".
+function classifyEventCost(event) {
+    const cost = String(event.cost ?? "").trim().toLowerCase();
+    if (!cost) return "unknown";
+    const free = /\bfree\b|\bno (?:charge|cost|fee)\b|\bcomplimentary\b|\$\s*0(?:\.00)?(?:\b|$)/.test(cost) && !/\bnot free\b/.test(cost);
+    const paid = /\bpaid\b|\b(?:fee|fees|ticket price|ticket cost|admission charge)\b|\$\s*[1-9]\d*(?:\.\d{1,2})?\b|\bnot free\b/.test(cost);
+    if (free && paid) return "mixed";
+    return free ? "free" : paid ? "paid" : "unknown";
 }
 
 function matchesCost(event, selection) {
     if (selection === "all") return true;
-    const cost = String(event.cost || "").trim().toLowerCase();
-    const free = /\bfree\b|\$\s*0(?:\.00)?\b|no cost/.test(cost);
-    // Unknown prices must not be mislabelled as paid.
-    const paid = !free && /\$\s*[1-9]|\bpaid\b|\bfee\b|\bticket\s*(?:price|cost)/.test(cost);
-    return selection === "free" ? free : paid;
+    const type = classifyEventCost(event);
+    return selection === "free" ? (type === "free" || type === "mixed") :
+        (type === "paid" || type === "mixed");
 }
 
 function matchesDate(event, selection) {
@@ -334,15 +378,14 @@ function createEventCard(event) {
     card.setAttribute("aria-label", `View ${event.subject || event.title || "event"} details`);
     card.append(makeEventMedia(event));
     const content = element("div", "event-card-content");
-    const cost = String(event.cost || "").trim();
-    const isFree = /\bfree\b/i.test(cost) && !/\bnot free\b/i.test(cost);
-    const costLabel = !cost ? "Cost unavailable" : isFree ? "Free" : "Paid";
+    const costType = classifyEventCost(event);
+    const costLabel = { free: "Free", paid: "Paid", mixed: "Free / Paid", unknown: "Check price" }[costType];
 
     content.append(
         element("h2", "", event.subject || event.title || "Brisbane Event"),
         element("p", "event-date", formatEventDateRange(event)),
         element("p", "event-venue", event.venue || "Venue unavailable"),
-        element("span", `event-cost ${isFree ? "event-cost-free" : "event-cost-other"}`, costLabel)
+        element("span", `event-cost event-cost-${costType}`, costLabel)
     );
     card.append(content);
     card.addEventListener("click", () => openEventDetails(event));
@@ -737,4 +780,29 @@ loadEventsFromAPI();
 
 subscribeToBookings(() => {
     updateBookingButtons();
+});
+
+
+/* LOAD THIS USER'S SAVED INTERESTS FOR EVENT RECOMMENDATIONS */
+onAuthStateChanged(auth, async user => {
+    const requestId = ++interestsRequestId;
+    recommendationInterests = [];
+
+    if (user) {
+        try {
+            const snapshot = await getDoc(doc(db, "userPersonas", user.uid));
+            if (requestId !== interestsRequestId) return;
+            const saved = snapshot.exists() ? snapshot.data().interests : [];
+            recommendationInterests = Array.isArray(saved)
+                ? saved.filter(interest => typeof interest === "string" && interest.trim())
+                : [];
+        } catch (error) {
+            if (requestId !== interestsRequestId) return;
+            console.warn("Couldn't load saved interests; using event dates instead:", error);
+        }
+    }
+
+    if (requestId === interestsRequestId && loadedEvents.length > 0) {
+        applyEventFilters();
+    }
 });

@@ -239,20 +239,31 @@ function renderSelectedDay() {
         cancelButton.textContent = "Cancel Attendance";
 
         cancelButton.addEventListener("click", async function () {
-    if (!confirm("Cancel attendance for this event?")) return;
+            if (!confirm("Cancel attendance for this event?")) return;
 
-    cancelButton.disabled = true;
+            cancelButton.disabled = true;
 
-    try {
-        await cancelEventBooking(event.id);
-    } catch (error) {
-        console.error("Cancellation failed:", error);
-        alert("Unable to cancel this event. Please try again.");
-        cancelButton.disabled = false;
-    }
-});
+            try {
+                await cancelEventBooking(event.id);
+            } catch (error) {
+                console.error("Cancellation failed:", error);
+                alert("Unable to cancel this event. Please try again.");
+                cancelButton.disabled = false;
+            }
+        });
 
-        card.append(heading, date, venue, cancelButton);
+        card.append(heading, date, venue);
+
+        // Event IDs match the BCC record IDs used by the Events detail deep link.
+        if (event.id != null && String(event.id)) {
+            const viewEventLink = document.createElement("a");
+            viewEventLink.className = "my-view-event";
+            viewEventLink.href = `events.html?event=${encodeURIComponent(String(event.id))}`;
+            viewEventLink.textContent = "View event";
+            card.appendChild(viewEventLink);
+        }
+
+        card.appendChild(cancelButton);
         selectedDayEvents.appendChild(card);
     });
 }
@@ -385,4 +396,3 @@ document.addEventListener("visibilitychange", () => {
 setInterval(displayMyEvents, 60000);
 
 displayMyEvents();
-

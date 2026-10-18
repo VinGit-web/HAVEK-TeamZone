@@ -1090,7 +1090,38 @@ body.event-dialog-open {
     color: #245b40;
 }
 
-.event-card .event-cost-other {
+.event-card .event-cost-paid,
+.event-card .event-cost-mixed {
     background: #e5dcf5;
     color: #513b76;
+}
+
+.event-card .event-cost-unknown {
+    background: #e8e6ee;
+    color: #625c70;
+}
+
+/* MY EVENTS: LINK SAVED BOOKINGS TO THE ORIGINAL EVENT DETAILS */
+.my-events-body .my-view-event {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0.7rem 0.6rem 0 0;
+    padding: 0.6rem 0.85rem;
+    border: 1px solid #8266ae;
+    border-radius: 0.6rem;
+    background: #62448a;
+    color: #fff;
+    text-decoration: none;
+    font-size: 0.87rem;
+    font-weight: 600;
+}
+
+.my-events-body .my-view-event:hover {
+    background: #4c3373;
+}
+
+.my-events-body .my-view-event:focus-visible {
+    outline: 2px solid #62448a;
+    outline-offset: 3px;
 }
