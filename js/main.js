@@ -606,22 +606,23 @@ function openUserProfile(user) {
 
     updateConnectionStatus(user);
 
-    profilePanel.classList.add(
-        "open"
-    );
+    
+    profilePanel.classList.add("open");
+    profileOverlay.classList.add("open");
+    profilePanel.setAttribute("aria-hidden", "false");
 
-    profileOverlay.classList.add(
-        "open"
-    );
 }
+
 
 
 
 function closeUserProfile() {
     profilePanel.classList.remove("open");
     profileOverlay.classList.remove("open");
+    profilePanel.setAttribute("aria-hidden", "true");
     selectedUser = null;
 }
+
 
 
 connectButton.addEventListener("click", async () => {
