@@ -15,47 +15,6 @@
     }
   </style>
   <script src="js/auth-guard.js" type="module"></script>
-  <style>
-    .account-tabs {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px
-    }
-
-    .account-tabs .tab {
-      flex: 1 1 150px
-    }
-
-    #openBlockedUsers {
-      display: block;
-      margin: 20px 0;
-      padding: 14px 18px;
-      border: 2px solid currentColor;
-      border-radius: 10px;
-      font-weight: 700;
-      cursor: pointer
-    }
-
-    #blockedUsersSection {
-      margin-top: 20px;
-      padding: 22px;
-      border: 1px solid #d8dbe4;
-      border-radius: 14px
-    }
-
-    .blocked-user-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      padding: 12px 0;
-      border-bottom: 1px solid #e6e7ef
-    }
-
-    .account-panel[hidden] {
-      display: none !important
-    }
-  </style>
 </head>
 
 <body class="account-body">
@@ -523,13 +482,13 @@
       </div>
     </form>
     <section aria-labelledby="logoutHeading" class="account-logout">
-      <h2 id="logoutHeading" style="margin: 0 0 8px;">
+      <h2 id="logoutHeading">
         Account access
       </h2>
-      <p style="margin: 0 0 16px;">
+      <p>
         Sign out of INTROSPHEER on this device.
       </p>
-      <button class="light-button" id="logoutButton" style="color: #b63c3c;" type="button">
+      <button class="light-button" id="logoutButton" type="button">
         Log Out
       </button>
     </section>
@@ -546,9 +505,6 @@
   <script src="js/profile-features.js" type="module"></script>
   <script src="js/account-logout.js" type="module"></script>
   <script src="js/age-verification.js" type="module"></script>
-  <script type="module" src="js/account-delete.js"></script>
 </body>
-<button class="light-button" id="logoutButton" type="button">
-  Log Out
-</button>
+
 </html>
