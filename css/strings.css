@@ -145,6 +145,9 @@
     border: 2px solid #ddd1f0 !important;
     border-radius: 1.25rem !important;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+
+    padding: 1.5rem;
+    box-sizing: border-box;
 }
 
 .strings-body .post-form-container form {
