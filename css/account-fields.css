@@ -1,4 +1,3 @@
-
 .account-section select,
 .account-section input[type="search"],
 .account-section input[type="text"] {
@@ -34,7 +33,7 @@
 
 .account-section .field-help {
   margin: 8px 0 14px;
-  color: #73758a;
+  color: #d0d8ea;
   font-size: 13px;
   line-height: 1.5;
 }
@@ -51,7 +50,7 @@
 
 #accountInterestOptions .interest-group h3 {
   margin: 0 0 12px;
-  color: #24243a;
+  color: #f0edff;
   font-size: 15px;
   font-weight: 600;
 }
