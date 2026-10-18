@@ -1874,9 +1874,18 @@ function renderLiveSphere(state) {
     centre: true
   });
 
-  const connections = state.connections.slice(0, 30);
+  
+  const connectedIds = new Set(
+    state.connections.map(person => person.uid)
+  );
 
-  connections.forEach((person, index) => {
+  const members = state.publicMembers
+    .filter(person => person.uid !== me.uid)
+    .slice(0, 60);
+
+  members.forEach((person, index) => {
+    const connected = connectedIds.has(person.uid);
+
     const colour =
       connectionColours[index % connectionColours.length];
 
@@ -1884,40 +1893,23 @@ function renderLiveSphere(state) {
 
     addSphereNode({
       id: person.uid,
-      user: displayName,
-      name: displayName.split(" ")[0],
-      initials: getInitials(displayName),
+      user: connected ? displayName : "Unknown Member",
+      name: connected ? displayName.split(" ")[0] : "",
+      initials: connected ? getInitials(displayName) : "",
       colour,
-      position: spherePosition(index, connections.length),
-      size: 1.35
+      locked: !connected,
+      position: spherePosition(index, members.length),
+      size: connected ? 1.35 : 0.9
     });
 
-    addSphereConnection(
-      me.uid,
-      person.uid,
-      Number.parseInt(colour.slice(1), 16),
-      0.85
-    );
-  });
-
-  // Decorative unknown nodes. They do not represent
-  // actual people or disclose private profile data.
-  const unknownPositions = [
-    [-1.3, 3.7, -1.7],
-    [2.5, 2.8, 2.1],
-    [-3.8, -0.1, 1.0],
-    [-0.8, -3.8, -2.0],
-    [3.6, 0.3, -2.1],
-    [0.4, 1.1, -4.0]
-  ];
-
-  unknownPositions.forEach((position, index) => {
-    addSphereNode({
-      id: `unknown-${index}`,
-      locked: true,
-      position,
-      size: 0.85
-    });
+    if (connected) {
+      addSphereConnection(
+        me.uid,
+        person.uid,
+        Number.parseInt(colour.slice(1), 16),
+        0.85
+      );
+    }
   });
 
   if (
