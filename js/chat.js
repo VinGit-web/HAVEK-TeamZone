@@ -17,7 +17,8 @@ import {
   addDoc,
   deleteDoc,
   getDoc,
-  serverTimestamp
+  serverTimestamp,
+  Timestamp
 } from "https://www.gstatic.com/firebasejs/13.0.0/firebase-firestore.js";
 
 import {
@@ -88,12 +89,16 @@ function updateUnreadNavigation() {
 }
 
 function isConversationVisible(uid) {
+  if (!chatLayout) return false;
+
+  const embedded = document.body.classList.contains("embedded-chat");
+
   return (
     document.visibilityState === "visible" &&
     currentChatUid === uid &&
     isCurrentConnection() &&
     (
-      (!document.body.classList.contains("embedded-chat") && window.innerWidth > 820) ||
+      (!embedded && window.innerWidth > 820) ||
       chatLayout.classList.contains("mobile-conversation")
     )
   );
