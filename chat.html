@@ -9,8 +9,34 @@
 
   <link rel="stylesheet" href="css/app.css">
   <link rel="stylesheet" href="css/theme.css">
+  
   <link rel="stylesheet" href="css/chat.css">
+
+  <style>
+    body.embedded-chat > nav,
+    body.embedded-chat > .site-footer {
+      display: none !important;
+    }
+
+    body.embedded-chat {
+      min-height: 100dvh;
+    }
+
+    body.embedded-chat .chat-layout {
+      height: 100dvh;
+      max-height: 100dvh;
+    }
+  </style>
+
+  <script>
+    if (new URLSearchParams(window.location.search).get("embedded") === "1") {
+      document.addEventListener("DOMContentLoaded", () => {
+        document.body.classList.add("embedded-chat");
+      });
+    }
+  </script>
 </head>
+
 
 <body class="chat-body">
 
@@ -26,12 +52,15 @@
       <a href="strings.html">Strings</a>
       <a href="account.html">Account</a>
 
+    
     </div>
   </nav>
 
-  
-<main id="chat-list-page" class="chat-page">
-  <h1>Chats</h1>
+  <div class="chat-layout">
+
+    <main id="chat-list-page" class="chat-page">
+      <h1>Chats</h1>
+
 
   <div class="chat-search-container">
     <svg
@@ -163,34 +192,6 @@
     </p>
   </footer>
 
- <script type="module" src="js/chat.js"></script>
+   <script type="module" src="js/chat.js"></script>
 </body>
-
-<style>
-    body.embedded-chat > nav,
-    body.embedded-chat > .site-footer {
-        display: none !important;
-    }
-
-    body.embedded-chat {
-        min-height: 100dvh;
-    }
-
-    body.embedded-chat .chat-layout {
-        height: 100dvh;
-        max-height: 100dvh;
-    }
-</style>
-
-<script>
-    if (
-        new URLSearchParams(window.location.search)
-            .get("embedded") === "1"
-    ) {
-        document.addEventListener("DOMContentLoaded", () => {
-            document.body.classList.add("embedded-chat");
-        });
-    }
-</script>
-
 </html>

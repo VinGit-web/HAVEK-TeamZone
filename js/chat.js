@@ -88,6 +88,7 @@ function updateUnreadNavigation() {
   );
 }
 
+
 function isConversationVisible(uid) {
   if (!chatLayout) return false;
 
@@ -103,6 +104,7 @@ function isConversationVisible(uid) {
     )
   );
 }
+
 
 async function markConversationRead(uid) {
   if (
