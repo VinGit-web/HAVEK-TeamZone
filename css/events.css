@@ -438,7 +438,7 @@ body.loaded #loading {
 .events-body #eventMap {
     display: block;
     width: 100%;
-    height: clamp(390px, 65vh, 650px);
+    height: clamp(550px, 65vh, 650px);
     background: #dce3e6;
     border: 2px solid #d3c7e7 !important;
     border-radius: 1rem !important;

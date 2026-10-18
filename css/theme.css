@@ -514,7 +514,7 @@ body>.navbar .nav-links a[aria-current="page"]::after {
     padding: 18px 18px 16px !important;
     color: #111;
     background:
-        radial-gradient(circle at 80% 70%, rgba(116, 226, 225, .45), transparent 48%),
+        radial-gradient(circle at 80% 70%, rgba(235, 80, 8, 0.45), transparent 48%),
         linear-gradient(120deg, rgba(245, 246, 241, .92), rgba(210, 232, 236, .88)) !important;
     border: 3px solid rgba(255, 255, 255, .95) !important;
     border-radius: 20px !important;

@@ -157,11 +157,8 @@ function renderEventMarkers() {
     mapResultsStatus.textContent = located
         ? `Showing ${located} of ${filteredEvents.length} matching events with a mapped location. Select a marker to view or book an event.`
         : "No matching events have a mapped location. Try another filter or use List View.";
-    if (located) {
-        eventMap.fitBounds(bounds, { padding: [36, 36], maxZoom: 13 });
-    } else {
-        eventMap.setView([-27.4698, 153.0251], 12);
-    }
+    // Default map view centred on Brisbane
+    eventMap.setView([-27.4698, 153.0251], 12);
 }
 
 
