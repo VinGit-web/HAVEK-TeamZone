@@ -277,42 +277,50 @@ if (currentUser && post.authorId === currentUser.uid) {
 
     actions.append(editButton, deleteButton);
 
-    /* EDIT POST */
 
-    editButton.addEventListener("click", async () => {
-        const newContent = prompt(
-            "Edit your post:",
-            post.content || ""
-        );
+/* EDIT POST */
 
-        if (newContent === null) {
-            return;
-        }
+editButton.addEventListener("click", async () => {
+    if (!currentUser || currentUser.uid !== post.authorId) {
+        return;
+    }
 
-        const trimmedContent = newContent.trim();
+    const newContent = window.prompt(
+        "Edit your post:",
+        post.content || ""
+    );
 
-        if (!trimmedContent) {
-            alert("Post cannot be empty.");
-            return;
-        }
+    if (newContent === null) return;
 
-        if (trimmedContent.length > 1000) {
-            alert("Post must be under 1000 characters.");
-            return;
-        }
+    const trimmedContent = newContent.trim();
 
-        try {
-            await updateDoc(
-                doc(db, "posts", post.id),
-                {
-                    content: trimmedContent
-                }
-            );
-        } catch (error) {
-            console.error("Unable to edit post:", error);
-            alert("Your post could not be edited.");
-        }
-    });
+    if (!trimmedContent) {
+        alert("Post cannot be empty.");
+        return;
+    }
+
+    if (trimmedContent.length > 1000) {
+        alert("Post must be 1000 characters or fewer.");
+        return;
+    }
+
+    if (trimmedContent === post.content) return;
+
+    editButton.disabled = true;
+    editButton.textContent = "Saving...";
+
+    try {
+        await updateDoc(doc(db, "posts", post.id), {
+            content: trimmedContent
+        });
+    } catch (error) {
+        console.error("Unable to edit post:", error);
+        alert("Your post could not be edited.");
+    } finally {
+        editButton.disabled = false;
+        editButton.textContent = "Edit";
+    }
+});
 
     /* DELETE POST */
 
