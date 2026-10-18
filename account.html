@@ -34,10 +34,8 @@
 <p>Manage your profile, personalise your experience and control your privacy and safety.</p>
 </header>
 <main>
-
 <div class="account-tabs" role="tablist"><button aria-selected="true" class="tab active" data-tab="profile" type="button">Profile</button><button aria-selected="false" class="tab" data-tab="personalise" type="button">Personalise</button><button aria-selected="false" class="tab" data-tab="privacy" type="button">Privacy &amp; Safety</button><button aria-selected="false" class="tab" data-tab="verification" type="button">Verification</button></div>
 <form id="accountForm">
-
 <section class="account-panel active" id="panel-profile">
 <h2>Profile details</h2>
 <div class="profile-summary">
@@ -46,7 +44,6 @@
             Your animal avatar represents you throughout INTROSPHEER.
           </p>
 </div>
-
 <div class="field-grid">
 <label>
             Username
@@ -100,17 +97,6 @@
 </select>
 </label>
 </div>
-
-
-
-
-
-
-
-
-
-
-
 <section class="photo-settings">
 <h3>Personal profile photograph</h3>
 <p>
@@ -141,7 +127,6 @@
 <p aria-live="polite" id="photoStatus" role="status"></p>
 </section>
 </section><section class="account-panel" hidden="" id="panel-personalise"><h2>Personalise your account</h2><p>Customise your animal avatar, personality, interests, location and connection preferences.</p><div class="studio-layout">
-
 <div class="studio-preview">
 <div aria-label="Animal avatar preview" id="avatarPreview" role="img"></div>
 <label>
@@ -158,7 +143,6 @@
               </button>
 </div>
 </div>
-
 <div class="studio-controls">
 <h3>Choose an animal</h3>
 <div class="animal-tabs">
@@ -173,7 +157,6 @@
               </button>
 </div>
 <div class="animal-grid" id="animalGrid"></div>
-
 <h3>Appearance</h3>
 <div class="control-grid">
 <label>
@@ -208,7 +191,6 @@
 </select>
 </label>
 </div>
-
 <h3>Accessories</h3>
 <div class="control-grid">
 <label>
@@ -269,7 +251,6 @@
 </select>
 </label>
 </div>
-
 <h3>Outfit</h3>
 <div class="control-grid">
 <label>
@@ -435,16 +416,7 @@
 <p>Unblock someone below. Unblocking will not automatically restore your previous connection.</p>
 <div aria-live="polite" id="blockedUsersList">Loading blocked users...</div>
 </section></section>
-
-
-
-<section class="account-panel" hidden="" id="panel-verification">
-<h2>Account verification</h2>
-<div class="verification-box"><h3>Email verification</h3><p id="emailVerificationStatus" role="status">Checking email status...</p><p>Verify the email address attached to your Firebase account. This does not verify your identity.</p><button type="button" id="sendVerificationEmail">Send verification email</button><button type="button" id="refreshEmailVerification" class="light-button">I have verified my email — Refresh</button></div>
-<div class="verification-box"><h3>Identity verification</h3><p id="identityVerificationStatus" role="status">Checking request status...</p><p>Request a manual identity review. An authorised administrator must review and approve it. This form does not collect identity documents, selfies or government ID numbers. Contact your project administrator through your organisation's approved private process if additional evidence is required.</p><label for="verificationNote">Optional message to the reviewer</label><textarea id="verificationNote" maxlength="500" rows="3" placeholder="Optional context for the reviewer"></textarea><button type="button" id="requestIdentityVerification">Request identity review</button><p id="verificationFeedback" role="status" aria-live="polite"></p><small>Email verified and identity verified are separate statuses. A request alone never grants a verified badge.</small></div>
-</section>
-
-
+<section class="account-panel" hidden="" id="panel-verification"><h2>Account verification</h2><p>Email ownership and 18+ age assurance are separate checks. A facial estimate is not proof of identity or exact age.</p><div class="verification-box"><h3>1. Email verification</h3><p id="emailVerificationStatus" role="status">Checking…</p><button id="sendVerificationEmail" type="button">Send verification email</button> <button class="light-button" id="refreshEmailVerification" type="button">Refresh email status</button></div><div class="verification-box"><h3>2. Age check (18+)</h3><p id="ageVerificationStatus" role="status">Checking…</p><p>A specialised provider may process camera images to estimate age. INTROSPHEER does not receive or store camera images. The provider's own privacy notice and retention policy apply.</p><label><input id="ageConsent" type="checkbox"/> I consent to a facial age-estimation session and understand I can choose alternative review instead.</label><p><button disabled="" id="startAgeCheck" type="button">Start age check</button> <button class="light-button" id="refreshAgeCheck" type="button">Refresh status</button></p><h3>Alternative review</h3><p>If camera checks are inaccessible, inconclusive or unsuitable, request an alternative assessment. A request does not grant an age badge.</p><label for="ageAppealReason">Reason (optional; do not include sensitive documents)</label><textarea id="ageAppealReason" maxlength="300" rows="3"></textarea><button id="requestAgeReview" type="button">Request alternative review</button><p aria-live="polite" id="verificationFeedback" role="status"></p></div></section>
 <div class="account-savebar">
 <p aria-live="polite" id="accountStatus" role="status">
           Loading profile...
@@ -457,7 +429,6 @@
         </button>
 </div>
 </form>
-
 <section aria-labelledby="logoutHeading" class="account-logout" style="
         max-width: 1100px;
         margin: 24px auto;
@@ -477,7 +448,6 @@
       </button>
 </section>
 </main>
-
 <footer class="site-footer">
 <p>
       Generative AI tools, including ChatGPT and Claude, were used
@@ -486,9 +456,8 @@
       the development of the final website.
     </p>
 </footer>
-
 <script src="js/account.js" type="module"></script>
 <script src="js/profile-features.js" type="module"></script>
 <script src="js/account-logout.js" type="module"></script>
-</body>
+<script src="js/age-verification.js" type="module"></script></body>
 </html>
