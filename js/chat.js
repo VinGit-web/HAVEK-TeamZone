@@ -47,6 +47,180 @@ let messageGeneration = 0;
 let currentMessages = [];
 let sending = false;
 
+
+const unreadByUid = new Map();
+const unreadListeners = new Map();
+const readMarkers = new Map();
+const pendingReadWrites = new Set();
+let unreadGeneration = 0;
+
+function clearUnreadListeners() {
+  unreadGeneration++;
+
+  for (const stops of unreadListeners.values()) {
+    stops.forEach(stop => stop());
+  }
+
+  unreadListeners.clear();
+  unreadByUid.clear();
+  readMarkers.clear();
+  pendingReadWrites.clear();
+  updateUnreadNavigation();
+}
+
+function updateUnreadNavigation() {
+  const total = [...unreadByUid.values()]
+    .reduce((sum, count) => sum + count, 0);
+
+  const badge = document.getElementById("nav-unread-count");
+
+  if (!badge) return;
+
+  badge.hidden = total === 0;
+  badge.textContent = total > 99 ? "99+" : String(total);
+  badge.setAttribute(
+    "aria-label",
+    `${total} unread messages`
+  );
+}
+
+function isConversationVisible(uid) {
+  return (
+    document.visibilityState === "visible" &&
+    currentChatUid === uid &&
+    isCurrentConnection() &&
+    (
+      window.innerWidth > 768 ||
+      chatLayout.classList.contains("mobile-conversation")
+    )
+  );
+}
+
+async function markConversationRead(uid) {
+  if (
+    !myUid ||
+    !isConversationVisible(uid) ||
+    pendingReadWrites.has(uid)
+  ) return;
+
+  const chatId = conversationId(myUid, uid);
+  pendingReadWrites.add(uid);
+
+  try {
+    await setDoc(
+      doc(db, "chats", chatId, "readStates", myUid),
+      { lastReadAt: serverTimestamp() },
+      { merge: true }
+    );
+  } catch (error) {
+    console.error("Unable to mark conversation as read:", error);
+  } finally {
+    pendingReadWrites.delete(uid);
+  }
+}
+
+function calculateUnread(uid, items) {
+  const lastRead = readMarkers.get(uid);
+  const lastReadMillis = lastRead?.toMillis() ?? 0;
+
+  return items.filter(message => (
+    message.senderUid !== myUid &&
+    message.createdAt?.toMillis?.() > lastReadMillis
+  )).length;
+}
+
+function watchUnreadConversations() {
+  const activeIds = new Set(connections.map(person => person.uid));
+  const generation = unreadGeneration;
+
+  for (const [uid, stops] of unreadListeners) {
+    if (!activeIds.has(uid)) {
+      stops.forEach(stop => stop());
+      unreadListeners.delete(uid);
+      unreadByUid.delete(uid);
+      readMarkers.delete(uid);
+    }
+  }
+
+  for (const uid of activeIds) {
+    if (unreadListeners.has(uid) || !myUid) continue;
+
+    const chatId = conversationId(myUid, uid);
+    let latestMessages = [];
+    let messagesLoaded = false;
+    let markerLoaded = false;
+
+    const refresh = () => {
+      if (
+        generation !== unreadGeneration ||
+        !messagesLoaded ||
+        !markerLoaded
+      ) return;
+
+      unreadByUid.set(
+        uid,
+        isConversationVisible(uid)
+          ? 0
+          : calculateUnread(uid, latestMessages)
+      );
+
+      updateUnreadNavigation();
+      renderContacts();
+
+      if (
+        isConversationVisible(uid) &&
+        latestMessages.some(message => (
+          message.senderUid !== myUid &&
+          message.createdAt?.toMillis?.() >
+            (readMarkers.get(uid)?.toMillis() ?? 0)
+        ))
+      ) {
+        markConversationRead(uid);
+      }
+    };
+
+    const stopMessages = onSnapshot(
+      query(
+        collection(db, "chats", chatId, "messages"),
+        orderBy("createdAt", "desc"),
+        limit(200)
+      ),
+      snapshot => {
+        if (generation !== unreadGeneration) return;
+
+        latestMessages = snapshot.docs.map(item => item.data());
+        messagesLoaded = true;
+        refresh();
+      },
+      error => console.error("Unread messages listener:", error)
+    );
+
+    const stopMarker = onSnapshot(
+      doc(db, "chats", chatId, "readStates", myUid),
+      snapshot => {
+        if (generation !== unreadGeneration) return;
+
+        readMarkers.set(
+          uid,
+          snapshot.exists()
+            ? snapshot.data().lastReadAt
+            : Timestamp.fromMillis(0)
+        );
+
+        markerLoaded = true;
+        refresh();
+      },
+      error => console.error("Read marker listener:", error)
+    );
+
+    unreadListeners.set(uid, [stopMessages, stopMarker]);
+  }
+
+  updateUnreadNavigation();
+  renderContacts();
+}
+
+
 const requestedChatUid =
   new URLSearchParams(window.location.search).get("uid");
 
@@ -138,7 +312,25 @@ function renderContacts() {
     const name = document.createElement("span");
     name.textContent = person.name || "INTROSPHEER User";
 
-    card.append(avatar, name);
+    
+card.append(avatar, name);
+
+const unread = unreadByUid.get(person.uid) || 0;
+
+if (unread > 0) {
+  card.classList.add("has-unread");
+
+  const badge = document.createElement("span");
+  badge.className = "unread-badge";
+  badge.textContent = unread > 99 ? "99+" : String(unread);
+  badge.setAttribute(
+    "aria-label",
+    `${unread} unread messages`
+  );
+
+  card.appendChild(badge);
+}
+  
     card.addEventListener("click", () => selectChat(person.uid));
 
     chatList.appendChild(card);
@@ -215,6 +407,9 @@ async function selectChat(uid) {
   conversationAvatar.textContent = initials(person.name || "User");
 
   chatLayout.classList.add("mobile-conversation");
+  unreadByUid.set(uid, 0);
+updateUnreadNavigation();
+markConversationRead(uid);
 
   safetyOptions.classList.remove("show");
   safetyButton.setAttribute("aria-expanded", "false");
@@ -276,6 +471,9 @@ const messagesQuery = query(
       }));
 
       renderMessages();
+      if (isConversationVisible(uid)) {
+  markConversationRead(uid);
+}
     },
     error => {
       console.error("Chat listener failed:", error);
@@ -321,13 +519,14 @@ onAuthStateChanged(auth, user => {
 
 subscribeToSphere(state => {
   if (!state.uid || state.uid !== auth.currentUser?.uid) {
-    connections = [];
+    clearUnreadListeners(); connections = [];
     renderContacts();
     return;
   }
 
   myUid = state.uid;
   connections = state.connections || [];
+  watchUnreadConversations();
 
   if (currentChatUid && !isCurrentConnection()) {
     resetConversation();
@@ -484,3 +683,18 @@ document.addEventListener("keydown", event => {
 
 setComposerEnabled(false);
 renderContacts();
+
+
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState !== "visible") return;
+
+  if (currentChatUid && isConversationVisible(currentChatUid)) {
+    markConversationRead(currentChatUid);
+  }
+});
+
+window.addEventListener("pageshow", () => {
+  if (currentChatUid && isConversationVisible(currentChatUid)) {
+    markConversationRead(currentChatUid);
+  }
+});
