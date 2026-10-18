@@ -196,6 +196,7 @@ const eventSort = document.getElementById("eventSort");
 // Personal recommendations use the interests saved in Account > Personalise.
 // If the user has no saved interests, events fall back to chronological order.
 let recommendationInterests = [];
+let recommendationBirthYear = null;
 let interestsRequestId = 0;
 const interestKeywords = {
     gaming: ["video game", "games night", "trivia", "esports"],
@@ -269,6 +270,42 @@ function getRecommendationScore(event) {
         if (variants.some(keyword => keyword && containsInterestKeyword(fullText, keyword))) return score + 5;
         return score;
     }, 0);
+}
+
+// Conservative matching: only explicit minimum-age admission rules are exclusions.
+// Descriptions mentioning seniors or an age (without a rule) are still eligible.
+function getMinimumEventAge(event) {
+    const text = [event.subject, event.title, event.description]
+        .filter(value => typeof value === "string")
+        .join(" ")
+        .replace(/<[^>]*>/g, " ")
+        .replace(/&nbsp;/gi, " ");
+
+    const patterns = [
+        /\b(?:ages?\s*|aged\s*|for\s+(?:people|adults|participants|those)\s+aged\s*|suitable\s+for\s+ages?\s*)(\d{2})\s*(?:\+(?!\w)|(?:and|or)\s+(?:over|above|older)\b)/gi,
+        /\b(?:over|above)\s+(\d{2})s?\b/gi,
+        /\b(\d{2})\s*years?\s*(?:and|or)\s*(?:over|older|above)\b/gi
+    ];
+
+    const minimums = [];
+    for (let index = 0; index < patterns.length; index++) {
+        for (const match of text.matchAll(patterns[index])) {
+            const minimum = Number(match[1]);
+            if (minimum >= 18 && minimum <= 100) minimums.push(minimum);
+        }
+    }
+    // "Seniors only" has no universal age threshold; do not guess an age.
+    return minimums.length ? Math.max(...minimums) : null;
+}
+
+function isAgeEligibleForRecommendation(event) {
+    if (!Number.isInteger(recommendationBirthYear)) return true;
+    const minimumAge = getMinimumEventAge(event);
+    if (minimumAge === null) return true;
+    // Birth year alone doesn't give a birthday. Use the youngest possible age,
+    // so we don't recommend an age-restricted event before eligibility is certain.
+    const youngestPossibleAge = new Date().getFullYear() - recommendationBirthYear - 1;
+    return youngestPossibleAge >= minimumAge;
 }
 
 // The API uses free-form cost descriptions: don't call missing or ambiguous costs "Free".
@@ -406,6 +443,7 @@ function applyEventFilters() {
         if (!end || end < now) return false;
         if (!getEventText(event).includes(search)) return false;
         if (category !== "all" && !categoryKeywords[category].some(word => getEventText(event).includes(word))) return false;
+        if (sort === "recommended" && !isAgeEligibleForRecommendation(event)) return false;
         return matchesCost(event, cost) && matchesDate(event, date);
     });
 
@@ -787,18 +825,25 @@ subscribeToBookings(() => {
 onAuthStateChanged(auth, async user => {
     const requestId = ++interestsRequestId;
     recommendationInterests = [];
+    recommendationBirthYear = null;
 
     if (user) {
         try {
-            const snapshot = await getDoc(doc(db, "userPersonas", user.uid));
+            const [personaSnapshot, profileSnapshot] = await Promise.all([
+                getDoc(doc(db, "userPersonas", user.uid)),
+                getDoc(doc(db, "users", user.uid))
+            ]);
             if (requestId !== interestsRequestId) return;
-            const saved = snapshot.exists() ? snapshot.data().interests : [];
+            const saved = personaSnapshot.exists() ? personaSnapshot.data().interests : [];
             recommendationInterests = Array.isArray(saved)
                 ? saved.filter(interest => typeof interest === "string" && interest.trim())
                 : [];
+            const birthYear = profileSnapshot.exists() ? Number(profileSnapshot.data().birthYear) : NaN;
+            recommendationBirthYear = Number.isInteger(birthYear) && birthYear >= 1900 &&
+                birthYear <= new Date().getFullYear() ? birthYear : null;
         } catch (error) {
             if (requestId !== interestsRequestId) return;
-            console.warn("Couldn't load saved interests; using event dates instead:", error);
+            console.warn("Couldn't load saved profile for recommendations; using available events:", error);
         }
     }
 
