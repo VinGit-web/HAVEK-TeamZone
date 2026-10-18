@@ -980,3 +980,107 @@ body>.chat-layout {
         opacity: 0.15;
     }
 }
+
+
+
+/* Team photo slideshow */
+.team-slideshow {
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 4 / 3;
+    border-radius: 16px;
+}
+
+/* Stack all photos in the same position */
+.team-slideshow .team-slide {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 0.7s ease-in-out;
+    pointer-events: none;
+}
+
+/* Only display the current photo */
+.team-slideshow .team-slide.active {
+    opacity: 1;
+}
+
+/* Slideshow arrows */
+.slide-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 2;
+    background: rgba(10, 18, 37, 0.55);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 38px;
+    height: 38px;
+    font-size: 19px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.slide-arrow:hover {
+    background: rgba(10, 18, 37, 0.9);
+}
+
+.slide-prev {
+    left: 12px;
+}
+
+.slide-next {
+    right: 12px;
+}
+
+/* Navigation dots at bottom of photo */
+.slide-dots {
+    position: absolute;
+    bottom: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 9px;
+    z-index: 2;
+}
+
+.slide-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    border: none;
+    padding: 0;
+    background: rgba(255, 255, 255, 0.5);
+    cursor: pointer;
+}
+
+.slide-dot.active {
+    background: white;
+    width: 22px;
+    border-radius: 10px;
+}
+
+.slide-arrow:focus-visible,
+.slide-dot:focus-visible {
+    outline: 2px solid white;
+    outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .team-slideshow .team-slide {
+        transition: none;
+    }
+}
+
+
+
+.slide-arrow,
+.slide-arrow:hover,
+.slide-arrow:focus,
+.slide-arrow:active {
+    transform: translateY(-50%);
+}

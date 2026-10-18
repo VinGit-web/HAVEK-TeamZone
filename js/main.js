@@ -616,14 +616,11 @@ function openUserProfile(user) {
 }
 
 
-function closeUserProfile() {
-    profilePanel.classList.remove(
-        "open"
-    );
 
-    profileOverlay.classList.remove(
-        "open"
-    );
+function closeUserProfile() {
+    profilePanel.classList.remove("open");
+    profileOverlay.classList.remove("open");
+    selectedUser = null;
 }
 
 
