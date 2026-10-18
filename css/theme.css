@@ -701,131 +701,67 @@ body>.navbar .nav-links a[aria-current="page"]::after {
    ACCOUNT PAGE DESIGN
    ========================================= */
 
-/* Account page background */
+/* Match the light lavender surfaces used by the My Events calendar. */
 .account-body {
-    background: #071126 !important;
-    color: white;
-    padding: 0 !important;
+    --account-surface: #f3f0f9;
+    --account-card: #ffffff;
+    --account-card-soft: #faf8fe;
+    --account-border: #d9ceea;
+    --account-text: #292139;
+    --account-muted: #625771;
+    --account-purple: #62448a;
+    --account-purple-hover: #4e346e;
+    --account-highlight: #ebe2fc;
+
+    background: #071126;
+    color: var(--account-text);
+    padding: 0;
     min-height: 100vh;
 }
 
-/* Hide the old heading and description
-   outside the main account panel */
+/* The original standalone heading remains hidden; tabs introduce the settings. */
 .account-body>h1,
 .account-body>header,
 .account-body>hr {
     display: none;
 }
 
-/* Main cream gradient panel */
+/* Main account panel */
 .account-body>main {
     width: min(1080px, calc(100% - 60px));
     max-width: 1080px;
-
     min-height: 850px;
     margin: 40px auto 0;
     padding: 55px 65px;
-
-    background: #182440 !important;
-    color: #f0edff;
-
-    border: none;
-    border-radius: 50px 50px 0 0;
-
-    box-shadow: none;
+    background: var(--account-surface);
+    color: var(--account-text);
+    border: 1px solid var(--account-border);
+    border-radius: 36px 36px 0 0;
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.15);
 }
 
-/* Form layout */
 .account-body main form {
     width: 100%;
     max-width: 850px;
     margin: 0 auto;
 }
 
-/* Fieldsets */
-.account-body main fieldset {
-    background: rgba(255, 255, 255, 0.24);
-    border: 1px solid rgba(70, 60, 50, 0.2);
-    border-radius: 16px;
-    padding: 25px;
-    margin-bottom: 25px;
-    text-align: left;
-}
-
-/* Fieldset headings */
-.account-body main legend {
-    font-size: 20px;
-    font-weight: 600;
-    padding: 0 10px;
-}
-
-/* Input fields */
-.account-body main input[type="text"],
-.account-body main input[type="date"],
-.account-body main select {
-    width: 100%;
-    max-width: 100%;
-    min-height: 44px;
-    padding: 10px 14px;
-
-    border: 1px solid #c6beb0;
-    border-radius: 9px;
-
-    background: rgba(255, 255, 255, 0.8);
-    color: #111;
-}
-
-/* Profile avatar */
-#avatarPreview {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    margin-top: 12px;
-}
-
-/* Buttons */
-.account-body main button {
-    background: #071126 !important;
-    color: white !important;
-    border: 1px solid #071126;
-    border-radius: 10px;
-    padding: 12px 25px;
-    cursor: pointer;
-}
-
-.account-body main button:hover {
-    background: #382566 !important;
-}
-
-/* Cancel button */
-.account-body main button[type="reset"] {
-    background: transparent !important;
-    color: #071126 !important;
-}
-
-/* Footer */
+/* Keep the site footer dark, outside the light account panel. */
 .account-body .site-footer {
-    background: #071126 !important;
+    background: #071126;
     color: #9da5b6;
     border-top: 1px solid rgba(255, 255, 255, 0.1);
     padding: 22px;
 }
 
-/* Tablet and mobile */
 @media (max-width: 768px) {
     .account-body>main {
         width: calc(100% - 30px);
         min-height: 650px;
         padding: 30px 20px;
-        border-radius: 30px 30px 0 0;
-    }
-
-    .account-body main fieldset {
-        padding: 15px;
+        border-radius: 24px 24px 0 0;
     }
 }
-
-
 
 
 /* =========================================================
