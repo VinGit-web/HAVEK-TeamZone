@@ -513,6 +513,31 @@
     display: none;
 }
 
+/* EDIT + DELETE POST BUTTONS */
+
+.edit-post-button,
+.delete-post-button {
+    border: none;
+    background: transparent;
+    font-size: 14px;
+    cursor: pointer;
+    padding: 8px 10px;
+    border-radius: 8px;
+}
+
+.edit-post-button {
+    color: #5f6f82;
+}
+
+.delete-post-button {
+    color: #c94a4a;
+}
+
+.edit-post-button:hover,
+.delete-post-button:hover {
+    background: rgba(0, 0, 0, 0.06);
+}
+
 @media (max-width: 600px) {
     .strings-body .strings-heading h1 {
         font-size: 32px;

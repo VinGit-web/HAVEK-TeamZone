@@ -14,7 +14,10 @@ import {
     query,
     orderBy,
     onSnapshot,
-    serverTimestamp
+    serverTimestamp,
+    doc,
+    updateDoc,
+    deleteDoc
 } from "https://www.gstatic.com/firebasejs/13.0.0/firebase-firestore.js";
 
 const openPostForm = document.getElementById("openPostForm");
@@ -252,6 +255,87 @@ function renderPost(post) {
     joinButton.type = "button";
 
     actions.append(commentButton, joinButton);
+
+/* EDIT + DELETE FOR OWN POSTS */
+
+if (currentUser && post.authorId === currentUser.uid) {
+
+    const editButton = makeElement(
+        "button",
+        "edit-post-button",
+        "Edit"
+    );
+
+    editButton.type = "button";
+
+    const deleteButton = makeElement(
+        "button",
+        "delete-post-button",
+        "Delete"
+    );
+
+    deleteButton.type = "button";
+
+    actions.append(editButton, deleteButton);
+
+    /* EDIT POST */
+
+    editButton.addEventListener("click", async () => {
+        const newContent = prompt(
+            "Edit your post:",
+            post.content || ""
+        );
+
+        if (newContent === null) {
+            return;
+        }
+
+        const trimmedContent = newContent.trim();
+
+        if (!trimmedContent) {
+            alert("Post cannot be empty.");
+            return;
+        }
+
+        if (trimmedContent.length > 1000) {
+            alert("Post must be under 1000 characters.");
+            return;
+        }
+
+        try {
+            await updateDoc(
+                doc(db, "posts", post.id),
+                {
+                    content: trimmedContent
+                }
+            );
+        } catch (error) {
+            console.error("Unable to edit post:", error);
+            alert("Your post could not be edited.");
+        }
+    });
+
+    /* DELETE POST */
+
+    deleteButton.addEventListener("click", async () => {
+        const confirmed = confirm(
+            "Are you sure you want to delete this post?"
+        );
+
+        if (!confirmed) {
+            return;
+        }
+
+        try {
+            await deleteDoc(
+                doc(db, "posts", post.id)
+            );
+        } catch (error) {
+            console.error("Unable to delete post:", error);
+            alert("Your post could not be deleted.");
+        }
+    });
+}
 
     /* COMMENT SECTION */
 
