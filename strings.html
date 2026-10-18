@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -11,6 +12,7 @@
     <link rel="stylesheet" href="css/theme.css">
     <link rel="stylesheet" href="css/strings.css">
     <link rel="stylesheet" href="css/strings-chat-panel.css">
+    <link rel="stylesheet" href="css/strings-photos.css">
 
     <style>
         html {
@@ -35,7 +37,9 @@
 
     <nav>
         <a href="index.html" class="nav-logo">
-            <img src="images/logowhite.png" alt="INTROSPHEER Logo" class="logo-image">
+            <img src="images/logowhite.png"
+                 alt="INTROSPHEER Logo"
+                 class="logo-image">
             <span>INTROSPHEER</span>
         </a>
 
@@ -44,7 +48,6 @@
             <a href="events.html">Events</a>
             <a href="strings.html" class="active">Strings</a>
             <a href="account.html">Account</a>
-
         </div>
     </nav>
 
@@ -54,83 +57,177 @@
             <h1>Strings</h1>
 
             <div class="strings-heading-actions">
-                <button id="openAddUser" class="add-user-button" type="button">
+                <button id="openAddUser"
+                        class="add-user-button"
+                        type="button">
                     <span aria-hidden="true">+</span>
                     Add User
                 </button>
 
-                <button id="openPostForm" class="add-post-button" type="button" aria-label="Create post">
+                <button id="openPostForm"
+                        class="add-post-button"
+                        type="button"
+                        aria-label="Create post">
                     +
                 </button>
             </div>
         </div>
 
-        <section id="addUserPanel" class="add-user-panel hidden" aria-labelledby="addUserHeading">
+        <section id="addUserPanel"
+                 class="add-user-panel hidden"
+                 aria-labelledby="addUserHeading">
+
             <div class="add-user-panel-heading">
                 <div>
                     <h2 id="addUserHeading">Your Connections</h2>
                     <p>Find other members and manage your connection requests.</p>
                 </div>
 
-                <button id="closeAddUser" class="close-add-user" type="button" aria-label="Close connections">
+                <button id="closeAddUser"
+                        class="close-add-user"
+                        type="button"
+                        aria-label="Close connections">
                     &times;
                 </button>
             </div>
 
-            <div class="connection-tabs" role="group" aria-label="Connection views">
-                <button type="button" class="connection-tab active" data-connection-tab="find">
+            <div class="connection-tabs"
+                 role="group"
+                 aria-label="Connection views">
+
+                <button type="button"
+                        class="connection-tab active"
+                        data-connection-tab="find">
                     Find People
                 </button>
 
-                <button type="button" class="connection-tab" data-connection-tab="requests">
+                <button type="button"
+                        class="connection-tab"
+                        data-connection-tab="requests">
                     Requests
-                    <span id="requestCount" class="request-count" hidden>0</span>
+                    <span id="requestCount"
+                          class="request-count"
+                          hidden>0</span>
                 </button>
 
-                <button type="button" class="connection-tab" data-connection-tab="connected">
+                <button type="button"
+                        class="connection-tab"
+                        data-connection-tab="connected">
                     Connected
                 </button>
             </div>
 
             <div id="findPeopleView" class="connection-view">
-                <label for="connectionSearch">Search registered members</label>
-                <input id="connectionSearch" type="search" placeholder="Search by name..." maxlength="60"
-                    autocomplete="off">
-                <div id="connectionSearchResults" class="connection-user-list"></div>
+                <label for="connectionSearch">
+                    Search registered members
+                </label>
+
+                <input id="connectionSearch"
+                       type="search"
+                       placeholder="Search by name..."
+                       maxlength="60"
+                       autocomplete="off">
+
+                <div id="connectionSearchResults"
+                     class="connection-user-list"></div>
             </div>
 
             <div id="requestsView" class="connection-view hidden">
                 <h3>Incoming Requests</h3>
-                <div id="incomingRequests" class="connection-user-list"></div>
+                <div id="incomingRequests"
+                     class="connection-user-list"></div>
 
                 <h3>Sent Requests</h3>
-                <div id="outgoingRequests" class="connection-user-list"></div>
+                <div id="outgoingRequests"
+                     class="connection-user-list"></div>
             </div>
 
             <div id="connectedView" class="connection-view hidden">
-                <div id="connectedUsers" class="connection-user-list"></div>
+                <div id="connectedUsers"
+                     class="connection-user-list"></div>
             </div>
 
-            <p id="connectionStatus" class="connection-status" role="status" aria-live="polite"></p>
+            <p id="connectionStatus"
+               class="connection-status"
+               role="status"
+               aria-live="polite"></p>
         </section>
 
-        <section id="postFormContainer" class="post-form-container hidden">
+        <section id="postFormContainer"
+                 class="post-form-container hidden">
+
             <form id="postForm">
 
-                <input type="text" id="postName" placeholder="Your display name" maxlength="60" required>
+                <input type="text"
+                       id="postName"
+                       placeholder="Your display name"
+                       maxlength="60"
+                       required>
 
-                <textarea id="postText" placeholder="What event are you thinking about?" maxlength="1000"
-                    required></textarea>
+                <textarea id="postText"
+                          placeholder="What event are you thinking about?"
+                          maxlength="1000"
+                          required></textarea>
 
-                <!-- Choose an actual BCC event rather than typing an unrelated event name. -->
                 <label for="eventPickerSearch">Link an event</label>
-                <input type="search" id="eventPickerSearch" placeholder="Search Brisbane events..." autocomplete="off">
-                <p id="eventPickerStatus" class="event-picker-status" role="status" aria-live="polite"></p>
-                <div id="eventPickerResults" class="event-picker-results" aria-label="Matching events"></div>
-                <div id="selectedEventPreview" class="selected-event-preview" hidden></div>
 
-                <input type="text" id="postEvent" placeholder="Selected event" maxlength="120" readonly required>
-                <input type="text" id="postLocation" placeholder="Event location" maxlength="120" readonly required>
+                <input type="search"
+                       id="eventPickerSearch"
+                       placeholder="Search Brisbane events..."
+                       autocomplete="off">
+
+                <p id="eventPickerStatus"
+                   class="event-picker-status"
+                   role="status"
+                   aria-live="polite"></p>
+
+                <div id="eventPickerResults"
+                     class="event-picker-results"
+                     aria-label="Matching events"></div>
+
+                <div id="selectedEventPreview"
+                     class="selected-event-preview"
+                     hidden></div>
+
+                <input type="text"
+                       id="postEvent"
+                       placeholder="Selected event"
+                       maxlength="120"
+                       readonly
+                       required>
+
+                <input type="text"
+                       id="postLocation"
+                       placeholder="Event location"
+                       maxlength="120"
+                       readonly
+                       required>
+
+                <!-- Optional post photo -->
+                <label for="postPhoto">
+                    Add a photo (optional, maximum 5 MB)
+                </label>
+
+                <input type="file"
+                       id="postPhoto"
+                       accept="image/jpeg,image/png,image/webp,image/gif">
+
+                <div id="postPhotoPreview"
+                     class="post-photo-preview"
+                     hidden>
+
+                    <img id="postPhotoImage"
+                         alt="Selected photo preview">
+
+                    <button type="button" id="removePostPhoto">
+                        Remove photo
+                    </button>
+                </div>
+
+                <p id="postPhotoStatus"
+                   class="post-photo-status"
+                   role="status"
+                   aria-live="polite"></p>
 
                 <div class="form-buttons">
                     <button type="button" id="cancelPost">
@@ -150,37 +247,57 @@
             It does not book you automatically.
         </p>
 
-        <p id="stringsStatus" class="strings-status" role="status" aria-live="polite">
+        <p id="stringsStatus"
+           class="strings-status"
+           role="status"
+           aria-live="polite">
             Loading posts...
         </p>
 
-        <section id="stringsFeed" class="strings-feed" aria-label="Strings posts"></section>
+        <section id="stringsFeed"
+                 class="strings-feed"
+                 aria-label="Strings posts"></section>
 
     </main>
 
-
-    <button id="stringsChatButton" class="strings-chat-button" type="button" aria-controls="stringsChatPanel"
-        aria-expanded="false" aria-label="Open Chat">
+    <button id="stringsChatButton"
+            class="strings-chat-button"
+            type="button"
+            aria-controls="stringsChatPanel"
+            aria-expanded="false"
+            aria-label="Open Chat">
         <span aria-hidden="true">✉</span>
         Chat
-        <span id="stringsChatUnread" class="strings-chat-unread" hidden></span>
+        <span id="stringsChatUnread"
+              class="strings-chat-unread"
+              hidden></span>
     </button>
 
-    <div id="stringsChatBackdrop" class="strings-chat-backdrop" hidden></div>
+    <div id="stringsChatBackdrop"
+         class="strings-chat-backdrop"
+         hidden></div>
 
-    <aside id="stringsChatPanel" class="strings-chat-panel" aria-label="Chat" aria-hidden="true">
+    <aside id="stringsChatPanel"
+           class="strings-chat-panel"
+           aria-label="Chat"
+           aria-hidden="true">
+
         <div class="strings-chat-panel-heading">
             <h2>Chat</h2>
 
-            <button id="stringsChatClose" class="strings-chat-close" type="button" aria-label="Close Chat">
+            <button id="stringsChatClose"
+                    class="strings-chat-close"
+                    type="button"
+                    aria-label="Close Chat">
                 &times;
             </button>
         </div>
 
-        <iframe id="stringsChatFrame" class="strings-chat-frame" title="INTROSPHEER conversations"
-            loading="lazy"></iframe>
+        <iframe id="stringsChatFrame"
+                class="strings-chat-frame"
+                title="INTROSPHEER conversations"
+                loading="lazy"></iframe>
     </aside>
-
 
     <footer class="site-footer">
         <p>
@@ -196,5 +313,4 @@
     <script type="module" src="js/strings-chat-panel.js"></script>
 
 </body>
-
 </html>

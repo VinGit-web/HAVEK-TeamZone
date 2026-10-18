@@ -1,8 +1,6 @@
 
 import { auth, db } from "./firebase.js";
-import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/13.0.0/firebase-storage.js";
-
-const storage = getStorage(auth.app);
+import { supabase } from "./supabase.js";
 
 import {
     onAuthStateChanged
@@ -34,37 +32,36 @@ const postPhotoPreview = document.getElementById("postPhotoPreview");
 const postPhotoImage = document.getElementById("postPhotoImage");
 const removePostPhoto = document.getElementById("removePostPhoto");
 const postPhotoStatus = document.getElementById("postPhotoStatus");
+const BUCKET = "strings-photos";
+const TYPES = {"image/jpeg":"jpg","image/png":"png","image/webp":"webp","image/gif":"gif"};
+const MAX_BYTES = 5 * 1024 * 1024;
 let selectedPhoto = null;
-const MAX_PHOTO_BYTES = 5 * 1024 * 1024;
-const PHOTO_TYPES = new Set(["image/jpeg", "image/png", "image/webp", "image/gif"]);
-
+let previewURL = null;
+let posting = false;
 function clearPostPhoto() {
     selectedPhoto = null;
     postPhoto.value = "";
+    if (previewURL) URL.revokeObjectURL(previewURL);
+    previewURL = null;
     postPhotoImage.removeAttribute("src");
     postPhotoPreview.hidden = true;
     postPhotoStatus.textContent = "";
 }
-
 postPhoto.addEventListener("change", () => {
     const file = postPhoto.files?.[0];
     clearPostPhoto();
     if (!file) return;
-    if (!PHOTO_TYPES.has(file.type) || file.size > MAX_PHOTO_BYTES) {
+    if (!TYPES[file.type] || !file.size || file.size > MAX_BYTES) {
         postPhotoStatus.textContent = "Choose a JPG, PNG, WebP or GIF image up to 5 MB.";
         return;
     }
     selectedPhoto = file;
-    const reader = new FileReader();
-    reader.onload = () => {
-        if (selectedPhoto === file) {
-            postPhotoImage.src = reader.result;
-            postPhotoPreview.hidden = false;
-        }
-    };
-    reader.readAsDataURL(file);
+    previewURL = URL.createObjectURL(file);
+    postPhotoImage.src = previewURL;
+    postPhotoPreview.hidden = false;
 });
 removePostPhoto.addEventListener("click", clearPostPhoto);
+
 
 let currentUser = null;
 let stopPostsListener = null;
@@ -199,14 +196,16 @@ function renderPost(post) {
         post.content || ""
     );
 
-    let postPhotoElement = null;
-    if (typeof post.photoURL === "string" && /^https:\/\//i.test(post.photoURL)) {
-        const photo = makeElement("img", "string-post-photo");
-        photo.src = post.photoURL;
-        photo.alt = `Photo attached to ${authorName}'s post`;
-        photo.loading = "lazy";
-        photo.decoding = "async";
-        postPhotoElement = photo;
+    let photoElement = null;
+    if (typeof post.photoPath === "string" &&
+        typeof post.authorId === "string" &&
+        post.photoPath.startsWith(`${post.authorId}/`) &&
+        /^[A-Za-z0-9_-]+\/[a-f0-9-]+\.(jpg|png|webp|gif)$/.test(post.photoPath)) {
+        const { data } = supabase.storage.from(BUCKET).getPublicUrl(post.photoPath);
+        photoElement = makeElement("img", "string-post-photo");
+        photoElement.src = data.publicUrl;
+        photoElement.alt = `Photo attached to ${authorName}'s post`;
+        photoElement.loading = "lazy";
     }
 
     /* EVENT DETAILS */
@@ -420,7 +419,7 @@ function renderPost(post) {
     card.append(
         user,
         message,
-        ...(postPhotoElement ? [postPhotoElement] : []),
+        ...(photoElement ? [photoElement] : []),
         details,
         actions,
         section
@@ -488,37 +487,38 @@ postForm.addEventListener("submit", async event => {
         return;
     }
 
+    if (posting) return;
+    posting = true;
     submitPost.disabled = true;
+    cancelPost.disabled = true;
     submitPost.textContent = "Posting...";
-    let uploadedPhotoRef = null;
-    let postSaved = false;
+    const postingUser = currentUser;
+    let uploadedPath = null;
+    let saved = false;
     try {
-        let photoURL = null;
-        let photoPath = null;
         if (selectedPhoto) {
             const file = selectedPhoto;
-            if (!PHOTO_TYPES.has(file.type) || file.size > MAX_PHOTO_BYTES) throw new Error("Invalid image. Select JPG, PNG, WebP or GIF up to 5 MB.");
-            const extension = { "image/jpeg": "jpg", "image/png": "png", "image/webp": "webp", "image/gif": "gif" }[file.type];
-            const id = crypto.randomUUID();
-            photoPath = `strings/${currentUser.uid}/${id}.${extension}`;
-            uploadedPhotoRef = ref(storage, photoPath);
+            const extension = TYPES[file.type];
+            if (!extension || !file.size || file.size > MAX_BYTES) throw new Error("Invalid image. Maximum 5 MB.");
+            uploadedPath = `${postingUser.uid}/${crypto.randomUUID()}.${extension}`;
             submitPost.textContent = "Uploading photo...";
-            await uploadBytes(uploadedPhotoRef, file, { contentType: file.type });
-            photoURL = await getDownloadURL(uploadedPhotoRef);
+            const { error } = await supabase.storage.from(BUCKET).upload(uploadedPath, file, {
+                contentType: file.type, upsert: false
+            });
+            if (error) { uploadedPath = null; throw error; }
         }
         submitPost.textContent = "Posting...";
         await addDoc(collection(db, "posts"), {
-            authorId: currentUser.uid,
+            authorId: postingUser.uid,
             authorName: name,
             content: text,
             eventName: eventName,
             location: location,
-            photoURL,
-            photoPath,
+            ...(uploadedPath ? { photoPath: uploadedPath } : {}),
             createdAt: serverTimestamp()
         });
 
-        postSaved = true;
+        saved = true;
         postForm.reset();
         clearPostPhoto();
         postName.value = getDisplayName();
@@ -528,12 +528,16 @@ postForm.addEventListener("submit", async event => {
         showStatus("");
     } catch (error) {
         console.error("Unable to create post:", error);
-        if (uploadedPhotoRef && !postSaved) {
-            try { await deleteObject(uploadedPhotoRef); } catch (cleanupError) { console.warn("Unable to clean up uploaded photo:", cleanupError); }
+
+        if (uploadedPath && !saved) {
+            const { error: cleanupError } = await supabase.storage.from(BUCKET).remove([uploadedPath]);
+            if (cleanupError) console.warn("Unable to clean up photo:", cleanupError);
         }
-        alert(error.message || "Your post could not be saved. Check Firebase Storage and Firestore rules.");
+        alert(error.message || "Your post could not be saved. Check Supabase and Firestore policies.");
     } finally {
+        posting = false;
         submitPost.disabled = false;
+        cancelPost.disabled = false;
         submitPost.textContent = "Post";
     }
 });
