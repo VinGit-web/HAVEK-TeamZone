@@ -78,6 +78,7 @@
     margin-bottom: 12px;
 }
 
+
 .strings-body .profile-circle {
     width: 40px !important;
     height: 40px !important;
@@ -86,10 +87,13 @@
     justify-content: center;
     flex: 0 0 40px;
     border-radius: 50%;
-    background: #eaf0f5 !important;
-    color: #111318;
+    background: #6843a5 !important;
+    color: #ffffff !important;
     font-weight: 700;
+    border: 2px solid #a98add;
+    box-sizing: border-box;
 }
+
 
 .strings-body .post-user h3 {
     margin: 0;
