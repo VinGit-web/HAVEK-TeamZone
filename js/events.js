@@ -827,7 +827,6 @@ cancelEventButton.addEventListener("click", async function () {
 });
 
 
-
 function setActiveView(view) {
     activeView = view;
     listView.hidden = view !== "list";
