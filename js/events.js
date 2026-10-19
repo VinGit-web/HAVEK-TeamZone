@@ -757,13 +757,42 @@ bookEventButton.addEventListener("click", async function () {
     bookEventButton.disabled = true;
 
     try {
-        await bookEvent({
-            id: getEventId(selectedEvent),
-            title: selectedEvent.subject || selectedEvent.title || "Brisbane Event",
-            startDate: selectedEvent.start_datetime,
-            endDate: selectedEvent.end_datetime,
-            venue: selectedEvent.venue || "Venue unavailable"
-        });
+        
+const eventId = String(getEventId(selectedEvent) ?? "").trim();
+
+const startDate = String(
+    selectedEvent.start_datetime ?? ""
+).trim();
+
+const endDate = String(
+    selectedEvent.end_datetime ??
+    selectedEvent.start_datetime ??
+    ""
+).trim();
+
+if (!eventId || !startDate) {
+    throw new Error("This event is missing a valid ID or start date.");
+}
+
+const bookingData = {
+    id: eventId,
+    title: String(
+        selectedEvent.subject ||
+        selectedEvent.title ||
+        "Brisbane Event"
+    ).trim(),
+    startDate,
+    endDate,
+    venue: String(
+        selectedEvent.venue || "Venue unavailable"
+    ),
+    status: "booked"
+};
+
+console.log("Booking data:", bookingData);
+
+await bookEvent(bookingData);
+
 
         updateBookingButtons();
     } catch (error) {

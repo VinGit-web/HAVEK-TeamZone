@@ -55,6 +55,8 @@ const latestMessageByUid = new Map();
 const unreadListeners = new Map();
 const readMarkers = new Map();
 const pendingReadWrites = new Set();
+const newestIncomingByUid = new Map();
+const acknowledgedIncomingByUid = new Map();
 let unreadGeneration = 0;
 
 function clearUnreadListeners() {
@@ -69,6 +71,8 @@ function clearUnreadListeners() {
   latestMessageByUid.clear();
   readMarkers.clear();
   pendingReadWrites.clear();
+  newestIncomingByUid.clear();
+  acknowledgedIncomingByUid.clear();
   updateUnreadNavigation();
 }
 
@@ -107,21 +111,30 @@ function isConversationVisible(uid) {
 
 
 async function markConversationRead(uid) {
-  if (
-    !myUid ||
-    !isConversationVisible(uid) ||
-    pendingReadWrites.has(uid)
-  ) return;
+  if (!myUid || !isConversationVisible(uid) || pendingReadWrites.has(uid)) return;
 
-  const chatId = conversationId(myUid, uid);
+  const newestIncoming = newestIncomingByUid.get(uid) ?? 0;
+  const savedRead = readMarkers.get(uid)?.toMillis?.() ?? 0;
+  const acknowledged = acknowledgedIncomingByUid.get(uid) ?? 0;
+  // Do not write when there is no new incoming message to acknowledge.
+  if (!newestIncoming || newestIncoming <= Math.max(savedRead, acknowledged)) return;
+
+  const readerUid = myUid;
+  const version = unreadGeneration;
+  const chatId = conversationId(readerUid, uid);
   pendingReadWrites.add(uid);
 
   try {
     await setDoc(
-      doc(db, "chats", chatId, "readStates", myUid),
+      doc(db, "chats", chatId, "readStates", readerUid),
       { lastReadAt: serverTimestamp() },
       { merge: true }
     );
+    // Acknowledge the incoming message locally so snapshot latency cannot
+    // trigger another identical write. The server timestamp remains authoritative.
+    if (version === unreadGeneration && myUid === readerUid) {
+      acknowledgedIncomingByUid.set(uid, newestIncoming);
+    }
   } catch (error) {
     console.error("Unable to mark conversation as read:", error);
   } finally {
@@ -150,6 +163,8 @@ async function watchUnreadConversations() {
       unreadByUid.delete(uid);
       readMarkers.delete(uid);
       latestMessageByUid.delete(uid);
+      newestIncomingByUid.delete(uid);
+      acknowledgedIncomingByUid.delete(uid);
     }
   }
 
@@ -217,16 +232,7 @@ if (
       updateUnreadNavigation();
       renderContacts();
 
-      if (
-        isConversationVisible(uid) &&
-        latestMessages.some(message => (
-          message.senderUid !== myUid &&
-          message.createdAt?.toMillis?.() >
-            (readMarkers.get(uid)?.toMillis() ?? 0)
-        ))
-      ) {
-        markConversationRead(uid);
-      }
+      if (isConversationVisible(uid)) markConversationRead(uid);
     };
 
     const stopMessages = onSnapshot(
@@ -239,6 +245,15 @@ if (
         if (generation !== unreadGeneration) return;
 
        latestMessages = snapshot.docs.map(item => item.data());
+       const newestIncoming = latestMessages.find(message =>
+         message.senderUid === uid && message.createdAt?.toMillis?.()
+       );
+       if (newestIncoming) {
+         newestIncomingByUid.set(uid, newestIncoming.createdAt.toMillis());
+       } else {
+         newestIncomingByUid.delete(uid);
+       }
+
 
 const newestMessage = latestMessages.find(
   message => message.createdAt?.toMillis?.()
