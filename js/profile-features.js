@@ -84,15 +84,27 @@ function possiblePaths(uid) {
   ];
 }
 
-async function checkSupabaseAuthentication(user) {
-  const token = await user.getIdTokenResult(true);
 
-  if (token.claims.role !== "authenticated") {
+async function checkSupabaseAuthentication(user) {
+  if (!user) {
+    throw new Error("Please sign in first.");
+  }
+
+  const tokenResult = await user.getIdTokenResult(true);
+
+  if (tokenResult.claims.role !== "authenticated") {
+    console.error(
+      "Supabase authentication role is not configured for this Firebase account."
+    );
+
     throw new Error(
-      "Your Firebase account is missing the Supabase authenticated role."
+      "Photo authentication is not configured. Please contact the website administrator."
     );
   }
+
+  return true;
 }
+
 
 async function findExistingPhoto(uid) {
   for (const path of possiblePaths(uid)) {
