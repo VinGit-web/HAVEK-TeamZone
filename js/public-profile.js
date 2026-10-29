@@ -10,7 +10,8 @@ import {
 import {
   doc,
   getDoc,
-  setDoc,
+  runTransaction,
+  serverTimestamp,
   updateDoc,
   onSnapshot
 } from "https://www.gstatic.com/firebasejs/13.0.0/firebase-firestore.js";
@@ -101,9 +102,8 @@ async function showPhoto() {
   if (
     !friendship ||
     friendship.status !== "accepted" ||
-    !Array.isArray(friendship.members) ||
-    !friendship.members.includes(me.uid) ||
-    !friendship.members.includes(viewedUid)
+    ![friendship.fromUid, friendship.toUid].includes(me.uid) ||
+    ![friendship.fromUid, friendship.toUid].includes(viewedUid)
   ) {
     restrictedPhoto(
       "Connect as friends to view this photograph."
@@ -214,50 +214,48 @@ async function showPhoto() {
 
 async function sendRequest() {
   if (!me || !viewedUid || me.uid === viewedUid) return;
-
   $("friendAction").disabled = true;
-
   try {
-    await setDoc(
-      doc(db, "friendships", friendshipId(me.uid, viewedUid)),
-      {
-        members: [me.uid, viewedUid].sort(),
-        requesterId: me.uid,
-        recipientId: viewedUid,
-        status: "pending"
+    const requestRef = doc(db, "connectionRequests", friendshipId(me.uid, viewedUid));
+    await runTransaction(db, async transaction => {
+      const existing = await transaction.get(requestRef);
+      if (existing.exists()) {
+        const data = existing.data();
+        if (data.status !== "declined" || data.fromUid !== me.uid) {
+          throw new Error("A connection request already exists.");
+        }
+        transaction.update(requestRef, {status: "pending", updatedAt: serverTimestamp()});
+      } else {
+        transaction.set(requestRef, {
+          fromUid: me.uid, toUid: viewedUid,
+          fromName: me.displayName || "INTROSPHEER User",
+          toName: $("viewedUsername").textContent,
+          status: "pending", createdAt: serverTimestamp(), updatedAt: serverTimestamp()
+        });
       }
-    );
-
-    message("Friend request sent.");
+    });
+    message("Connection request sent.");
   } catch (error) {
-    message(error.message);
+    message(error.message || "Unable to send request.");
     renderFriendship();
   }
 }
 
 async function acceptRequest() {
-  if (
-    !me ||
-    !friendship ||
-    friendship.status !== "pending" ||
-    friendship.recipientId !== me.uid
-  ) {
-    return;
-  }
-
+  if (!me || !friendship || friendship.status !== "pending" || friendship.toUid !== me.uid) return;
   $("friendAction").disabled = true;
-
   try {
-    await updateDoc(
-      doc(db, "friendships", friendshipId(me.uid, viewedUid)),
-      {
-        status: "accepted"
+    const ref = doc(db, "connectionRequests", friendshipId(me.uid, viewedUid));
+    await runTransaction(db, async transaction => {
+      const snapshot = await transaction.get(ref);
+      if (!snapshot.exists() || snapshot.data().status !== "pending" || snapshot.data().toUid !== me.uid) {
+        throw new Error("Request is no longer available.");
       }
-    );
-
-    message("Friend request accepted.");
+      transaction.update(ref, {status: "accepted", updatedAt: serverTimestamp()});
+    });
+    message("Connection accepted.");
   } catch (error) {
-    message(error.message);
+    message(error.message || "Unable to accept request.");
     renderFriendship();
   }
 }
@@ -284,13 +282,13 @@ function renderFriendship() {
 
     button.textContent = "Friends";
     button.disabled = true;
-  } else if (friendship.requesterId === me.uid) {
+  } else if (friendship.fromUid === me.uid) {
     $("friendStatus").textContent =
       "Your friend request is pending.";
 
     button.textContent = "Request sent";
     button.disabled = true;
-  } else if (friendship.recipientId === me.uid) {
+  } else if (friendship.toUid === me.uid) {
     $("friendStatus").textContent =
       "This user has sent you a friend request.";
 
@@ -327,6 +325,26 @@ async function loadProfile() {
   if (profile.avatar) {
     $("viewedAvatar").innerHTML = svgAvatar(profile.avatar);
   }
+
+  // Only show fields explicitly stored in the publicProfiles collection.
+  // Never read private account documents or expose email, DOB or phone.
+  const sharedFields = [
+    ["Name", profile.displayName || profile.name],
+    ["About", profile.bio || profile.about],
+    ["Interests", Array.isArray(profile.interests)
+      ? profile.interests.join(", ") : profile.interests]
+  ];
+  const details = $("sharedProfileDetails");
+  details.replaceChildren();
+  for (const [label, value] of sharedFields) {
+    if (typeof value !== "string" || !value.trim()) continue;
+    const dt = document.createElement("dt");
+    dt.textContent = label;
+    const dd = document.createElement("dd");
+    dd.textContent = value;
+    details.append(dt, dd);
+  }
+  $("sharedProfileSection").hidden = !details.childElementCount;
 
   unsubscribeVerification = onSnapshot(
     doc(db, "verificationPublic", viewedUid),
@@ -403,7 +421,7 @@ onAuthStateChanged(auth, async user => {
     if (!exists || auth.currentUser?.uid !== user.uid) return;
 
     unsubscribeFriendship = onSnapshot(
-      doc(db, "friendships", friendshipId(user.uid, viewedUid)),
+      doc(db, "connectionRequests", friendshipId(user.uid, viewedUid)),
       snapshot => {
         friendship = snapshot.exists()
           ? snapshot.data()

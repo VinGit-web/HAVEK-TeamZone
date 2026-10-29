@@ -9,6 +9,7 @@
 
   <link rel="stylesheet" href="css/app.css">
   <link rel="stylesheet" href="css/theme.css">
+  <link rel="stylesheet" href="css/profile-link.css">
   <link rel="stylesheet" href="css/social-profile.css">
 
   <style>
@@ -16,7 +17,6 @@
       visibility: hidden
     }
   </style>
-  <script type="module" src="js/auth-guard.js"></script>
 </head>
 
 <body class="public-profile-body">
@@ -47,6 +47,11 @@
         </p>
       </div>
     </div>
+
+    <section id="sharedProfileSection" class="connection-section" hidden>
+      <h2>Shared information</h2>
+      <dl id="sharedProfileDetails"></dl>
+    </section>
 
     <section class="connection-section">
       <h2>Connection</h2>

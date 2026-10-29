@@ -120,7 +120,7 @@ function getRequestFor(uid) {
     return getAllRequests().find(request => request.id === id) || null;
 }
 
-function makeCard(name, subtitle, actions = []) {
+function makeCard(name, subtitle, actions = [], profileUid = null) {
     const card = makeElement("div", "connection-user-card");
 
     const info = makeElement("div", "connection-user-info");
@@ -136,6 +136,17 @@ function makeCard(name, subtitle, actions = []) {
 
     details.append(heading, description);
     info.append(avatar, details);
+
+    if (profileUid) {
+        const link = document.createElement("a");
+        link.className = "connection-profile-link";
+        link.href = `profile.html?uid=${encodeURIComponent(profileUid)}`;
+        link.setAttribute("aria-label", `View ${name}'s shared profile`);
+        link.append(info);
+        card.append(link);
+    } else {
+        card.append(info);
+    }
 
     const actionContainer = makeElement(
         "div",
@@ -161,7 +172,7 @@ function makeCard(name, subtitle, actions = []) {
         actionContainer.appendChild(button);
     });
 
-    card.append(info, actionContainer);
+    card.append(actionContainer);
 
     return card;
 }
@@ -248,7 +259,7 @@ function renderSearch() {
         }
 
         searchResults.appendChild(
-            makeCard(name, subtitle, actions)
+            makeCard(name, subtitle, actions, member.id)
         );
     });
 }
@@ -285,7 +296,7 @@ function renderRequests() {
                     label: "Decline",
                     secondary: true,
                     onClick: () => respondToRequest(request, "declined")
-                }])
+                }], request.fromUid)
             );
         });
     }
@@ -303,7 +314,7 @@ function renderRequests() {
                 makeCard(name, "Waiting for response", [{
                     label: "Pending",
                     disabled: true
-                }])
+                }], request.toUid)
             );
         });
     }
@@ -336,7 +347,8 @@ function renderConnected() {
                 [{
                     label: "Connected",
                     disabled: true
-                }]
+                }],
+                otherUid
             )
         );
     });
