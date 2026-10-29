@@ -10,7 +10,7 @@
 
     <link rel="stylesheet" href="css/app.css">
     <link rel="stylesheet" href="css/theme.css">
-  <link rel="stylesheet" href="css/profile-link.css">
+  <link rel="stylesheet" href="css/inline-profile.css">
     <link rel="stylesheet" href="css/strings.css">
     <link rel="stylesheet" href="css/strings-chat-panel.css">
     <link rel="stylesheet" href="css/strings-photos.css">
@@ -312,6 +312,17 @@
             of the final website.
         </p>
     </footer>
+
+    <div id="inlineProfileOverlay" class="inline-profile-overlay" hidden>
+      <section class="inline-profile-dialog" role="dialog" aria-modal="true" aria-labelledby="inlineProfileTitle" tabindex="-1">
+        <button id="closeInlineProfile" class="inline-profile-close" type="button" aria-label="Close profile">&times;</button>
+        <h2 id="inlineProfileTitle">Shared profile</h2>
+        <div id="inlineProfileAvatar" class="inline-profile-avatar" aria-hidden="true"></div>
+        <h3 id="inlineProfileName"></h3>
+        <p id="inlineProfileStatus" role="status"></p>
+        <dl id="inlineProfileDetails" class="inline-profile-details"></dl>
+      </section>
+    </div>
 
     <script type="module" src="js/strings.js"></script>
     <script type="module" src="js/strings-connections.js"></script>

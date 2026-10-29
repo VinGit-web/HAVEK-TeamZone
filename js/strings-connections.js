@@ -138,12 +138,13 @@ function makeCard(name, subtitle, actions = [], profileUid = null) {
     info.append(avatar, details);
 
     if (profileUid) {
-        const link = document.createElement("a");
-        link.className = "connection-profile-link";
-        link.href = `profile.html?uid=${encodeURIComponent(profileUid)}`;
-        link.setAttribute("aria-label", `View ${name}'s shared profile`);
-        link.append(info);
-        card.append(link);
+        const trigger = document.createElement("button");
+        trigger.type = "button";
+        trigger.className = "connection-profile-trigger";
+        trigger.setAttribute("aria-label", `View ${name}'s shared profile`);
+        trigger.append(info);
+        trigger.addEventListener("click", () => openInlineProfile(profileUid));
+        card.append(trigger);
     } else {
         card.append(info);
     }
@@ -176,6 +177,84 @@ function makeCard(name, subtitle, actions = [], profileUid = null) {
 
     return card;
 }
+
+const profileOverlay = document.getElementById("inlineProfileOverlay");
+const profileDialog = profileOverlay?.querySelector(".inline-profile-dialog");
+const profileClose = document.getElementById("closeInlineProfile");
+let previousFocus = null;
+let activeProfileUid = null;
+
+function closeInlineProfile() {
+    if (!profileOverlay) return;
+    activeProfileUid = null;
+    profileOverlay.hidden = true;
+    document.body.classList.remove("inline-profile-open");
+    previousFocus?.focus();
+}
+
+function addSharedDetail(label, value) {
+    const details = document.getElementById("inlineProfileDetails");
+    if (Array.isArray(value)) value = value.filter(item => typeof item === "string").join(", ");
+    if (typeof value !== "string" || !value.trim()) return;
+    const term = document.createElement("dt");
+    const description = document.createElement("dd");
+    term.textContent = label;
+    description.textContent = value;
+    details.append(term, description);
+}
+
+async function openInlineProfile(uid) {
+    if (!uid || !profileOverlay || !currentUser) return;
+    previousFocus = document.activeElement;
+    activeProfileUid = uid;
+    profileOverlay.hidden = false;
+    document.body.classList.add("inline-profile-open");
+    document.getElementById("inlineProfileName").textContent = "Loading profile...";
+    document.getElementById("inlineProfileAvatar").textContent = "";
+    document.getElementById("inlineProfileDetails").replaceChildren();
+    document.getElementById("inlineProfileStatus").textContent = "";
+    profileDialog?.focus();
+    try {
+        // Public profile documents only: do not query private user/account records.
+        const { getDoc } = await import("https://www.gstatic.com/firebasejs/13.0.0/firebase-firestore.js");
+        const snapshot = await getDoc(doc(db, "publicProfiles", uid));
+        if (activeProfileUid !== uid || profileOverlay.hidden) return;
+        if (!snapshot.exists()) throw new Error("This profile is unavailable.");
+        const profile = snapshot.data();
+        const name = getName(profile);
+        document.getElementById("inlineProfileName").textContent = name;
+        document.getElementById("inlineProfileAvatar").textContent = getInitials(name);
+        addSharedDetail("Username", profile.username);
+        addSharedDetail("Name", profile.displayName || profile.name);
+        addSharedDetail("About", profile.bio || profile.about);
+        addSharedDetail("Interests", profile.interests);
+        addSharedDetail("Personality", profile.personality || profile.personalityType || profile.mbti);
+        addSharedDetail("Preferred activities", profile.preferredActivities);
+        addSharedDetail("Shared preferences", profile.publicPreferences);
+        if (!document.getElementById("inlineProfileDetails").children.length) {
+            document.getElementById("inlineProfileStatus").textContent = "No profile details have been shared yet.";
+        }
+    } catch (error) {
+        if (activeProfileUid === uid) {
+            document.getElementById("inlineProfileName").textContent = "Profile unavailable";
+            document.getElementById("inlineProfileStatus").textContent = error.message || "Unable to load profile.";
+        }
+    }
+}
+
+profileClose?.addEventListener("click", closeInlineProfile);
+profileOverlay?.addEventListener("click", event => {
+    if (event.target === profileOverlay) closeInlineProfile();
+});
+document.addEventListener("keydown", event => {
+    if (!profileOverlay || profileOverlay.hidden) return;
+    if (event.key === "Escape") closeInlineProfile();
+    if (event.key === "Tab") {
+        // The close button is the only keyboard-focusable control in this dialog.
+        event.preventDefault();
+        profileClose?.focus();
+    }
+});
 
 function showEmpty(container, message) {
     container.replaceChildren(
