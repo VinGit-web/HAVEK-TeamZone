@@ -11,8 +11,14 @@ import {
     onSnapshot
 } from "https://www.gstatic.com/firebasejs/13.0.0/firebase-firestore.js";
 
+// ========================================
+// CHAT ELEMENTS
+// ========================================
+
 const openButton = document.getElementById("stringsChatButton");
 const navButton = document.getElementById("openChatNav");
+const homeMessageButton = document.getElementById("messageButton");
+
 const closeButton = document.getElementById("stringsChatClose");
 const panel = document.getElementById("stringsChatPanel");
 const backdrop = document.getElementById("stringsChatBackdrop");
@@ -28,6 +34,10 @@ let currentUid = null;
 let generation = 0;
 let panelOpen = false;
 
+// ========================================
+// UNREAD MESSAGE BADGES
+// ========================================
+
 function updateBadge() {
     const total = [...counts.values()].reduce(
         (sum, count) => sum + count,
@@ -36,21 +46,29 @@ function updateBadge() {
 
     const value = total > 99 ? "99+" : String(total);
 
-    badge.hidden = total === 0;
-    badge.textContent = value;
+    if (badge) {
+        badge.hidden = total === 0;
+        badge.textContent = value;
+    }
 
     if (navBadge) {
         navBadge.hidden = total === 0;
         navBadge.textContent = value;
     }
 
-    openButton.setAttribute(
-        "aria-label",
-        total
-            ? `Open Chat, ${total} unread messages`
-            : "Open Chat"
-    );
+    if (openButton) {
+        openButton.setAttribute(
+            "aria-label",
+            total
+                ? `Open Chat, ${total} unread messages`
+                : "Open Chat"
+        );
+    }
 }
+
+// ========================================
+// CLEAR FIREBASE LISTENERS
+// ========================================
 
 function clearAll() {
     generation++;
@@ -65,7 +83,15 @@ function clearAll() {
     updateBadge();
 }
 
+// ========================================
+// WATCH INDIVIDUAL CONVERSATION
+// ========================================
+
 function watchConversation(otherUid) {
+    if (!currentUid || !otherUid || currentUid === otherUid) {
+        return;
+    }
+
     const uid = currentUid;
     const version = generation;
     const chatId = [uid, otherUid].sort().join("_");
@@ -96,7 +122,6 @@ function watchConversation(otherUid) {
         }).length;
 
         counts.set(otherUid, unread);
-
         updateBadge();
     }
 
@@ -143,15 +168,17 @@ function watchConversation(otherUid) {
                 snapshot => {
                     if (version !== generation) return;
 
-                    received = snapshot.docs.map(item => item.data());
-                    messagesLoaded = true;
+                    received = snapshot.docs.map(
+                        item => item.data()
+                    );
 
+                    messagesLoaded = true;
                     refresh();
                 },
 
                 error => {
                     console.error(
-                        "Strings unread messages:",
+                        "Chat unread messages:",
                         error
                     );
                 }
@@ -174,13 +201,12 @@ function watchConversation(otherUid) {
                         : 0;
 
                     readLoaded = true;
-
                     refresh();
                 },
 
                 error => {
                     console.error(
-                        "Strings read status:",
+                        "Chat read status:",
                         error
                     );
                 }
@@ -189,7 +215,7 @@ function watchConversation(otherUid) {
 
         error => {
             console.error(
-                "Strings chat status:",
+                "Chat status:",
                 error
             );
         }
@@ -202,6 +228,10 @@ function watchConversation(otherUid) {
         if (stopRead) stopRead();
     });
 }
+
+// ========================================
+// FIREBASE SPHERE CONNECTIONS
+// ========================================
 
 subscribeToSphere(state => {
     if (
@@ -217,13 +247,15 @@ subscribeToSphere(state => {
         clearAll();
         currentUid = state.uid;
 
-        if (frame.dataset.loaded === "true") {
+        if (frame?.dataset.loaded === "true") {
             frame.src = "chat.html?embedded=1";
         }
     }
 
     const allowed = new Set(
-        (state.connections || []).map(person => person.uid)
+        (state.connections || [])
+            .map(person => person.uid)
+            .filter(Boolean)
     );
 
     for (const [uid, stop] of listeners) {
@@ -243,7 +275,16 @@ subscribeToSphere(state => {
     updateBadge();
 });
 
+// ========================================
+// OPEN / CLOSE CHAT SIDEBAR
+// ========================================
+
 function setOpen(open) {
+    if (!panel || !backdrop || !frame) {
+        console.error("Chat sidebar elements are missing.");
+        return;
+    }
+
     panelOpen = open;
 
     panel.classList.toggle("is-open", open);
@@ -254,7 +295,7 @@ function setOpen(open) {
         String(!open)
     );
 
-    openButton.setAttribute(
+    openButton?.setAttribute(
         "aria-expanded",
         String(open)
     );
@@ -270,34 +311,54 @@ function setOpen(open) {
             frame.dataset.loaded = "true";
         }
 
-        closeButton.focus();
+        closeButton?.focus();
     } else {
-        openButton.focus();
+        openButton?.focus();
     }
 }
 
-openButton.addEventListener("click", () => {
+// ========================================
+// BUTTON EVENT LISTENERS
+// ========================================
+
+// Floating Chat button on Home and Strings
+openButton?.addEventListener("click", () => {
     setOpen(true);
 });
 
+// Optional navigation Chat button
 navButton?.addEventListener("click", () => {
     setOpen(true);
 });
 
-closeButton.addEventListener("click", () => {
+// Message button inside Home connection profile
+homeMessageButton?.addEventListener("click", () => {
+    setOpen(true);
+});
+
+// Close sidebar
+closeButton?.addEventListener("click", () => {
     setOpen(false);
 });
 
-backdrop.addEventListener("click", () => {
+// Click outside sidebar
+backdrop?.addEventListener("click", () => {
     setOpen(false);
 });
 
+// Escape key
 document.addEventListener("keydown", event => {
     if (event.key === "Escape" && panelOpen) {
         setOpen(false);
     }
 });
 
-window.addEventListener("pagehide", clearAll);
+// ========================================
+// CLEANUP
+// ========================================
+
+window.addEventListener("pagehide", () => {
+    clearAll();
+});
 
 updateBadge();
