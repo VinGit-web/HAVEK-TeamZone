@@ -1,0 +1,24 @@
+/* Add to the bottom of css/chat.css */
+body.embedded-chat.single-conversation .chat-layout {
+    display: block;
+    height: 100dvh;
+    max-height: 100dvh;
+}
+body.embedded-chat.single-conversation #chat-list-page {
+    display: none !important;
+}
+body.embedded-chat.single-conversation #conversation-page {
+    display: flex !important;
+    flex-direction: column;
+    width: 100% !important;
+    height: 100% !important;
+    min-width: 0;
+}
+body.embedded-chat.single-conversation #back-button {
+    display: none !important;
+}
+body.embedded-chat.single-conversation .conversation-messages {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+}

@@ -682,8 +682,10 @@ if (!targetUid || !isSphereConnected(targetUid)) {
     return;
 }
 
-window.location.href =
-    `chat.html?uid=${encodeURIComponent(targetUid)}`;
+// Open the shared chat sidebar without navigating away from Home.
+window.dispatchEvent(new CustomEvent("introspheer:open-chat", {
+    detail: { uid: targetUid }
+}));
 });
 
 
