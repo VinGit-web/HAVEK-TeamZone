@@ -573,6 +573,49 @@
     type="module"
     src="./js/strings-chat-panel.js"></script>
 
+<!-- Chat Shortcut -->
+<button
+    id="stringsChatButton"
+    class="strings-chat-button"
+    type="button"
+    aria-controls="stringsChatPanel"
+    aria-expanded="false">
+    Chat
+    <span id="stringsChatUnread"
+          class="strings-chat-unread"
+          hidden></span>
+</button>
+
+<!-- Dark background overlay -->
+<div id="stringsChatBackdrop"
+     class="strings-chat-backdrop"
+     hidden></div>
+
+<!-- Chat Popup -->
+<aside id="stringsChatPanel"
+       class="strings-chat-panel"
+       aria-label="Chat"
+       aria-hidden="true">
+
+    <div class="strings-chat-panel-heading">
+        <h2>Chat</h2>
+
+        <button id="stringsChatClose"
+                class="strings-chat-close"
+                type="button"
+                aria-label="Close chat">
+            &times;
+        </button>
+    </div>
+
+    <iframe id="stringsChatFrame"
+            class="strings-chat-frame"
+            title="INTROSPHEER Chat"></iframe>
+</aside>
+
+<script type="module"
+        src="./js/strings-chat-panel.js"></script>
+
 
 </body>
 
