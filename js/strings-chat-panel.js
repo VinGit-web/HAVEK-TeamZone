@@ -333,8 +333,27 @@ navButton?.addEventListener("click", () => {
 
 // Message button inside Home connection profile
 homeMessageButton?.addEventListener("click", () => {
-    setOpen(true);
+    const uid = homeMessageButton.dataset.chatUid;
+
+    if (!uid) {
+        console.warn("No selected profile UID found.");
+        return;
+    }
+
+    openChatForUser(uid);
 });
+function openChatForUser(uid) {
+    if (!uid || !frame) return;
+
+    const url = new URL("chat.html", window.location.href);
+    url.searchParams.set("embedded", "1");
+    url.searchParams.set("uid", uid);
+
+    frame.src = url.toString();
+    frame.dataset.loaded = "true";
+
+    setOpen(true);
+}
 
 // Close sidebar
 closeButton?.addEventListener("click", () => {
