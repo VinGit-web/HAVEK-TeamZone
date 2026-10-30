@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+    <link rel="stylesheet" href="css/strings-chat-panel.css">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -510,6 +511,57 @@
 
     <script src="./js/team-slideshow.js"></script>
     <script type="module" src="./js/main.js"></script>
+    <!-- Home Chat Button -->
+<button
+    id="stringsChatButton"
+    class="strings-chat-button"
+    type="button"
+    aria-controls="stringsChatPanel"
+    aria-expanded="false"
+    aria-label="Open Chat">
+    <span aria-hidden="true">✉</span>
+    Chat
+    <span
+        id="stringsChatUnread"
+        class="strings-chat-unread"
+        hidden></span>
+</button>
+
+<!-- Chat Backdrop -->
+<div
+    id="stringsChatBackdrop"
+    class="strings-chat-backdrop"
+    hidden></div>
+
+<!-- Chat Sidebar -->
+<aside
+    id="stringsChatPanel"
+    class="strings-chat-panel"
+    aria-label="Chat"
+    aria-hidden="true">
+
+    <div class="strings-chat-panel-heading">
+        <h2>Chat</h2>
+
+        <button
+            id="stringsChatClose"
+            class="strings-chat-close"
+            type="button"
+            aria-label="Close Chat">
+            &times;
+        </button>
+    </div>
+
+    <iframe
+        id="stringsChatFrame"
+        class="strings-chat-frame"
+        title="INTROSPHEER conversations"
+        loading="lazy"></iframe>
+</aside>
+
+<script
+    type="module"
+    src="./js/strings-chat-panel.js"></script>
 
 
 </body>
